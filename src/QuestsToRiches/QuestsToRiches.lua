@@ -3435,8 +3435,11 @@ local function FormatDiff(copper, noIcon)
     if noIcon and text:sub(-#GOLD_ICON) == GOLD_ICON then
         text = text:sub(1, -#GOLD_ICON - 1) -- 아이콘은 늘 끝에 붙는다 (패턴 문자 "-"가 있어 gsub 대신 잘라 낸다)
         -- 아이콘 없는 칸은 좁아 "+99,999"까지만 들어간다: 10만 골드부터 "+204k"로 줄인다 (버림, 실제보다 크게 보이지 않게)
+        -- 1천만 골드부터는 "+12,345k"(8글자)도 넘칠 수 있어 "+12.3M"으로 (2026-11-03 사용자 결정, 7천만 골드 넘게 가진 사용자 대비)
         local gold = CopperToGold(math.abs(copper))
-        if gold >= 100000 then
+        if gold >= 10000000 then
+            text = text:sub(1, 1) .. string.format("%.1f", math.floor(gold / 100000) / 10) .. "M"
+        elseif gold >= 100000 then
             text = text:sub(1, 1) .. BreakUpLargeNumbers(math.floor(gold / 1000)) .. "k"
         end
     end
@@ -3446,6 +3449,16 @@ local function FormatDiff(copper, noIcon)
         return "|cffff4444" .. text .. "|r"
     end
     return "|cff808080" .. text .. "|r"
+end
+
+-- 상세의 보유 골드 칸(폭 82)은 "1,369,190"까지는 넉넉하나 1천만 골드부터 한 자리가 늘어 넘칠 수 있다:
+-- "12,345k"로 줄인다 (버림, 2026-11-03 사용자 결정). 1천만 골드 미만은 그대로
+function hold.FormatGold(copper)
+    local gold = CopperToGold(copper)
+    if gold >= 10000000 then
+        return BreakUpLargeNumbers(math.floor(gold / 1000)) .. "k" .. GOLD_ICON
+    end
+    return FormatGold(copper)
 end
 
 function QTR:UpdateHoldingsSummary()
@@ -3524,7 +3537,8 @@ function QTR:UpdateHoldingsDetail()
             prevKey = k
         end
     end
-    local summary = L["만렙 캐릭터 %d개 중 접속 %d개 / 합계 %s"]:format(charCount, onlineCount, FormatGold(total))
+    -- 이 줄은 1백만 골드대에서도 창 끝까지 차므로 합계도 1천만 골드부터 k로 줄인다 (hold.FormatGold)
+    local summary = L["만렙 캐릭터 %d개 중 접속 %d개 / 합계 %s"]:format(charCount, onlineCount, hold.FormatGold(total))
     -- 전날 기록 (캐릭터별 전일비에도 쓴다)
     local prevHoldings, prevWarband
     if prevKey then
@@ -3583,7 +3597,7 @@ function QTR:UpdateHoldingsDetail()
             Cell(FormatRank(rank), COL.rank, "RIGHT"),
             Cell(ColorName(key), COL.rankName),
             Cell((v.day == dayKey) and ONLINE_ICON or "", COL.holdDot),
-            Cell(FormatGold(v.money), COL.holdGold, "RIGHT"),
+            Cell(hold.FormatGold(v.money), COL.holdGold, "RIGHT"),
             DiffCell(v.money, prevHoldings and prevHoldings[key]),
             RankMoveCell(key, rank),
             Cell("|cffaaaaaa" .. FormatPercent(v.money, total) .. "|r", COL.holdPct, "RIGHT"),
@@ -3598,7 +3612,7 @@ function QTR:UpdateHoldingsDetail()
         table.insert(entries, {
             Cell(L["전투부대 은행"], COL.rankName),
             Cell((warband.day == dayKey) and ONLINE_ICON or "", COL.holdDot),
-            Cell(FormatGold(warband.money), COL.holdGold, "RIGHT"),
+            Cell(hold.FormatGold(warband.money), COL.holdGold, "RIGHT"),
             DiffCell(warband.money, prevWarband),
             Cell("|cffaaaaaa" .. FormatPercent(warband.money, total) .. "|r", COL.holdPct, "RIGHT"),
         })
