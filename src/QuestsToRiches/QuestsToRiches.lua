@@ -297,6 +297,7 @@ end
 -- settings               = { goal, chatNotify, alpha, frameLocked, pos(창 왼쪽 위 기준), keys = { dashboard, config, route } }
 --   goal: 목표 골드 (골드 단위, 1 ~ GOAL_MAX). 예전 goalMan(만 골드 단위)은 처음 한 번 옮겨 온다.
 --   dashPinned, navPinned: 대시보드, 내비게이션 창 고정 (Esc로 닫히지 않음). dashScale, navScale: 두 창의 크기 배율 (기본 1)
+--   holdNoWarband: 이 계정 보유량에 전투부대 은행 넣지 않기 (QTR.WarbandCounted 참고)
 --
 -- 이전 이름(GoldQuestMakeMeRich, RoadToGold5M)의 저장 파일을 새 이름(QuestsToRiches.lua)으로 바꿔 넣으면
 -- 그 안의 이전 변수(GoldQuestMakeMeRichDB, RoadToGold5MDB)가 함께 읽힌다.
@@ -580,12 +581,44 @@ local function UpdateWarbandMoney()
     end
 end
 
-local function GetAccountTotals()
+-- 이 계정 보유량에 전투부대 은행을 넣는지 (2026-11-03 사용자 결정, SF작가님 요청: 하위 계정 두 개의 골드 합이 중복됨)
+--   한 와우 계정의 하위 계정(WoW1, WoW2)은 전투부대 은행을 함께 써서, 계정마다 넣으면 두 계정 합에 은행이 두 번 들어간다.
+--   설정(DB.settings.holdNoWarband)은 저장 파일, 즉 계정마다 따로라 한 계정에서만 은행을 넣으면 된다.
+--   기록(snapshots, holdDays)은 늘 은행을 포함해 남기고 보여 줄 때 뺀다 (설정을 껐다 켜도 지난 기록이 맞게).
+function QTR.WarbandCounted()
+    return not DB.settings.holdNoWarband
+end
+
+-- dayKey 날짜의 계정 합계 기록 (snapshots). 은행을 넣지 않으면 그날까지의 마지막 은행 기록(holdDays.warband)을 뺀다
+--   RecordSnapshot이 두 값을 같은 순간에 쓰므로 같은 날 값끼리 맞는다.
+--   그날 이전 은행 기록이 없으면(날짜별 보유량 기록을 만들기 전의 합계) 가장 오래된 은행 기록을 뺀다.
+function QTR.SnapshotAt(dayKey)
+    local total = DB.snapshots[dayKey]
+    if not total or QTR.WarbandCounted() then
+        return total
+    end
+    local lastKey, firstKey
+    for k, h in pairs(DB.holdDays) do
+        if h.warband then
+            if k <= dayKey and (not lastKey or k > lastKey) then
+                lastKey = k
+            end
+            if not firstKey or k < firstKey then
+                firstKey = k
+            end
+        end
+    end
+    local k = lastKey or firstKey
+    return total - (k and DB.holdDays[k].warband or 0)
+end
+
+-- raw: 설정과 상관없이 은행을 넣는다 (기록용)
+local function GetAccountTotals(raw)
     local charSum = 0
     for _, c in pairs(DB.chars) do
         charSum = charSum + (c.money or 0)
     end
-    local warband = DB.warbandMoney or 0
+    local warband = (raw or QTR.WarbandCounted()) and DB.warbandMoney or 0
     return charSum + warband, charSum, warband
 end
 
@@ -593,7 +626,7 @@ local function RecordSnapshot()
     if not DB or not charKey then
         return
     end
-    local total = GetAccountTotals()
+    local total = GetAccountTotals(true) -- 기록은 늘 은행 포함 (보여 줄 때 QTR.SnapshotAt이 뺀다)
     local today = GetDayKey()
     DB.snapshots[today] = total
     -- 보유량 탭의 날짜별 보기: 현재 캐릭터와 전투부대 은행의 그날 마지막 값
@@ -904,7 +937,7 @@ local function GetHoldingTrend()
     if days < 1 then
         return nil
     end
-    return (DB.snapshots[lastKey] - DB.snapshots[firstKey]) / days
+    return (QTR.SnapshotAt(lastKey) - QTR.SnapshotAt(firstKey)) / days
 end
 
 -- 목표까지 예상 달성일 문자열
@@ -3282,6 +3315,7 @@ end)
 -- 보유량 탭 (획득량 탭처럼 위쪽에 보기 버튼 2개)
 --   요약: 날짜별 계정 보유 골드 합계 (최근 날짜부터). 날짜 선택 없음.
 --         합계는 snapshots(그날 마지막으로 확인한 계정 총 보유, 전투부대 은행 포함)를 쓴다.
+--         은행을 넣지 않는 설정이면 QTR.SnapshotAt이 은행을 뺀 값을 준다 (상세도 은행 줄과 합계에서 뺀다).
 --   상세: 고른 날짜의 캐릭터별 보유 골드와 비중.
 --         골드는 그날까지 마지막으로 확인한 값(holdDays), 그날 접속한 캐릭터에만 녹색불을 켠다.
 -------------------------------------------------------------------------------
@@ -3423,12 +3457,13 @@ function QTR:UpdateHoldingsSummary()
     table.sort(keys, function(a, b) return a > b end) -- 최근 날짜부터
 
     hold.sumSummary:SetText(L["기록 %d일"]:format(#keys))
-    hold.sumSub:SetText(L["|cffaaaaaa그날 마지막으로 확인한 계정 보유 골드 합계 (전투부대 은행 포함)|r"])
+    hold.sumSub:SetText(QTR.WarbandCounted() and L["|cffaaaaaa그날 마지막으로 확인한 계정 보유 골드 합계 (전투부대 은행 포함)|r"]
+        or L["|cffaaaaaa그날 마지막으로 확인한 계정 보유 골드 합계 (전투부대 은행 뺌)|r"])
 
     local entries = {}
     for i, k in ipairs(keys) do
-        local total = DB.snapshots[k]
-        local prev = keys[i + 1] and DB.snapshots[keys[i + 1]]
+        local total = QTR.SnapshotAt(k)
+        local prev = keys[i + 1] and QTR.SnapshotAt(keys[i + 1])
         local dayLabel = FormatDayKey(k)
         if k == today then
             dayLabel = dayLabel .. L[" |cffffd100오늘|r"]
@@ -3466,6 +3501,9 @@ function QTR:UpdateHoldingsDetail()
     end
 
     local holdings, warband = GetHoldingsAt(dayKey)
+    if not QTR.WarbandCounted() then
+        warband = nil -- 은행을 넣지 않는 계정: 은행 줄을 빼고 합계, 비중에서도 뺀다
+    end
     local total = SumHoldings(holdings, warband)
 
     -- 요약: 만렙 캐릭터 수, 그날 접속한 만렙 캐릭터 수, 계정 합계(전투부대 은행 포함), 전일비
@@ -3491,6 +3529,9 @@ function QTR:UpdateHoldingsDetail()
     local prevHoldings, prevWarband
     if prevKey then
         prevHoldings, prevWarband = GetHoldingsAt(prevKey)
+        if not QTR.WarbandCounted() then
+            prevWarband = nil
+        end
         local prevTotal = SumHoldings(prevHoldings, prevWarband)
         summary = summary .. L[" (전일비 %s)"]:format(FormatDiff(total - prevTotal))
     end
@@ -8773,6 +8814,17 @@ local function BuildOptions()
                             return ""
                         end,
                     },
+                    holdNoWarband = {
+                        type = "toggle", name = L["이 계정 보유량에 전투부대 은행 넣지 않기"], order = 4, width = "full",
+                        desc = L["하위 계정(WoW1, WoW2 등)은 전투부대 은행을 함께 쓰므로, 계정마다 보유량에 같은 은행이 들어갑니다.\n"]
+                            .. L["계정별 보유량을 더해 볼 때는 은행을 넣을 계정 하나만 남기고 나머지 계정에서 켜세요. 설정은 계정마다 따로 저장됩니다.\n"]
+                            .. L["켜면 목표 진행률, 보유량 순증, 달성 예상일, 보유량 탭에서 은행을 뺍니다. 지난 기록도 은행을 빼고 다시 계산합니다."],
+                        get = function() return DB.settings.holdNoWarband == true end,
+                        set = function(_, val)
+                            DB.settings.holdNoWarband = val or nil
+                            QTR:Refresh()
+                        end,
+                    },
                 },
             },
             displayGroup = {
@@ -9728,7 +9780,8 @@ SlashCmdList["QUESTSTORICHES"] = function(msg)
         for key, c in pairs(DB.chars) do
             Print(key .. " : " .. FormatGold(c.money))
         end
-        Print(L["전투부대 은행 : "] .. FormatGold(DB.warbandMoney))
+        Print(L["전투부대 은행 : "] .. FormatGold(DB.warbandMoney)
+            .. (QTR.WarbandCounted() and "" or L[" (이 계정 보유량에 넣지 않음)"]))
     else
         Print(L["/qtr : 창 열기/닫기"])
         Print(L["/qtr gq : 골드퀘 탭 열기"])

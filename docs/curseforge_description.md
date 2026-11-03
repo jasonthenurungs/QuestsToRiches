@@ -34,7 +34,8 @@ Works on Korean and English clients (all windows, settings and messages are tran
   and the order of stops is planned around it. Guild perk and Human racial (two charges) are taken into account,
   and one charge can be kept for when you finish.
 - Travel abilities: Mage Teleport: Silvermoon, Shaman Astral Recall, the Personal Key to the Arcantina
-  and the Maisara Caverns Mythic+ teleport (to Zul'Aman) are used when they are faster. Each can be turned off.
+  and the Maisara Caverns Mythic+ teleport (to Zul'Aman) are used when they are faster. Each can be turned off
+  (the Mythic+ teleport is off by default, turn it on in Settings).
 - Use button: when the next step is a hearthstone or a travel ability, click the small window to use it.
 - Quests about to expire are shown in orange and moved earlier; expired quests are removed.
 - Right-click a quest line: do it first, do it last, skip it this time, or never show it again.
@@ -62,6 +63,8 @@ Works on Korean and English clients (all windows, settings and messages are tran
 - Exclude quests you never do (/qtr ban).
 - Optional chat notice with each gold quest you complete.
 - Merge character records after a rename (Settings > Character management).
+- Several game accounts under one license: leave the shared Warband Bank out of all but one account's holdings
+  (Settings > Goal), so the bank is not counted twice.
 
 ## Commands
 - /qtr : open or close the window
@@ -116,7 +119,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
   잠긴 특별 과제는 그 지역 골드퀘를 마친 뒤에 가도록 편성
 - 귀환석: 빨라지는 구간이 있으면 귀환석(또는 귀환석 장난감)을 동선에 넣고, 방문 순서도 귀환석을 고려해 편성
   길드 혜택과 인간 종족 특성(2회 충전)을 반영하고, 마칠 때 1회 남기기 가능
-- 이동 기술: 마법사 실버문 순간이동, 주술사 영혼의 귀환, 아르칸티나로 통하는 개인 열쇠, 쐐기돌 던전 마이사라 동굴 순간이동(줄아만)을 더 빠를 때 사용 (각각 끌 수 있음)
+- 이동 기술: 마법사 실버문 순간이동, 주술사 영혼의 귀환, 아르칸티나로 통하는 개인 열쇠, 쐐기돌 던전 마이사라 동굴 순간이동(줄아만)을 더 빠를 때 사용 (각각 끌 수 있음, 쐐기 순간이동은 기본 끔이라 설정에서 켜야 함)
 - 사용 버튼 창: 다음 단계가 귀환석이나 이동 기술이면 작은 창을 눌러 바로 사용
 - 곧 만료되는 퀘스트는 주황색으로 표시하고 앞으로 당기며, 만료되면 경로에서 뺌
 - 퀘스트 줄 우클릭: 가장 먼저, 마지막에, 이번만 빼기, 더 이상 안 하기
@@ -141,6 +144,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
 - 하지 않는 퀘스트 추적 제외 (/qtr ban)
 - 골드퀘 완료 시 채팅 알림 (선택)
 - 캐릭터 이름을 바꿨을 때 옛 이름 기록 합치기 (설정창 "캐릭터 관리")
+- 하위 계정(WoW1, WoW2 등)을 여럿 쓸 때: 함께 쓰는 전투부대 은행을 한 계정에만 넣고 나머지 계정 보유량에서 빼기 (설정창 "목표")
 
 ## 명령어
 - /qtr : 창 열기/닫기
