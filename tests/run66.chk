@@ -1,0 +1,237 @@
+|cffffd100[QTR]|r 로드 완료. /qtr 창 열기, /qtr set 설정창
+== 1) 정점 보관함 알아보기
+  279520: true
+  282183: true
+  279527: true
+  279526: true
+  888666: true
+  12345: false
+  777555: false
+  777555 정보를 받은 뒤: true (못 받았을 때는 기억하지 않음)
+== 2) 미개봉 알림창 (가방: 잡템, 최정상, 모르는 정점, 특별 과제)
+|cffffd100[QTR]|r 정점 보관함 획득: 최정상 보관함
+  최정상 1개: 보임 true / 열지 않은 정점 보관함 1개 / 클릭해서 열기 / 누르면 279527
+|cffffd100[QTR]|r 정점 보관함 획득: 승리의 스토마리온 정점 보관함
+  모르는 정점 1개 더: 보임 true / 열지 않은 정점 보관함 2개 / 클릭해서 열기 / 누르면 279527
+|cffffd100[QTR]|r 정점 보관함 획득: 실버문 정점 보관함
+  특별 과제 1개 더 (특별 과제를 먼저 연다): 보임 true / 열지 않은 정점 보관함 3개 / 클릭해서 열기 / 누르면 282183
+  부자되기 탭용 가방 개수(다른 정점 보관함도): 279527x1, 282183x1, 888666x1
+  받은 기록(2026-10-29부터 다른 보관함도, 툴팁으로 늦게 안 보관함은 처음 개수를 기준으로만): 279527, 888666, 282183
+== 3) 열기와 대박 판정
+|cffffd100[QTR]|r 정점 보관함 |cffff8000대박|r |cffffd700★|r +17,968|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 오늘 합계 17,968|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 달성률 +0.36% / |cff00ff00달성 예상 12시간 54분 단축|r
+|cffffd100[QTR]|r 정점 보관함 |cffff8000대박|r |cffc0c0c0★|r +4,450|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 오늘 합계 22,418|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 달성률 +0.09% / |cff00ff00달성 예상 2시간 59분 단축|r
+|cffffd100[QTR]|r 정점 보관함 +2,010|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 오늘 합계 24,428|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 달성률 +0.04% / |cff00ff00달성 예상 1시간 19분 단축|r
+  다 연 뒤: 보임 false / 열지 않은 정점 보관함 1개 / 클릭해서 열기 / 누르면 282183
+  기록: 279527 17968.0골드
+  기록: 888666 4450.0골드
+  기록: 282183 2010.0골드
+  오늘 합계: 24428.0골드, 보관함 3개
+  2999골드: nil 
+  3000골드: 1 [은별]
+  9999골드: 1 [은별]
+  10000골드: 2 [금별]
+  17968골드: 2 [금별]
+== 4) 획득량 탭 보관함 묶음
+  -- 일별 (오늘, 처음에는 접힘)
+    요약: 참여 캐릭터 1개 / 보관함 대박 2회 ([금별]1, [은별]1)
+    1 | 봄이간다-데스윙 | 3개 | 24,428|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 100%
+    보관함 대박
+    + | 초대박([금별]) | 1회 | 17,968|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    + | 대박([은별]) | 1회 | 4,450|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    최근 추이 (일별)
+    2026-10-16 (금) | 3개 | 24,428|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    2026-10-09 (금) | 6개 | 48,829|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+  (초대박 줄 누름)
+  -- 일별 (초대박 펼침)
+    요약: 참여 캐릭터 1개 / 보관함 대박 2회 ([금별]1, [은별]1)
+    1 | 봄이간다-데스윙 | 3개 | 24,428|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 100%
+    보관함 대박
+    - | 초대박([금별]) | 1회 | 17,968|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    21:00 | 봄이간다-데스윙 | 17,968|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    + | 대박([은별]) | 1회 | 4,450|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    최근 추이 (일별)
+    2026-10-16 (금) | 3개 | 24,428|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    2026-10-09 (금) | 6개 | 48,829|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+  -- 주별 (이번 주, 펼친 상태 유지)
+    요약: 수행한 날 1일 / 하루 평균 24,428|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보관함 대박 2회 ([금별]1, [은별]1)
+    1 | 봄이간다-데스윙 | 3개 | 24,428|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 100%
+    보관함 대박
+    - | 초대박([금별]) | 1회 | 17,968|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    16(금) 21:00 | 봄이간다-데스윙 | 17,968|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    + | 대박([은별]) | 1회 | 4,450|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    최근 추이 (주별)
+    10-16 (금) ~ 10-22 (목) | 3개 | 24,428|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    10-09 (금) ~ 10-15 (목) | 6개 | 48,829|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+  -- 주별 (지난주)
+    요약: 수행한 날 1일 / 하루 평균 48,829|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보관함 대박 4회 ([금별]2, [은별]2)
+    1 | 여름이간다-데스윙 | 4개 | 28,787|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 59.0%
+    2 | 격냥패딩-데스윙 | 2개 | 20,042|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 41.0%
+    보관함 대박
+    - | 초대박([금별]) | 2회 | 35,883|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    9(금) 22:00 | 격냥패딩-데스윙 | 17,968|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    9(금) 21:01 | 여름이간다-데스윙 | 17,915|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    + | 대박([은별]) | 2회 | 8,906|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    최근 추이 (주별)
+    10-16 (금) ~ 10-22 (목) | 3개 | 24,428|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    10-09 (금) ~ 10-15 (목) | 6개 | 48,829|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+  (대박( 줄 누름)
+  (초대박 줄 누름)
+  -- 주별 (지난주, 초대박 다시 접고 대박 펼침)
+    요약: 수행한 날 1일 / 하루 평균 48,829|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보관함 대박 4회 ([금별]2, [은별]2)
+    1 | 여름이간다-데스윙 | 4개 | 28,787|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 59.0%
+    2 | 격냥패딩-데스윙 | 2개 | 20,042|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 41.0%
+    보관함 대박
+    + | 초대박([금별]) | 2회 | 35,883|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    - | 대박([은별]) | 2회 | 8,906|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    9(금) 21:05 | 여름이간다-데스윙 | 4,479|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    9(금) 21:03 | 여름이간다-데스윙 | 4,427|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    최근 추이 (주별)
+    10-16 (금) ~ 10-22 (목) | 3개 | 24,428|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    10-09 (금) ~ 10-15 (목) | 6개 | 48,829|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+  -- 월별 (2026-10-29부터 별과 + 있음, 접힘)
+    요약: 수행한 날 2일 / 하루 평균 36,628|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보관함 대박 6회 ([금별]3, [은별]3)
+    1 | 여름이간다-데스윙 | 4개 | 28,787|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 39.3%
+    2 | 봄이간다-데스윙 | 3개 | 24,428|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 33.3%
+    3 | 격냥패딩-데스윙 | 2개 | 20,042|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 27.4%
+    보관함 대박
+    + | 초대박([금별]) | 3회 | 53,851|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    - | 대박([은별]) | 3회 | 13,356|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    10/16(금) | 봄이간다-데스윙 | 4,450|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    10/9(금) | 여름이간다-데스윙 | 4,479|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    10/9(금) | 여름이간다-데스윙 | 4,427|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    최근 추이 (월별)
+    2026-10 | 9개 | 73,257|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+  (초대박 줄 누름)
+  -- 월별 (펼침, 날짜는 10/9(금) 꼴)
+    요약: 수행한 날 2일 / 하루 평균 36,628|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보관함 대박 6회 ([금별]3, [은별]3)
+    1 | 여름이간다-데스윙 | 4개 | 28,787|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 39.3%
+    2 | 봄이간다-데스윙 | 3개 | 24,428|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 33.3%
+    3 | 격냥패딩-데스윙 | 2개 | 20,042|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 27.4%
+    보관함 대박
+    - | 초대박([금별]) | 3회 | 53,851|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    10/16(금) | 봄이간다-데스윙 | 17,968|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    10/9(금) | 격냥패딩-데스윙 | 17,968|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    10/9(금) | 여름이간다-데스윙 | 17,915|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    - | 대박([은별]) | 3회 | 13,356|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    10/16(금) | 봄이간다-데스윙 | 4,450|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    10/9(금) | 여름이간다-데스윙 | 4,479|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    10/9(금) | 여름이간다-데스윙 | 4,427|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    최근 추이 (월별)
+    2026-10 | 9개 | 73,257|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+  -- 전체 (펼친 상태 유지, 날짜는 26/10/09(금) 꼴, 기간 제목에 수집 기간)
+    기간 제목: 전체 (26/10/09 ~ 26/10/16, 8일)
+    요약: 수행한 날 2일 / 하루 평균 36,628|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보관함 대박 6회 ([금별]3, [은별]3)
+    1 | 여름이간다-데스윙 | 4개 | 28,787|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 39.3%
+    2 | 봄이간다-데스윙 | 3개 | 24,428|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 33.3%
+    3 | 격냥패딩-데스윙 | 2개 | 20,042|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 27.4%
+    보관함 대박
+    - | 초대박([금별]) | 3회 | 53,851|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    26/10/16(금) | 봄이간다-데스윙 | 17,968|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    26/10/09(금) | 격냥패딩-데스윙 | 17,968|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    26/10/09(금) | 여름이간다-데스윙 | 17,915|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    - | 대박([은별]) | 3회 | 13,356|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    26/10/16(금) | 봄이간다-데스윙 | 4,450|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    26/10/09(금) | 여름이간다-데스윙 | 4,479|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    26/10/09(금) | 여름이간다-데스윙 | 4,427|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+    최근 추이 (월별)
+    2026-10 | 9개 | 73,257|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+  여름이간다 툴팁: 9(금) 21:01  최정상 보관함 [금별] = 17,915|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+  여름이간다 툴팁: 9(금) 21:03  최정상 보관함 [은별] = 4,427|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+  여름이간다 툴팁: 9(금) 21:05  아이템 279526 [은별] = 4,479|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+  여름이간다 툴팁: 9(금) 21:06  최정상 보관함 = 1,966|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+== 5) 요약 줄 대박: 없으면 아무것도 붙이지 않는다
+  대박 없음: nil
+  보관함 없음: nil
+  두 등급: 보관함 대박 4회 ([금별]2, [은별]2)
+== 6) 골드퀘 탭 클릭: 내비게이션 중에는 웨이포인트를 찍지 않고 채팅 한 줄 (10초에 한 번)
+|cffffd100[QTR]|r 내비게이션 중에는 퀘스트를 눌러도 웨이포인트를 찍지 않습니다. 순서를 바꾸려면 내비게이션 창의 퀘스트 줄을 우클릭하세요.
+  누름 1: false / 핀 false
+  3초 뒤 누름 2 (채팅 없음): false
+|cffffd100[QTR]|r 내비게이션 중에는 퀘스트를 눌러도 웨이포인트를 찍지 않습니다. 순서를 바꾸려면 내비게이션 창의 퀘스트 줄을 우클릭하세요.
+  11초 뒤 누름 3 (채팅 다시): false
+|cffffd100[QTR]|r 웨이포인트: 퀘 E (공허폭풍)
+  내비게이션이 없을 때: true / 핀 2405
+== 7) 부자되기 탭 다른 정점 보관함 (이번 주에 받은 캐릭터가 있을 때만)
+  이번 주 받은 다른 보관함: 888666 봄이간다-데스윙@0
+  이번 주 받은 다른 보관함: 279527 격냥패딩-데스윙@1800, 봄이간다-데스윙@0, 여름이간다-데스윙@600
+  -- 부자되기 탭 (접힘)
+    알고 있는 골드퀘가 없습니다. 캐릭터로 접속하면 지도에서 읽어 모아 둡니다.
+    정점 보관함
+    + | 수요와 공급 (똬리의 섬) | 1d 0h 0m | [아이콘] | 0/3
+    + | 승리의 스토마리온 정점 보관함 | 6d 9h 0m | [아이콘] | 1/3
+  -- 최정상 보관함 줄은 2026-10-30부터 없음 (실버문 주간 두 줄이 대신한다)
+    알고 있는 골드퀘가 없습니다. 캐릭터로 접속하면 지도에서 읽어 모아 둡니다.
+    정점 보관함
+    + | 수요와 공급 (똬리의 섬) | 1d 0h 0m | [아이콘] | 0/3
+    + | 승리의 스토마리온 정점 보관함 | 6d 9h 0m | [아이콘] | 1/3
+== 7b) 실버문 주간 퀘스트 두 줄 (잘아타스 추적, 리에드린 주간)
+  봄이간다 turnIns[98172] 저장: true
+  -- 부자되기 탭 (최정상 보관함 줄 대신 두 줄)
+    알고 있는 골드퀘가 없습니다. 캐릭터로 접속하면 지도에서 읽어 모아 둡니다.
+    정점 보관함
+    + | 수요와 공급 (똬리의 섬) | 1d 0h 0m | [아이콘] | 0/3
+    + | 잘아타스 추적 (실버문) | 6d 9h 0m | [아이콘] | 1/3
+    + | 리에드린 주간 퀘스트 (실버문) | 6d 9h 0m | [아이콘] | 2/3
+    + | 승리의 스토마리온 정점 보관함 | 6d 9h 0m | [아이콘] | 1/3
+  -- 잘아타스 추적 펼침
+    알고 있는 골드퀘가 없습니다. 캐릭터로 접속하면 지도에서 읽어 모아 둡니다.
+    정점 보관함
+    + | 수요와 공급 (똬리의 섬) | 1d 0h 0m | [아이콘] | 0/3
+    - | 잘아타스 추적 (실버문) | 6d 9h 0m | [아이콘] | 1/3
+    [아이콘] | 봄이간다-데스윙 | 16(금) 21:00
+    격냥패딩-데스윙 | 미완료
+    여름이간다-데스윙 | 미완료 | 미개봉 1
+    + | 리에드린 주간 퀘스트 (실버문) | 6d 9h 0m | [아이콘] | 2/3
+    + | 승리의 스토마리온 정점 보관함 | 6d 9h 0m | [아이콘] | 1/3
+  봄이간다 flagDone[93909]: true
+  -- 리에드린 주간을 아무도 안 함 (잘아타스 추적 줄만)
+    알고 있는 골드퀘가 없습니다. 캐릭터로 접속하면 지도에서 읽어 모아 둡니다.
+    정점 보관함
+    + | 수요와 공급 (똬리의 섬) | 1d 0h 0m | [아이콘] | 0/3
+    - | 잘아타스 추적 (실버문) | 6d 9h 0m | [아이콘] | 1/3
+    [아이콘] | 봄이간다-데스윙 | 16(금) 21:00
+    격냥패딩-데스윙 | 미완료
+    여름이간다-데스윙 | 미완료 | 미개봉 1
+    + | 승리의 스토마리온 정점 보관함 | 6d 9h 0m | [아이콘] | 1/3
+  이번 주 기록을 지운 뒤 다른 보관함 수: 0
+== 8) 대박이 많을 때: 모든 보기에서 최근 것부터 10개와 "그 밖의 대박 n회"
+  대박이 없는 기간의 보관함 대박 묶음 줄 수: 0
+  -- all
+    - | 초대박([금별]) | 5회 | 89,840g
+    26/10/11(일) | 여름이간다-데스윙 | 17,968g
+    26/10/08(목) | 봄이간다-데스윙 | 17,968g
+    26/10/05(월) | 여름이간다-데스윙 | 17,968g
+    26/10/02(금) | 봄이간다-데스윙 | 17,968g
+    26/09/29(화) | 여름이간다-데스윙 | 17,968g
+    - | 대박([은별]) | 11회 | 48,491g
+    26/10/12(월) | 봄이간다-데스윙 | 4,416g
+    26/10/10(토) | 봄이간다-데스윙 | 4,414g
+    26/10/09(금) | 여름이간다-데스윙 | 4,413g
+    26/10/07(수) | 여름이간다-데스윙 | 4,411g
+    26/10/06(화) | 봄이간다-데스윙 | 4,410g
+    26/10/04(일) | 봄이간다-데스윙 | 4,408g
+    26/10/03(토) | 여름이간다-데스윙 | 4,407g
+    26/10/01(목) | 여름이간다-데스윙 | 4,405g
+    26/09/30(수) | 봄이간다-데스윙 | 4,404g
+    26/09/28(월) | 봄이간다-데스윙 | 4,402g
+    그 밖의 대박 1회
+  -- month
+    - | 초대박([금별]) | 5회 | 89,840g
+    10/11(일) | 여름이간다-데스윙 | 17,968g
+    10/8(목) | 봄이간다-데스윙 | 17,968g
+    10/5(월) | 여름이간다-데스윙 | 17,968g
+    10/2(금) | 봄이간다-데스윙 | 17,968g
+    9/29(화) | 여름이간다-데스윙 | 17,968g
+    - | 대박([은별]) | 11회 | 48,491g
+    10/12(월) | 봄이간다-데스윙 | 4,416g
+    10/10(토) | 봄이간다-데스윙 | 4,414g
+    10/9(금) | 여름이간다-데스윙 | 4,413g
+    10/7(수) | 여름이간다-데스윙 | 4,411g
+    10/6(화) | 봄이간다-데스윙 | 4,410g
+    10/4(일) | 봄이간다-데스윙 | 4,408g
+    10/3(토) | 여름이간다-데스윙 | 4,407g
+    10/1(목) | 여름이간다-데스윙 | 4,405g
+    9/30(수) | 봄이간다-데스윙 | 4,404g
+    9/28(월) | 봄이간다-데스윙 | 4,402g
+    그 밖의 대박 1회
+== end

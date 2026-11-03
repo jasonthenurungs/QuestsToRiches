@@ -1,0 +1,11 @@
+﻿|cffffd100[QTR]|r 로드 완료. /qtr 창 열기, /qtr set 설정창
+== 1) 기본: 12번 시작 -> 10번만
+  10
+|cffffd100[QTR]|r 내비게이션 기록 10번 보관 중 (최근 10번만 남김)
+== 2) /qtr navlog all 뒤 5번 더 -> 15번
+|cffffd100[QTR]|r 내비게이션 기록 10번 보관 중 (모두 남김)
+  15 / navLogAll true
+== 3) /qtr navlog 10: 바로 지우지 않고, 다음 시작 때 10번으로
+|cffffd100[QTR]|r 내비게이션 기록 15번 보관 중 (최근 10번만 남김)
+  10 / navLogAll nil
+== end

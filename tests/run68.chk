@@ -1,0 +1,53 @@
+﻿|cffffd100[QTR]|r Loaded. /qtr opens the window, /qtr set opens settings.
+== 1) 탭
+== 2) 명령어
+|cffffd100[QTR]|r Home inn: Wayfarer Inn (location unknown: hearth once to remember it)
+|cffffd100[QTR]|r Cooldown 30 min, max charges 1, charges available now 1
+|cffffd100[QTR]|r Use in navigation: on, keep one charge for the finish: on
+|cffffd100[QTR]|r No excluded quests. Type /qtr ban followed by a space and Shift+click a quest.
+|cffffd100[QTR]|r /qtr : toggle the window
+|cffffd100[QTR]|r /qtr gq : open the Gold Quests tab
+|cffffd100[QTR]|r /qtr rich : open the Riches tab
+|cffffd100[QTR]|r /qtr stats : open the Earnings tab
+|cffffd100[QTR]|r /qtr hold : open the Holdings tab
+|cffffd100[QTR]|r /qtr set : toggle settings
+|cffffd100[QTR]|r /qtr list : print saved gold per character
+|cffffd100[QTR]|r /qtr ban (Shift+click a quest) : exclude / /qtr unban : restore
+|cffffd100[QTR]|r /qtr route : navigate the remaining gold quests / /qtr route clear : stop navigation
+|cffffd100[QTR]|r /qtr hearth : Hearthstone status (home inn, cooldown, charges available)
+|cffffd100[QTR]|r /qtr pos [note] : save the map ID and position where you stand (/qtr pos list : list, /qtr pos clear : clear)
+|cffffd100[QTR]|r Mouse over the window and press 1~4 : switch tabs
+|cffffd100[QTR]|r Mouse over the Gold Quests tab and press R : start navigation
+|cffffd100[QTR]|r locale: enUS
+|cffffd100[QTR]|r realm: 데스윙
+|cffffd100[QTR]|r char key: 봄이간다-데스윙
+|cffffd100[QTR]|r bind location (ARC_INN when at the Silvermoon inn): Wayfarer Inn
+|cffffd100[QTR]|r special assignment 92145 (SPECIAL_PREFIX): Quest Title 92145
+|cffffd100[QTR]|r special assignment 93438 (SPECIAL_PREFIX): Quest Title 93438
+|cffffd100[QTR]|r special assignment 95918 (SPECIAL_PREFIX): Quest Title 95918
+|cffffd100[QTR]|r weekly quest 98172: Quest Title 98172
+|cffffd100[QTR]|r item 279520: Item 279520
+|cffffd100[QTR]|r item 282183: Item 282183
+|cffffd100[QTR]|r item 279527: Item 279527
+|cffffd100[QTR]|r item 253629: Item 253629
+|cffffd100[QTR]|r cache tooltip line 2: Sell Price
+|cffffd100[QTR]|r spell 1259190 (MAGE_TELE for 1259190): nil
+|cffffd100[QTR]|r spell 556 (MAGE_TELE for 1259190): nil
+|cffffd100[QTR]|r spell 1255801 (MAGE_TELE for 1259190): nil
+|cffffd100[QTR]|r map 2393: Silvermoon City
+|cffffd100[QTR]|r map 2405: Silvermoon City
+|cffffd100[QTR]|r map 2413: Silvermoon City
+|cffffd100[QTR]|r map 2437: Silvermoon City
+|cffffd100[QTR]|r map 2395: Silvermoon City
+|cffffd100[QTR]|r map 2512: Silvermoon City
+|cffffd100[QTR]|r map 2576: Silvermoon City
+== 3) 내비게이션 대기 화면과 완료 추천
+  Next: |cffc79c6e여름이간다-데스윙|r |cffaaaaaa(gold quests left: 1, 1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t)|r
+== 4) 정점 보관함 출처 이름 (한국어로 저장된 이름은 게임에서 읽은 이름으로)
+  Quest Title 92145 (Silvermoon)
+  저장 이름 언어가 다름: true, 영어 이름: false
+== 5) 설정창 문구 (함수는 불러서)
+  문구 91개, 오류 0개
+== 6) 화면 글자 중 한글이 남은 것 (시험 데이터 이름 말고는 없어야 한다)
+  |cffaaaaaaFor 봄이간다, soonest to expire first|r
+  Next: |cffc79c6e여름이간다-데스윙|r |cffaaaaaa(gold quests left: 1, 1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t)|r

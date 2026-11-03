@@ -1,0 +1,11 @@
+<Bindings>
+	<Binding name="QUESTSTORICHES_DASHBOARD" header="QUESTSTORICHES" category="ADDONS">
+		QuestsToRiches_ToggleDashboard()
+	</Binding>
+	<Binding name="QUESTSTORICHES_CONFIG" category="ADDONS">
+		QuestsToRiches_ToggleConfig()
+	</Binding>
+	<Binding name="QUESTSTORICHES_ROUTE" category="ADDONS">
+		QuestsToRiches_ToggleRoute()
+	</Binding>
+</Bindings>

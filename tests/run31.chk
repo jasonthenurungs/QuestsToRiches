@@ -1,0 +1,324 @@
+|cffffd100[QTR]|r 로드 완료. /qtr 창 열기, /qtr set 설정창
+|cffffd100[QTR]|r 보관함 출처 학습: 특별 과제: 수요와 공급 (공허폭풍) -> 전설적인 역전용사의 보관함
+hidden for me: true
+activeGQ: 4
+source: q5 특별 과제: 수요와 공급 공허폭풍 279520 map
+== NPC dialog
+|cffffd100[QTR]|r 정점 보관함 인식: 실버문 정점 보관함 (ID 999777)
+|cffffd100[QTR]|r 보관함 출처 학습: 실버문 주간: 수호 (실버문) -> 실버문 정점 보관함
+== turn in 900 and cache arrives
+|cffffd100[QTR]|r 정점 보관함 획득: 실버문 정점 보관함 (실버문 주간: 수호)
+== stormarion cache with no quest
+|cffffd100[QTR]|r 정점 보관함 인식: 승리의 스토마리온 정점 보관함 (ID 888666)
+|cffffd100[QTR]|r 보관함 출처 학습: 승리의 스토마리온 정점 보관함 (퀘스트 없이 받은 보관함)
+|cffffd100[QTR]|r 정점 보관함 획득: 승리의 스토마리온 정점 보관함
+get: 999777 1 900
+get: 888666 1
+source: i888666 item
+source: q900 quest 실버문 주간: 수호 999777 npc
+source: q5 quest 특별 과제: 수요와 공급 279520 map
+== bank withdraw should not count
+gets now: 2
+==== rich collapsed
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+|cff808080-|r
+|cff808080-|r
+골드퀘 4개 / 정점 보관함 출처 3곳
+|cffaaaaaa만렙(90) 캐릭터 7개 기준, 줄을 누르면 캐릭터별 현황|r
+|cff00ccff공허폭풍|r
+|cffffd100+|r
+|cffffffff퀘 A|r
+|cffff444458m|r
+|cffffffff1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffffd100+|r
+|cffffffff뜻밖의 상황|r
+|cffaaaaaa11h 6m|r
+|cffffffff1,089|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/6|r
+|cffffd100+|r
+|cffffffff퀘 B|r
+|cffaaaaaa3d 0h 0m|r
+|cffffffff984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cff00ccff하란다르|r
+|cffffd100+|r
+|cffffffff퀘 C|r
+|cffaaaaaa1d 0h 0m|r
+|cffffffff1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffa335ee정점 보관함|r
+|cffffd100+|r
+|cffffffff수요와 공급 (공허폭풍)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffff44440/7|r
+|cffffd100+|r
+|cffffffff승리의 스토마리온 정점 보관함 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffffffff1/7|r
+|cffffd100+|r
+|cffffffff실버문 주간: 수호 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffffffff1/7|r
+clickable rows: 9
+==== rich expanded first gq and first source
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+|cff808080-|r
+|cff808080-|r
+골드퀘 4개 / 정점 보관함 출처 3곳
+|cffaaaaaa만렙(90) 캐릭터 7개 기준, 줄을 누르면 캐릭터별 현황|r
+|cff00ccff공허폭풍|r
+|cffffd100+|r
+|cffffffff퀘 A|r
+|cffff444458m|r
+|cffffffff1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffffd100-|r
+|cffffffff뜻밖의 상황|r
+|cffaaaaaa11h 6m|r
+|cffffffff1,089|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/6|r
+가방-아즈샤라
+|cffff4444미완료|r
+완료빠름-아즈샤라
+|cffff4444미완료|r
+가람-불타는군단
+|cffff4444미완료|r
+|cffc79c6e봄이간다-데스윙|r
+|cff808080안 보임|r
+|cffffd100+|r
+|cffffffff퀘 B|r
+|cffaaaaaa3d 0h 0m|r
+|cffffffff984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+다리-아즈샤라
+|cffff4444미완료|r
+|cffc79c6e나무-아즈샤라|r
+|cffff4444미완료|r
+|cffc79c6e여름이간다-데스윙|r
+|cffff4444미완료|r
+|cff00ccff하란다르|r
+|cffffd100+|r
+|cffffffff퀘 C|r
+|cffaaaaaa1d 0h 0m|r
+|cffffffff1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffa335ee정점 보관함|r
+|cffffd100+|r
+|cffffffff수요와 공급 (공허폭풍)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffff44440/7|r
+|cffffd100+|r
+|cffffffff승리의 스토마리온 정점 보관함 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffffffff1/7|r
+|cffffd100+|r
+|cffffffff실버문 주간: 수호 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffffffff1/7|r
+== ban quest 1 via link
+|cffffd100[QTR]|r 추적에서 제외했습니다: 퀘 A (ID 1)
+|cffffd100[QTR]|r 제외 퀘스트: 퀘 A (ID 1)
+==== rich after ban
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+|cff808080-|r
+|cff808080-|r
+골드퀘 3개 / 정점 보관함 출처 3곳
+|cffaaaaaa만렙(90) 캐릭터 7개 기준, 줄을 누르면 캐릭터별 현황|r
+|cff00ccff공허폭풍|r
+|cffffd100-|r
+|cffffffff뜻밖의 상황|r
+|cffaaaaaa11h 6m|r
+|cffffffff1,089|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/6|r
+가방-아즈샤라
+|cffff4444미완료|r
+다리-아즈샤라
+|cffff4444미완료|r
+|cffc79c6e나무-아즈샤라|r
+|cffff4444미완료|r
+|cffc79c6e봄이간다-데스윙|r
+|cff808080안 보임|r
+|cffffd100+|r
+|cffffffff퀘 B|r
+|cffaaaaaa3d 0h 0m|r
+|cffffffff984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cff00ccff하란다르|r
+완료빠름-아즈샤라
+|cffff4444미완료|r
+|cffc79c6e여름이간다-데스윙|r
+|cffff4444미완료|r
+가람-불타는군단
+|cffff4444미완료|r
+|cffffd100+|r
+|cffa335ee정점 보관함|r
+|cffffd100+|r
+|cffffd100+|r
+|cffffffff승리의 스토마리온 정점 보관함 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffffffff1/7|r
+|cffffd100+|r
+|cffffffff실버문 주간: 수호 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffffffff1/7|r
+|cffffffff퀘 C|r
+|cffaaaaaa1d 0h 0m|r
+|cffffffff1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffffffff수요와 공급 (공허폭풍)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffff44440/7|r
+==== ordered rows
+공허폭풍
+- | 뜻밖의 상황 | 11h 6m | 1,089|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/6
+가방-아즈샤라 | 미완료
+다리-아즈샤라 | 미완료
+완료빠름-아즈샤라 | 미완료
+나무-아즈샤라 | 미완료
+여름이간다-데스윙 | 미완료
+가람-불타는군단 | 미완료
+봄이간다-데스윙 | 안 보임
++ | 퀘 B | 3d 0h 0m | 984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/7
+하란다르
++ | 퀘 C | 1d 0h 0m | 1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/7
+정점 보관함
++ | 수요와 공급 (공허폭풍) | 6d 9h 0m | |T5555:0|t | 0/7
++ | 승리의 스토마리온 정점 보관함 (실버문) | 6d 9h 0m | |T5555:0|t | 1/7
++ | 실버문 주간: 수호 (실버문) | 6d 9h 0m | |T5555:0|t | 1/7
+==== rich ban off
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+|cff808080-|r
+|cff808080-|r
+골드퀘 4개 / 정점 보관함 출처 3곳
+|cffaaaaaa만렙(90) 캐릭터 7개 기준, 줄을 누르면 캐릭터별 현황|r
+|cff00ccff공허폭풍|r
+|cffffd100+|r
+|cffffffff퀘 A|r |cff808080(제외)|r
+|cffff444458m|r
+|cffffffff1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffffd100-|r
+|cffffffff뜻밖의 상황|r
+|cffaaaaaa11h 6m|r
+|cffffffff1,089|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/6|r
+가방-아즈샤라
+|cffff4444미완료|r
+완료빠름-아즈샤라
+|cffff4444미완료|r
+가람-불타는군단
+|cffff4444미완료|r
+|cffc79c6e봄이간다-데스윙|r
+|cff808080안 보임|r
+|cffffd100+|r
+|cffffffff퀘 B|r
+|cffaaaaaa3d 0h 0m|r
+|cffffffff984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+다리-아즈샤라
+|cffff4444미완료|r
+|cffc79c6e나무-아즈샤라|r
+|cffff4444미완료|r
+|cffc79c6e여름이간다-데스윙|r
+|cffff4444미완료|r
+|cff00ccff하란다르|r
+|cffffd100+|r
+|cffffffff퀘 C|r
+|cffaaaaaa1d 0h 0m|r
+|cffffffff1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffa335ee정점 보관함|r
+|cffffd100+|r
+|cffffffff수요와 공급 (공허폭풍)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffff44440/7|r
+|cffffd100+|r
+|cffffffff승리의 스토마리온 정점 보관함 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffffffff1/7|r
+|cffffd100+|r
+|cffffffff실버문 주간: 수호 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffffffff1/7|r
+==== quest A expanded
+공허폭풍
+- | 퀘 A (제외) | 58m | 1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/7
+가방-아즈샤라 | 미완료
+다리-아즈샤라 | 미완료
+완료빠름-아즈샤라 | 미완료
+나무-아즈샤라 | 미완료
+봄이간다-데스윙 | 미완료
+여름이간다-데스윙 | 미완료
+가람-불타는군단 | 미완료
+- | 뜻밖의 상황 | 11h 6m | 1,089|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/6
+가방-아즈샤라 | 미완료
+다리-아즈샤라 | 미완료
+완료빠름-아즈샤라 | 미완료
+나무-아즈샤라 | 미완료
+여름이간다-데스윙 | 미완료
+가람-불타는군단 | 미완료
+봄이간다-데스윙 | 안 보임
++ | 퀘 B | 3d 0h 0m | 984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/7
+하란다르
++ | 퀘 C | 1d 0h 0m | 1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/7
+정점 보관함
++ | 수요와 공급 (공허폭풍) | 6d 9h 0m | |T5555:0|t | 0/7
++ | 승리의 스토마리온 정점 보관함 (실버문) | 6d 9h 0m | |T5555:0|t | 1/7
++ | 실버문 주간: 수호 (실버문) | 6d 9h 0m | |T5555:0|t | 1/7
+|cffffd100[QTR]|r 제외를 해제했습니다: 퀘 A (ID 1)
+==== gq tab
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+|cff808080-|r
+|cff808080-|r
+수행 가능한 골드퀘 3개 / 3,030|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+|cffaaaaaa봄이간다 기준, 남은 시간이 적은 순|r
+|cff00ccff공허폭풍|r
+|T1542860:0:0:0:0|t |cffff8000수행가능|r
+|cffffffff퀘 A|r
+|cffff444458m|r
+|cffffffff1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffffffff퀘 B|r
+|cffaaaaaa3d 0h 0m|r
+|cffffffff984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cff00ccff하란다르|r
+|cffffffff퀘 C|r
+|cffaaaaaa1d 0h 0m|r
+|cffffffff1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffa335ee정점 보관함|r
+|cffffffff수요와 공급 (공허폭풍)|r
+|cffaaaaaa6d 9h 0m|r
+|cffff4444미완료|r
+|cffffffff승리의 스토마리온 정점 보관함 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|cffffd100미개봉 2|r
+|cffffffff실버문 주간: 수호 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|cffffd100미개봉 1|r
+tip: 1
+tip: 77
+item tip: 888666 true
+== route without TomTom
+|cffffd100[QTR]|r 경로 안내: 3곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. 퀘 A (공허폭풍)
+|cffffd100[QTR]|r 다음 목적지: 2. 퀘 C (하란다르)
+|cffffd100[QTR]|r 퀘 A (공허폭풍) +1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 오늘 1개, 1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 달성률 +0.02% / |cff00ff00달성 예상 1일 단축|r
+== end
+day now: 2026-10-16 (금)
+day after <: 2026-10-15 (목)
+week: 2026-10-16 (금) ~ 10-22 (목)
+week after <: 2026-10-09 (금) ~ 10-15 (목)
+back to day: 2026-10-15 (목)
+back to week: 2026-10-09 (금) ~ 10-15 (목)
+count cells (x:text): 216:2개  216:1개  216:2개  216:1개

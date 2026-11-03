@@ -1,0 +1,485 @@
+|cffffd100[QTR]|r 로드 완료. /qtr 창 열기, /qtr set 설정창
+|cffffd100[QTR]|r 보관함 출처 학습: 수요와 공급 (공허폭풍) -> 전설적인 역전용사의 보관함
+hidden for me: true
+activeGQ: 4
+source: q5 특별 과제: 수요와 공급 공허폭풍 279520 map
+== NPC dialog
+|cffffd100[QTR]|r 보관함 출처 학습: 실버문 주간: 수호 (실버문) -> 실버문 정점 보관함
+== turn in 900 and cache arrives
+|cffffd100[QTR]|r 정점 보관함 획득: 실버문 정점 보관함 (실버문 주간: 수호)
+== stormarion cache with no quest
+get: 282183 1 900
+source: q5 quest 특별 과제: 수요와 공급 279520 map
+source: q900 quest 실버문 주간: 수호 282183 npc
+== bank withdraw should not count
+gets now: 1
+==== rich collapsed
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+|cff808080-|r
+|cff808080-|r
+골드퀘 4개 / 특별 과제 2개
+|cffaaaaaa만렙(90) 캐릭터 7개 기준, 줄을 누르면 캐릭터별 현황|r
+다음 추천: |cffc79c6e여름이간다-데스윙|r |cffaaaaaa(남은 골드퀘 4개, 4,119|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t)|r
+|cff00ccff공허폭풍|r
+|cffffd100+|r
+|cffffffff퀘 A|r
+|cffff444458m|r
+|cffffffff1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffffd100+|r
+|cffffffff뜻밖의 상황|r
+|cffaaaaaa11h 6m|r
+|cffffffff1,089|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/6|r
+|cffffd100+|r
+|cffffffff퀘 B|r
+|cffaaaaaa3d 0h 0m|r
+|cffffffff984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cff00ccff하란다르|r
+|cffffd100+|r
+|cffffffff퀘 C|r
+|cffaaaaaa1d 0h 0m|r
+|cffffffff1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffa335ee정점 보관함|r
+|cffffd100+|r
+|cffffffff수요와 공급 (공허폭풍)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffff44440/7|r
+|cffffd100+|r
+|cffffffff실버문 주간: 수호 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffffffff1/7|r
+clickable rows: 8
+==== rich expanded first gq and first source
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+|cff808080-|r
+|cff808080-|r
+골드퀘 4개 / 특별 과제 2개
+|cffaaaaaa만렙(90) 캐릭터 7개 기준, 줄을 누르면 캐릭터별 현황|r
+다음 추천: |cffc79c6e여름이간다-데스윙|r |cffaaaaaa(남은 골드퀘 4개, 4,119|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t)|r
+|cff00ccff공허폭풍|r
+|cffffd100+|r
+|cffffffff퀘 A|r
+|cffff444458m|r
+|cffffffff1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffffd100-|r
+|cffffffff뜻밖의 상황|r
+|cffaaaaaa11h 6m|r
+|cffffffff1,089|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/6|r
+가방-아즈샤라
+|cffff4444미완료|r
+완료빠름-아즈샤라
+|cffff4444미완료|r
+가람-불타는군단
+|cffff4444미완료|r
+|cffc79c6e봄이간다-데스윙|r
+|cff808080안 보임|r
+다리-아즈샤라
+|cffff4444미완료|r
+|cffc79c6e나무-아즈샤라|r
+|cffff4444미완료|r
+|cffc79c6e여름이간다-데스윙|r
+|cffff4444미완료|r
+|cffffd100+|r
+|cffffffff퀘 B|r
+|cffaaaaaa3d 0h 0m|r
+|cffffffff984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cff00ccff하란다르|r
+|cffffd100+|r
+|cffffffff퀘 C|r
+|cffaaaaaa1d 0h 0m|r
+|cffffffff1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffa335ee정점 보관함|r
+|cffffd100+|r
+|cffffffff수요와 공급 (공허폭풍)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffff44440/7|r
+|cffffd100+|r
+|cffffffff실버문 주간: 수호 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffffffff1/7|r
+== ban quest 1 via link
+|cffffd100[QTR]|r 추적에서 제외했습니다: 퀘 A (공허폭풍)
+|cffffd100[QTR]|r 제외 퀘스트: 퀘 A (공허폭풍)
+==== rich after ban
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+|cff808080-|r
+|cff808080-|r
+골드퀘 3개 / 특별 과제 2개
+|cffaaaaaa만렙(90) 캐릭터 7개 기준, 줄을 누르면 캐릭터별 현황|r
+다음 추천: |cffc79c6e여름이간다-데스윙|r |cffaaaaaa(남은 골드퀘 3개, 3,119|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t)|r
+|cff00ccff공허폭풍|r
+|cffffd100-|r
+|cffffffff뜻밖의 상황|r
+|cffaaaaaa11h 6m|r
+|cffffffff1,089|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/6|r
+가방-아즈샤라
+|cffff4444미완료|r
+다리-아즈샤라
+|cffff4444미완료|r
+|cffc79c6e나무-아즈샤라|r
+|cffff4444미완료|r
+|cffc79c6e봄이간다-데스윙|r
+|cff808080안 보임|r
+|cffffd100+|r
+|cffffffff퀘 B|r
+|cffaaaaaa3d 0h 0m|r
+|cffffffff984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+완료빠름-아즈샤라
+|cffff4444미완료|r
+|cffc79c6e여름이간다-데스윙|r
+|cffff4444미완료|r
+가람-불타는군단
+|cffff4444미완료|r
+|cff00ccff하란다르|r
+|cffffd100+|r
+|cffa335ee정점 보관함|r
+|cffffd100+|r
+|cffffd100+|r
+|cffffffff실버문 주간: 수호 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffffffff1/7|r
+|cffffffff퀘 C|r
+|cffaaaaaa1d 0h 0m|r
+|cffffffff1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffffffff수요와 공급 (공허폭풍)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffff44440/7|r
+==== ordered rows
+공허폭풍
+- | 뜻밖의 상황 | 11h 6m | 1,089|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/6
+가방-아즈샤라 | 미완료
+다리-아즈샤라 | 미완료
+완료빠름-아즈샤라 | 미완료
+나무-아즈샤라 | 미완료
+여름이간다-데스윙 | 미완료
+가람-불타는군단 | 미완료
+봄이간다-데스윙 | 안 보임
++ | 퀘 B | 3d 0h 0m | 984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/7
+하란다르
++ | 퀘 C | 1d 0h 0m | 1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/7
+정점 보관함
++ | 수요와 공급 (공허폭풍) | 6d 9h 0m | |T5555:0|t | 0/7
++ | 실버문 주간: 수호 (실버문) | 6d 9h 0m | |T5555:0|t | 1/7
+==== rich ban off
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+|cff808080-|r
+|cff808080-|r
+골드퀘 4개 / 특별 과제 2개
+|cffaaaaaa만렙(90) 캐릭터 7개 기준, 줄을 누르면 캐릭터별 현황|r
+다음 추천: |cffc79c6e여름이간다-데스윙|r |cffaaaaaa(남은 골드퀘 4개, 4,119|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t)|r
+|cff00ccff공허폭풍|r
+|cffffd100+|r
+|cffffffff퀘 A|r |cff808080(제외)|r
+|cffff444458m|r
+|cffffffff1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffffd100-|r
+|cffffffff뜻밖의 상황|r
+|cffaaaaaa11h 6m|r
+|cffffffff1,089|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/6|r
+가방-아즈샤라
+|cffff4444미완료|r
+완료빠름-아즈샤라
+|cffff4444미완료|r
+가람-불타는군단
+|cffff4444미완료|r
+|cffc79c6e봄이간다-데스윙|r
+|cff808080안 보임|r
+다리-아즈샤라
+|cffff4444미완료|r
+|cffc79c6e나무-아즈샤라|r
+|cffff4444미완료|r
+|cffc79c6e여름이간다-데스윙|r
+|cffff4444미완료|r
+|cffffd100+|r
+|cffffffff퀘 B|r
+|cffaaaaaa3d 0h 0m|r
+|cffffffff984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cff00ccff하란다르|r
+|cffffd100+|r
+|cffffffff퀘 C|r
+|cffaaaaaa1d 0h 0m|r
+|cffffffff1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffff44440/7|r
+|cffa335ee정점 보관함|r
+|cffffd100+|r
+|cffffffff수요와 공급 (공허폭풍)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffff44440/7|r
+|cffffd100+|r
+|cffffffff실버문 주간: 수호 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|T5555:0|t
+|cffffffff1/7|r
+==== quest A expanded
+공허폭풍
+- | 퀘 A (제외) | 58m | 1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/7
+가방-아즈샤라 | 미완료
+다리-아즈샤라 | 미완료
+완료빠름-아즈샤라 | 미완료
+나무-아즈샤라 | 미완료
+봄이간다-데스윙 | 미완료
+여름이간다-데스윙 | 미완료
+가람-불타는군단 | 미완료
+- | 뜻밖의 상황 | 11h 6m | 1,089|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/6
+가방-아즈샤라 | 미완료
+다리-아즈샤라 | 미완료
+완료빠름-아즈샤라 | 미완료
+나무-아즈샤라 | 미완료
+여름이간다-데스윙 | 미완료
+가람-불타는군단 | 미완료
+봄이간다-데스윙 | 안 보임
++ | 퀘 B | 3d 0h 0m | 984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/7
+하란다르
++ | 퀘 C | 1d 0h 0m | 1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t | 0/7
+정점 보관함
++ | 수요와 공급 (공허폭풍) | 6d 9h 0m | |T5555:0|t | 0/7
++ | 실버문 주간: 수호 (실버문) | 6d 9h 0m | |T5555:0|t | 1/7
+|cffffd100[QTR]|r 제외를 해제했습니다: 퀘 A (공허폭풍)
+==== gq tab
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+|cff808080-|r
+|cff808080-|r
+수행 가능한 골드퀘 3개 / 3,030|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+|cffaaaaaa봄이간다 기준, 남은 시간이 적은 순|r
+|cff00ccff공허폭풍|r
+|T1542860:0:0:0:0|t |cffff8000수행가능|r
+|cffffffff퀘 A|r
+|cffff444458m|r
+|cffffffff1,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffffffff퀘 B|r
+|cffaaaaaa3d 0h 0m|r
+|cffffffff984|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cff00ccff하란다르|r
+|cffffffff퀘 C|r
+|cffaaaaaa1d 0h 0m|r
+|cffffffff1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t|r
+|cffa335ee특별 과제|r
+|cffffffff수요와 공급 (공허폭풍)|r
+|cffaaaaaa6d 9h 0m|r
+|cffff4444미완료|r
+|cffffffff실버문 주간: 수호 (실버문)|r
+|cffaaaaaa6d 9h 0m|r
+|cffffd100미개봉 1|r
+tip: 1
+tip: 77
+==T T1 shaman, hearth on cooldown -> astral recall
+|cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번, 영혼의 귀환 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 영혼의 귀환으로 실버문
+|cffffd100[QTR]|r 영혼의 귀환을 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 2분 단축)
+  route: 영혼의 귀환: 실버문 / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
+  button: shown=true type=spell spell=556 item=nil toy=nil text=영혼의 귀환: 실버문 | 클릭해서 사용
+==T T1b astral also on cooldown -> nothing
+|cffffd100[QTR]|r 내비게이션: 2곳 (포탈 2번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 실버문행 포탈 (하란다르)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
+  route: 실버문행 포탈 (하란다르) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
+==T T1c astral setting off -> nothing
+|cffffd100[QTR]|r 내비게이션: 2곳 (포탈 2번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 실버문행 포탈 (하란다르)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
+  route: 실버문행 포탈 (하란다르) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
+==T T2 hearth + astral both ready, keep off, quests in 똬리 and 공허폭풍
+|cffffd100[QTR]|r 내비게이션: 3곳 (포탈 2번, 귀환석 1번, 영혼의 귀환 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 귀환석으로 실버문
+|cffffd100[QTR]|r 귀환석을 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 2분 단축)
+|cffffd100[QTR]|r 영혼의 귀환을 동선에 넣었습니다: V1 공허폭풍 (실버문) 가기 전 (약 24초 단축)
+  route: 귀환석: 실버문 / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문) / 영혼의 귀환: 실버문 / 공허폭풍행 포탈 (실버문) / 3. V1 공허폭풍 (실버문)
+==T T3 arcantina, exit unknown -> nothing
+|cffffd100[QTR]|r 내비게이션: 2곳 (포탈 2번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 실버문행 포탈 (하란다르)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
+  route: 실버문행 포탈 (하란다르) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
+|cffffd100[QTR]|r 귀환 지점: 실버문 (위치 기억함)
+|cffffd100[QTR]|r 대기시간 15분, 최대 충전 1회, 지금 쓸 수 있는 충전 0회 (14분 뒤)
+|cffffd100[QTR]|r 동선에 넣기: 켬, 마지막에 1회 남기기: 켬
+|cffffd100[QTR]|r 아르칸티나 열쇠: 켬, 나오는 곳(나그네의 쉼터) 위치 모름: 한 번 쓰거나 그 여관으로 귀환석을 타면 기억합니다
+==T T3b arcantina, exit known (나그네의 쉼터) -> arcantina
+|cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번, 아르칸티나 열쇠 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 아르칸티나 열쇠 (장난감)
+|cffffd100[QTR]|r 아르칸티나 열쇠를 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 1분 단축)
+  route: 장난감: 아르칸티나 열쇠 / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
+  button: shown=true type=toy spell=nil item=nil toy=253629 text=장난감: 아르칸티나 열쇠 | 클릭해서 사용
+==T T3c take arcantina: into the Arcantina (another place) -> wait, out at the inn -> next
+  first: 장난감: 아르칸티나 열쇠 inside: true
+  button: shown=false type=toy spell=nil item=nil toy=253629 text=장난감: 아르칸티나 열쇠 | 클릭해서 사용
+|cffffd100[QTR]|r 다음 목적지: 똬리의 섬행 포탈 (아스탈로르의 성소)
+  after exit, first: 똬리의 섬행 포탈 (아스탈로르의 성소)
+  navlog last stop: arcantina
+==T T3d arcantina setting off -> nothing
+|cffffd100[QTR]|r 내비게이션: 2곳 (포탈 2번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 실버문행 포탈 (하란다르)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
+  route: 실버문행 포탈 (하란다르) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
+==T T3e arcantina on cooldown -> nothing
+|cffffd100[QTR]|r 내비게이션: 2곳 (포탈 2번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 실버문행 포탈 (하란다르)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
+  route: 실버문행 포탈 (하란다르) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
+==T T4 mage in 공허폭풍 far side -> teleport to Silvermoon instead of flying to the portal
+|cffffd100[QTR]|r 내비게이션: 2곳 (순간이동 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V2 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. V2 공허폭풍 (실버문) / 순간이동: 실버문 / 2. E1 영원노래 (실버문)
+  button: shown=false type=toy spell=nil item=nil toy=253629 text=장난감: 아르칸티나 열쇠 | 클릭해서 사용
+|cffffd100[QTR]|r 귀환 지점: 실버문 (위치 기억함)
+|cffffd100[QTR]|r 대기시간 15분, 최대 충전 1회, 지금 쓸 수 있는 충전 0회 (14분 뒤)
+|cffffd100[QTR]|r 동선에 넣기: 켬, 마지막에 1회 남기기: 켬
+|cffffd100[QTR]|r 마법사 실버문 순간이동: 찾음 (순간이동: 실버문)
+==T T4b mage setting off -> portal
+|cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V2 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
+  route: 1. V2 공허폭풍 (실버문) / 실버문행 포탈 (공허폭풍) / 2. E1 영원노래 (실버문)
+==T T4c mage knows only the old (Burning Crusade) Silvermoon teleport -> portal
+|cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V2 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
+  route: 1. V2 공허폭풍 (실버문) / 실버문행 포탈 (공허폭풍) / 2. E1 영원노래 (실버문)
+|cffffd100[QTR]|r 귀환 지점: 실버문 (위치 기억함)
+|cffffd100[QTR]|r 대기시간 15분, 최대 충전 1회, 지금 쓸 수 있는 충전 0회 (14분 뒤)
+|cffffd100[QTR]|r 동선에 넣기: 켬, 마지막에 1회 남기기: 켬
+|cffffd100[QTR]|r 마법사 실버문 순간이동: 아직 배우지 않음 (한밤 실버문 순간이동을 배우면 동선에 넣습니다)
+==T T4d cast the old teleport -> not learned / cast the Midnight one -> landing learned
+  after old spell, landing:
+  after Midnight spell, landing: 0 8538 -4823
+==T T4e wrong learned landing (old Silvermoon) -> removed, teleport used
+|cffffd100[QTR]|r 내비게이션: 2곳 (순간이동 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V2 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. V2 공허폭풍 (실버문) / 순간이동: 실버문 / 2. E1 영원노래 (실버문)
+  travelDest.mage:
+==T T4f mage with hearth ready -> teleport, not hearth
+|cffffd100[QTR]|r 내비게이션: 2곳 (순간이동 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V2 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. V2 공허폭풍 (실버문) / 순간이동: 실버문 / 2. E1 영원노래 (실버문)
+==T T5 cast astral recall -> learn cooldown and bind
+  astralCD: 540  hearthBinds[새 여관]: true  hearth uses: 0
+  hearthBinds[새 여관].zone: 실버문  zoneV: 2
+  옛 방식 지역은 안 씀: 귀환석: 옛 여관
+==T T5b astral to inn with known zone
+|cffffd100[QTR]|r 내비게이션: 4곳 (포탈 3번, 영혼의 귀환 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 영혼의 귀환으로 새 여관 (실버문)
+|cffffd100[QTR]|r 영혼의 귀환을 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 2분 단축)
+  route: 영혼의 귀환: 새 여관 (실버문) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문) / 실버문행 포탈 (똬리의 섬) / 3. E1 영원노래 (실버문) / 공허폭풍행 포탈 (실버문) / 4. V2 공허폭풍 (실버문)
+  nav line: 영혼의 귀환: 새 여관 / zone: |cff66ccff (실버문)|r
+  작은 글씨: 창 세로 260 -> 236, 설정 true
+  작은 글씨 끔: 창 세로 260, 설정 nil
+  배경 투명도 기본: 0.85
+  배경 투명도 0.3: 0.3 / 창 전체 불투명도는 그대로 nil
+==T T6 hearth first -> button uses the hearthstone item
+|cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번, 귀환석 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 귀환석으로 실버문
+|cffffd100[QTR]|r 귀환석을 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 2분 단축)
+  route: 귀환석: 실버문 / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
+  button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
+==T T6a cast the hearthstone -> button hides for this step
+  button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
+==T T6a2 new navigation again (use record cleared)
+|cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번, 귀환석 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 귀환석으로 실버문
+|cffffd100[QTR]|r 귀환석을 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 2분 단축)
+  route: 귀환석: 실버문 / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
+  button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
+==T T6b popup setting off
+  button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
+==T T6c closed -> stays hidden for this step (also when re-planned)
+  button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
+  button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
+==T T6d new navigation -> shown again
+|cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번, 귀환석 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 귀환석으로 실버문
+|cffffd100[QTR]|r 귀환석을 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 2분 단축)
+  route: 귀환석: 실버문 / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
+  button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
+==T T6e in combat: route cleared but the button can't change until combat ends
+  button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
+==T T6f after combat -> hidden
+  button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
+==T T7 order with/without recall (start 줄아만)
+  no recall: 줄아만 사원 > 영원노래 북쪽 > 공허 A > 공허 B (귀환형 0번)
+  hearth 1: 줄아만 사원 > 영원노래 북쪽 > 공허 A > 공허 B (귀환형 0번)
+  hearth 1: 줄아만 사원 > 영원노래 북쪽 > 공허 A > 공허 B (귀환형 1번)
+  1단계 방식(순서 먼저, 귀환석 끼우기): 이동 173초, 귀환석 반영 96초 (영원노래 북쪽 가기 전)
+  2단계 방식(귀환석 고려해 순서):       이동 173초, 귀환석 반영 96초 (영원노래 북쪽 가기 전)
+==T T8 random 200 cases: 1단계(순서 먼저) vs 2단계(귀환석 고려 순서)
+  나아짐 75, 같음 125, 나빠짐 0, 나아진 경우 평균 17초
+  (순서를 짤 때는 대기시간을 따지지 않아 나빠질 수도 있으나, RouteStart는 두 방식 중 실제로 빠른 쪽을 고른다)
+  가장 나아진 예 (295초 -> 236초)
+    1단계: Q3(2437) > Q4(2437) > Q2(2512) > Q1(2395) > Q5(2395) > Q6(2413) / 귀환석: nil
+    2단계: Q1(2395) > Q5(2395) > Q2(2512) > Q4(2437) > Q3(2437) > Q6(2413) / 귀환석: Q6(2413)
+==T T9a mage finishes in 공허폭풍 -> Silvermoon teleport
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=true type=spell spell=1259190 item=nil toy=nil text=순간이동: 실버문 | 클릭해서 사용 (내비게이션 완료)
+==T T9b shaman -> astral recall
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=true type=spell spell=556 item=nil toy=nil text=영혼의 귀환: 실버문 | 클릭해서 사용 (내비게이션 완료)
+==T T9c warrior, hearth ready -> hearthstone
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
+==T T9d cast it -> button goes away
+  button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
+==T T9e hearth on cooldown -> nothing
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
+==T T9f route popup off, finish popup on -> hearthstone
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
+==T T9g stop navigation -> button goes away
+|cffffd100[QTR]|r 경로안내를 중지했습니다.
+  button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
+==T T9h finish popup setting off -> nothing
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
+==T T9i finish next to the inn -> nothing
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. S9 실버문 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. S9 실버문 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
+==T T9j mage, teleport unchecked -> hearthstone
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
+==T T9k hearth unchecked, Arcantina key owned -> Arcantina key
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=true type=toy spell=nil item=nil toy=253629 text=장난감: 아르칸티나 열쇠 | 클릭해서 사용 (내비게이션 완료)
+==T T9l hearth unchecked, key on cooldown -> nothing, quietly (no chat line)
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=false type=toy spell=nil item=nil toy=253629 text=장난감: 아르칸티나 열쇠 | 클릭해서 사용 (내비게이션 완료)
+==T T9m hearth and key unchecked -> nothing
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=false type=toy spell=nil item=nil toy=253629 text=장난감: 아르칸티나 열쇠 | 클릭해서 사용 (내비게이션 완료)
+==T end
