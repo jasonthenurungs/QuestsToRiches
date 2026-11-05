@@ -41,7 +41,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
 - Right-click a quest line: do it first, do it last, skip it this time, or never show it again.
 - With TomTom the whole route is registered; without it, the game waypoint guides you one stop at a time.
 - Moves to the next stop when you turn in a quest, take a portal, hearth or teleport.
-  Re-plans automatically after a teleport or when a special assignment unlocks.
+  Re-plans automatically after a teleport, when a special assignment unlocks, or when you turn War Mode on or off.
 - Navigation window: completed stops with time, next stop, remaining stops, portals,
   gold earned and remaining. Pin it to keep it open through Esc, and let it fade when the mouse is away.
   Size and fade: Settings > Navigation > "Navigation window size", "Small text", "Background opacity",
@@ -124,7 +124,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
 - 곧 만료되는 퀘스트는 주황색으로 표시하고 앞으로 당기며, 만료되면 경로에서 뺌
 - 퀘스트 줄 우클릭: 가장 먼저, 마지막에, 이번만 빼기, 더 이상 안 하기
 - TomTom이 있으면 전체 경로를 등록하고, 없으면 게임 웨이포인트로 한 곳씩 안내
-- 퀘스트를 완료하거나 포탈, 귀환석, 순간이동을 타면 다음 목적지로 넘어가고, 순간이동을 하거나 특별 과제가 열리면 남은 경로를 다시 편성
+- 퀘스트를 완료하거나 포탈, 귀환석, 순간이동을 타면 다음 목적지로 넘어가고, 순간이동을 하거나 특별 과제가 열리거나 전쟁 모드를 켜고 끄면 남은 경로를 다시 편성
 - 내비게이션 창: 완료한 곳과 완료 시각, 다음 목적지, 남은 곳, 포탈, 획득 골드와 남은 골드
   고정하면 Esc로 닫히지 않고, 마우스를 올리지 않으면 흐리게 할 수 있음
   크기와 흐리게: 설정창 "내비게이션" 묶음의 "내비게이션 창 크기", "작은 글씨", "배경 투명도",
