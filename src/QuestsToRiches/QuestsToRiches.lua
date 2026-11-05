@@ -1683,6 +1683,9 @@ local function LearnQuestSource(questID, itemID, title, zone, via, expire)
     if expire then
         s.expire = expire -- 지도에서 본 퀘스트(특별 과제)는 만료 시각을 안다
         s.expireSeen = true -- 퀘스트 자체에서 읽은 시각 (QTR.GetSpecialTimeLeft)
+    elseif via == "map" and s.expire and s.expire <= time() then
+        -- 지금 지도에 떠 있는데 저장된 만료 시각이 지났으면 그 시각이 틀렸다 (예전 버전이 남긴 주간 초기화 어림값 등, 2026-11-05)
+        s.expire, s.expireSeen = nil, nil
     end
     if via == "map" then
         -- 지도에 뜨는 퀘스트(특별 과제 등): 정점 보관함 묶음에 넣되,
@@ -4248,6 +4251,9 @@ local function CollectGoldQuests()
                     -- (1, 2번 탭 아래쪽 정점 보관함 묶음에서 보여준다)
                     local cacheItem = GetQuestLogCacheReward(questID)
                     -- 보관함을 주는 퀘스트(스토마리온 공격 등)의 남은 시간을 못 읽으면 주간 초기화까지로 본다
+                    -- 이 어림값은 출처의 만료 시각(expireSeen, "퀘스트에서 직접 읽은 시각")으로 남기지 않는다 (2026-11-05 사용자 제보:
+                    -- 주간 초기화를 넘겨 남는 대마법학자의 음료가 초기화 시각으로 저장되어, 초기화 뒤 끝난 특별 과제로 보고 숨겨졌다)
+                    local readLeft = timeLeft
                     if cacheItem and not timeLeft then
                         local _, nextReset = GetWeekBounds()
                         timeLeft = nextReset - time()
@@ -4255,7 +4261,7 @@ local function CollectGoldQuests()
                     -- 웨이포인트용 위치: 조회한 지역 지도(zone.mapID) 기준 좌표
                     local wp = (v.x and v.y and v.x > 0) and { zone.mapID, v.x, v.y } or nil
                     if cacheItem then
-                        LearnQuestSource(questID, cacheItem, title, entry.name, "map", timeLeft and (time() + timeLeft))
+                        LearnQuestSource(questID, cacheItem, title, entry.name, "map", readLeft and (time() + readLeft))
                         mapCaches[questID] = true
                         if wp and DB.cacheSources["q" .. questID] then
                             DB.cacheSources["q" .. questID].wp = wp
