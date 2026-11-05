@@ -6342,9 +6342,12 @@ QTR.SetupRoute = function()
         local now = time()
         for _, r in ipairs(QTR.route or {}) do
             local q = r.questID
+            local a = q and DB.activeGQ[q]
             if q and not r.locked and not have[q] and not (QTR.routeDone and QTR.routeDone[q])
                 and not (QTR.routeSkip and QTR.routeSkip[q]) and not DB.settings.bannedQuests[q]
                 and not (r.expire and r.expire <= now)
+                -- 지도에서 읽었는데 이 캐릭터에게는 보상이 골드가 아니게 된 퀘스트 (전쟁 모드 등): 정보가 덜 온 게 아니다
+                and not (a and a.notGoldFor and charKey and a.notGoldFor[charKey])
                 and not (C_QuestLog.IsQuestFlaggedCompleted and C_QuestLog.IsQuestFlaggedCompleted(q)) then
                 return true
             end
@@ -9463,11 +9466,31 @@ function QTR:QUEST_TURNED_IN(_, questID, xpReward, moneyReward)
     QTR:Refresh()
 end
 
+-- 내비게이션 중 전쟁 모드를 바꾸면 남은 경로를 바로 다시 짠다 (2026-11-05 사용자 결정, 인벤 나이샤님 질문에서:
+--   전쟁 모드에서는 보상이 골드가 아닌 것으로 바뀌는 퀘스트가 있다. 다시 짜지 않으면 골드가 아니게 된 퀘스트가 경로에 남고,
+--   골드가 된 퀘스트는 다음 완료 때에야 들어간다). 전쟁 모드 상태는 접속 때부터 기억해 바뀐 때만 다시 짠다 (자리비움 등은 무시)
+--   보상 정보가 바뀌어 들어올 시간을 1초 둔다. 골드가 아니게 된 퀘스트는 검색 때 notGoldFor로 기억되어 RouteQuestsMissing이 기다리지 않는다
+function QTR.WarModeCheck()
+    local on = (C_PvP and C_PvP.IsWarModeDesired and C_PvP.IsWarModeDesired()) and true or false
+    local before = QTR.warModeSeen
+    QTR.warModeSeen = on
+    if before == nil or before == on or not QTR.route then
+        return
+    end
+    C_Timer.After(1, function()
+        if QTR.route then
+            QTR.forceScan = true
+            QTR.RouteStart(on and L["전쟁 모드를 켰습니다."] or L["전쟁 모드를 껐습니다."])
+        end
+    end)
+end
+
 function QTR:PLAYER_FLAGS_CHANGED(_, unit)
     if unit == "player" then
         QTR.NavLogAfk() -- 자리비움 켜고 끄기도 이 이벤트로 온다
         QTR.forceScan = true
         QTR:ScheduleRefresh()
+        QTR.WarModeCheck()
     end
 end
 
@@ -9540,6 +9563,7 @@ function QTR:PLAYER_ENTERING_WORLD()
         RecordCacheBag()
     end)
     QTR.PreloadGoldQuests()
+    QTR.WarModeCheck() -- 전쟁 모드 상태를 기억해 둔다 (바뀌면 내비게이션 경로를 다시 짠다)
     -- 현재 골드 전역퀘와 특별 과제 보상을 계정 공용 목록에 모아 둔다 (부자되기 탭용)
     C_Timer.After(5, QTR.ScanQuestBoard)
     C_Timer.After(15, QTR.ScanQuestBoard)
