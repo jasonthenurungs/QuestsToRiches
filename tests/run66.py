@@ -260,14 +260,15 @@ lua.eval(r'''function(QTR, out)
   print("== 7b) 실버문 주간 퀘스트 두 줄 (잘아타스 추적, 리에드린 주간)")
   QTR:QUEST_TURNED_IN("x", 98172, 0, 0) -- 봄이간다(지금 캐릭터)가 잘아타스 추적 완료
   QuestsToRichesDB.turnIns["여름이간다-데스윙"] = { [93913] = now - 100, [98172] = now - 8 * 86400 } -- 리에드린 이번 주, 잘아타스는 지난주
-  QuestsToRichesDB.flagDone["격냥패딩-데스윙"] = { [93911] = now - 50 } -- 접속했을 때 게임 완료 표시로 본 리에드린 던전 (시각 모름)
+  -- 접속했을 때 게임 완료 표시로 본 리에드린 던전 (시각 모름): 2026-11-05부터 리에드린은 완료 표시를 믿지 않아 세지 않는다 (2/3 -> 1/3)
+  QuestsToRichesDB.flagDone["격냥패딩-데스윙"] = { [93911] = now - 50 }
   print("  봄이간다 turnIns[98172] 저장: " .. tostring(QuestsToRichesDB.turnIns["봄이간다-데스윙"] and QuestsToRichesDB.turnIns["봄이간다-데스윙"][98172] ~= nil))
   rows("부자되기 탭 (최정상 보관함 줄 대신 두 줄)")
   for _, fr in ipairs(ALLFRAMES) do
     if rawget(fr, "tipQuest") == 98172 and rawget(fr, "_scr_OnClick") then rawget(fr, "_scr_OnClick")(fr, "LeftButton"); break end
   end
   rows("잘아타스 추적 펼침")
-  -- 게임 완료 표시 기록 (지금 캐릭터): 리에드린 구렁 93909가 완료로 보이면 flagDone에 남긴다
+  -- 게임 완료 표시 기록 (지금 캐릭터): 리에드린 구렁 93909가 완료로 보여도 2026-11-05부터 flagDone에 남기지 않는다 (false)
   local oldFlag = C_QuestLog.IsQuestFlaggedCompleted
   C_QuestLog.IsQuestFlaggedCompleted = function(id) return id == 93909 end
   QTR.ScanWeeklyFlags()
@@ -276,7 +277,7 @@ lua.eval(r'''function(QTR, out)
   -- 리에드린 주간을 이번 주에 아무도 안 했으면 그 줄은 없다 (2026-10-30 사용자 결정: 숙제처럼 보이지 않게)
   QuestsToRichesDB.turnIns["여름이간다-데스윙"][93913] = nil
   QuestsToRichesDB.flagDone["격냥패딩-데스윙"] = nil
-  QuestsToRichesDB.flagDone["봄이간다-데스윙"][93909] = nil
+  if QuestsToRichesDB.flagDone["봄이간다-데스윙"] then QuestsToRichesDB.flagDone["봄이간다-데스윙"][93909] = nil end
   rows("리에드린 주간을 아무도 안 함 (잘아타스 추적 줄만)")
   -- 이번 주에 아무도 안 받았으면 묶음이 없다
   QuestsToRichesDB.cacheGets["여름이간다-데스윙"] = nil

@@ -485,9 +485,10 @@ local function InitDB()
     end
     -- 게임이 완료로 본 퀘스트(QTR 완료 기록 없음): { [캐릭터키] = { [퀘스트ID] = 그렇게 본 시각 } }, 완료 시각처럼 30일 뒤 지운다
     DB.flagDone = DB.flagDone or {}
+    -- 게임의 완료 표시를 믿지 않는 퀘스트(리에드린 주간, QTR.SILVERMOON_NOFLAG_IDS)는 예전에 남긴 것도 지운다
     for _, list in pairs(DB.flagDone) do
         for questID, t in pairs(list) do
-            if t < cutoff then
+            if t < cutoff or QTR.SILVERMOON_NOFLAG_IDS[questID] then
                 list[questID] = nil
             end
         end
@@ -1578,9 +1579,14 @@ QTR.SILVERMOON_WEEKLY = {
     { key = "xalatath", name = L["잘아타스 추적"], ids = { 98172 } },
     -- 93913 야외 우두머리, 93769 주거, 93889 연회, 93890 풍요, 93891 하란다르 전설, 93892 스토마리온 공격,
     -- 93909 구렁, 93910 사냥감, 93911 던전, 93912 공격대
-    { key = "liadrin", name = L["리에드린 주간 퀘스트"], ids = { 93913, 93769, 93889, 93890, 93891, 93892, 93909, 93910, 93911, 93912 } },
+    -- noFlag: 게임의 완료 표시(IsQuestFlaggedCompleted)를 믿지 않는다 (2026-11-05 사용자 제보: 리에드린 주간이 없는 주인데 "완료").
+    --   저장 데이터에서 10종이 캐릭터마다 접속 시각에 한꺼번에 완료로 잡혔고, 실제로 한 것은 하나(10-29 93913, 보관함 출처 기록)뿐이었다.
+    --   그래서 이 줄은 QTR이 직접 본 완료(QUEST_TURNED_IN)와 수행중만 쓴다. QTR이 꺼진 채 완료한 것은 잡지 못한다
+    { key = "liadrin", name = L["리에드린 주간 퀘스트"], noFlag = true,
+      ids = { 93913, 93769, 93889, 93890, 93891, 93892, 93909, 93910, 93911, 93912 } },
 }
 QTR.SILVERMOON_WEEKLY_IDS = {}
+QTR.SILVERMOON_NOFLAG_IDS = {}
 -- 줄 이름: 한국어가 아닌 클라이언트는 퀘스트 하나짜리(잘아타스 추적)를 게임에서 읽은 이름으로
 function QTR.WeeklyName(w)
     if #w.ids == 1 and GetLocale() ~= "koKR" then
@@ -1591,6 +1597,9 @@ end
 for _, w in ipairs(QTR.SILVERMOON_WEEKLY) do
     for _, id in ipairs(w.ids) do
         QTR.SILVERMOON_WEEKLY_IDS[id] = true
+        if w.noFlag then
+            QTR.SILVERMOON_NOFLAG_IDS[id] = true
+        end
     end
 end
 
@@ -4072,6 +4081,10 @@ local function GetQuestDoneTime(key, questID, since)
     if t and t >= since then
         return t
     end
+    -- 리에드린 주간(QTR.SILVERMOON_NOFLAG_IDS)은 게임의 완료 표시를 믿지 않는다 (직접 본 완료 기록만)
+    if QTR.SILVERMOON_NOFLAG_IDS[questID] then
+        return nil
+    end
     if key == charKey and C_QuestLog.IsQuestFlaggedCompleted and C_QuestLog.IsQuestFlaggedCompleted(questID) then
         return math.huge
     end
@@ -4096,7 +4109,10 @@ function QTR.ScanWeeklyFlags()
     local weekStart = GetWeekBounds()
     local now = time()
     for questID in pairs(QTR.SILVERMOON_WEEKLY_IDS) do
-        local ok, done = pcall(C_QuestLog.IsQuestFlaggedCompleted, questID)
+        local ok, done = false, false
+        if not QTR.SILVERMOON_NOFLAG_IDS[questID] then -- 리에드린 주간은 완료 표시를 믿지 않는다 (SILVERMOON_WEEKLY noFlag)
+            ok, done = pcall(C_QuestLog.IsQuestFlaggedCompleted, questID)
+        end
         if ok and done then
             local t = DB.turnIns[charKey] and DB.turnIns[charKey][questID]
             local f = DB.flagDone[charKey] and DB.flagDone[charKey][questID]
