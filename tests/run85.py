@@ -128,7 +128,7 @@ lua.eval(r'''function(QTR, out)
   KNOWN[1254559] = true
   OPTIONS.args.travelGroup.args.travelMaisara.set(nil, true)
   print("  설정 기본값: " .. tostring(OPTIONS.args.travelGroup.args.travelWhy.get()))
-  route("1) 기본(끔): 마이사라 대기시간 중, 귀환석 대기시간 중 -> 이유를 알리지 않음", 2393, 0.567, 0.652)
+  route("1) 기본(끔): 마이사라를 넣어도 넣었다는 알림, 귀환석 이유 모두 알리지 않음 (2026-11-08 사용자 결정)", 2393, 0.567, 0.652)
   SCD[1254559] = { NOWT - 60, 28800 }
   route("1b) 기본(끔), 마이사라 대기시간 중 -> 여전히 알리지 않음", 2393, 0.567, 0.652)
   OPTIONS.args.travelGroup.args.travelWhy.set(nil, true)

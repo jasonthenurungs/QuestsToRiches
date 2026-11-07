@@ -6850,7 +6850,8 @@ QTR.SetupRoute = function()
             Print(L["곧 만료되는 퀘스트를 앞으로 당겼습니다: "] .. table.concat(names, ", "))
         end
         -- 귀환석 등을 넣었으면 어디서 쓰는지와 줄어드는 시간을 알린다
-        if #recallUses > 0 and not quiet then
+        --   2026-11-08 사용자 결정: 넣지 않은 이유와 함께 설정(travelWhyOn, 기본 끔)을 켰을 때만 (채팅창 글자가 많아지지 않게)
+        if #recallUses > 0 and not quiet and DB.settings.travelWhyOn then
             for _, u in ipairs(recallUses) do
                 local p = order[u.k]
                 -- 줄어드는 시간: 1분 미만이면 초 단위 ("약 34초"), 그 이상은 분 단위 ("약 2분")
@@ -6860,7 +6861,7 @@ QTR.SetupRoute = function()
                     .. ((p.zone and p.zone ~= "") and (" (" .. p.zone .. ")") or ""), saveText))
             end
         end
-        -- 넣지 않은 이유 (설정 "넣지 않은 이유를 채팅창에 알리기", 기본 끔, 2026-11-08 사용자 요청. 그전에는 귀환석만, 아무것도 안 넣었을 때 늘 알렸다)
+        -- 넣지 않은 이유 (설정 "이동 수단을 넣었는지와 그 이유를 채팅창에 알리기", 기본 끔, 2026-11-08 사용자 요청. 그전에는 귀환석만, 아무것도 안 넣었을 때 늘 알렸다)
         --   가지고 있고 설정도 켠 수단만: 목록에 넣었는데 고르지 않은 것(whyNots)과 위치를 몰라 목록에 못 넣은 것(missing)
         --   새로 시작할 때만 알린다 (다시 짤 때마다 알리면 시끄럽다)
         if DB.settings.travelWhyOn and not reason and not quiet then
@@ -9393,8 +9394,9 @@ local function BuildOptions()
                     },
                     -- 2026-11-08 사용자 요청 (램값 내비게이션에서 마이사라가 빠진 까닭을 알 수 없었다). 기본 끔
                     travelWhy = {
-                        type = "toggle", name = L["넣지 않은 이유를 채팅창에 알리기"], order = 6.8, width = "full",
-                        desc = L["내비게이션을 시작할 때, 위의 이동 수단 중 가지고 있고 켜 둔 것을 동선에 넣지 않았으면 그 이유를 한 줄씩 알립니다.\n"]
+                        type = "toggle", name = L["이동 수단을 넣었는지와 그 이유를 채팅창에 알리기"], order = 6.8, width = "full",
+                        desc = L["내비게이션을 시작할 때, 위의 이동 수단 중 가지고 있고 켜 둔 것을 동선에 넣었으면 어디서 쓰는지와 줄어드는 시간을,\n"]
+                            .. L["넣지 않았으면 그 이유를 한 줄씩 알립니다.\n"]
                             .. L["예: 15초 이상 빨라지는 구간이 없어서, 대기시간 중이라서, 귀환석 1회 남기기 때문에"],
                         get = function() return DB.settings.travelWhyOn == true end,
                         set = function(_, val) DB.settings.travelWhyOn = val or nil end,

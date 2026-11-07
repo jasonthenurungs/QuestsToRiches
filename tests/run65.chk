@@ -9,8 +9,8 @@ source: q5 특별 과제: 수요와 공급 공허폭풍 279520 map
 |cffffd100[QTR]|r 정점 보관함 획득: 실버문 정점 보관함 (실버문 주간: 수호)
 == stormarion cache with no quest
 get: 282183 1 900
-source: q5 quest 특별 과제: 수요와 공급 279520 map
 source: q900 quest 실버문 주간: 수호 282183 npc
+source: q5 quest 특별 과제: 수요와 공급 279520 map
 == bank withdraw should not count
 gets now: 1
 ==== rich collapsed
@@ -284,7 +284,6 @@ tip: 1
 tip: 77
 ==T T1 shaman, hearth on cooldown -> astral recall
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번, 영혼의 귀환 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 영혼의 귀환으로 실버문
-|cffffd100[QTR]|r 영혼의 귀환을 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 2분 단축)
   route: 영혼의 귀환: 실버문 / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
   button: shown=true type=spell spell=556 item=nil toy=nil text=영혼의 귀환: 실버문 | 클릭해서 사용
 ==T T1b astral also on cooldown -> nothing
@@ -295,8 +294,6 @@ tip: 77
   route: 실버문행 포탈 (하란다르) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
 ==T T2 hearth + astral both ready, keep off, quests in 똬리 and 공허폭풍
 |cffffd100[QTR]|r 내비게이션: 3곳 (포탈 2번, 귀환석 1번, 영혼의 귀환 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 귀환석으로 실버문
-|cffffd100[QTR]|r 귀환석을 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 2분 단축)
-|cffffd100[QTR]|r 영혼의 귀환을 동선에 넣었습니다: V1 공허폭풍 (실버문) 가기 전 (약 24초 단축)
   route: 귀환석: 실버문 / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문) / 영혼의 귀환: 실버문 / 공허폭풍행 포탈 (실버문) / 3. V1 공허폭풍 (실버문)
 ==T T3 arcantina, exit unknown -> nothing
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 2번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 실버문행 포탈 (하란다르)
@@ -307,7 +304,6 @@ tip: 77
 |cffffd100[QTR]|r 아르칸티나 열쇠: 켬, 나오는 곳(나그네의 쉼터) 위치 모름: 한 번 쓰거나 그 여관으로 귀환석을 타면 기억합니다
 ==T T3b arcantina, exit known (나그네의 쉼터) -> arcantina
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번, 아르칸티나 열쇠 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 아르칸티나 열쇠 (장난감)
-|cffffd100[QTR]|r 아르칸티나 열쇠를 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 1분 단축)
   route: 장난감: 아르칸티나 열쇠 / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
   button: shown=true type=toy spell=nil item=nil toy=253629 text=장난감: 아르칸티나 열쇠 | 클릭해서 사용
 ==T T3c take arcantina: into the Arcantina (another place) -> wait, out at the inn -> next
@@ -356,7 +352,6 @@ tip: 77
   옛 방식 지역은 안 씀: 귀환석: 옛 여관
 ==T T5b astral to inn with known zone
 |cffffd100[QTR]|r 내비게이션: 4곳 (포탈 3번, 영혼의 귀환 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 영혼의 귀환으로 새 여관 (실버문)
-|cffffd100[QTR]|r 영혼의 귀환을 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 2분 단축)
   route: 영혼의 귀환: 새 여관 (실버문) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문) / 실버문행 포탈 (똬리의 섬) / 3. E1 영원노래 (실버문) / 공허폭풍행 포탈 (실버문) / 4. V2 공허폭풍 (실버문)
   nav line: 영혼의 귀환: 새 여관 / zone: |cff66ccff (실버문)|r
   작은 글씨: 창 세로 260 -> 236, 설정 true
@@ -365,14 +360,12 @@ tip: 77
   배경 투명도 0.3: 0.3 / 창 전체 불투명도는 그대로 nil
 ==T T6 hearth first -> button uses the hearthstone item
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번, 귀환석 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 귀환석으로 실버문
-|cffffd100[QTR]|r 귀환석을 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 2분 단축)
   route: 귀환석: 실버문 / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
   button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
 ==T T6a cast the hearthstone -> button hides for this step
   button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
 ==T T6a2 new navigation again (use record cleared)
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번, 귀환석 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 귀환석으로 실버문
-|cffffd100[QTR]|r 귀환석을 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 2분 단축)
   route: 귀환석: 실버문 / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
   button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
 ==T T6b popup setting off
@@ -382,7 +375,6 @@ tip: 77
   button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
 ==T T6d new navigation -> shown again
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번, 귀환석 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 귀환석으로 실버문
-|cffffd100[QTR]|r 귀환석을 동선에 넣었습니다: C2 똬리 (실버문) 가기 전 (약 2분 단축)
   route: 귀환석: 실버문 / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
   button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용
 ==T T6e in combat: route cleared but the button can't change until combat ends
