@@ -5392,6 +5392,17 @@ QTR.SetupRoute = function()
     TV.NAMES.dundun = L["둔둔 장난감"]
     TV.OBJ.dundun = L["둔둔 장난감을"]
 
+    -- 구렁로봇 7001 (2026-11-08 사용자 결정, 인벤 엔젤스쿨님 제안): 장난감 230850, 사용 주문 467470 "구렁로봇 7001 소환"
+    --   로봇(NPC 232267)을 불러 말을 걸면 선택지로 목적지를 고른다 (사용자 게임 확인): 142847 "킨도잔의 미궁으로 데려다주십시오."
+    --   (미궁 업데이트 칩, 계정 공통), 140193 카즈 알가르 구렁, 140192 한밤 구렁. 미궁 입구 실측 (/qtr pos #20): 영원노래 숲 62.89, 71.98
+    --   부르고 말을 걸 수 있을 때까지 약 5초, 고른 뒤 순간이동 로딩 약 5초 (사용자 실측) -> 비용은 다른 순간이동처럼 TELE_COST. 대기시간 1시간
+    --   칩은 미리 알 수 없어 로봇 선택지에 142847이 있는지로 배운다 (DB.delveBotLab = 본 시각, 없었으면 false. 계정 공통)
+    --   기본 끔 (설정 travelDelveBotOn): 1시간 대기시간을 구렁에 쓰려는 사람도 있어서 (마이사라와 같은 까닭)
+    --   미궁 선택지 자동 선택: 내비게이션의 지금 단계가 구렁로봇이고 막 장난감을 썼을 때만, Shift를 누르고 있지 않을 때만 (TV.OnGossip)
+    TV.DBOT = { item = 230850, spell = 467470, npc = 232267, option = 142847, cd = 3600, map = 2395, x = 0.6289, y = 0.7198 }
+    TV.NAMES.delvebot = L["구렁로봇"]
+    TV.OBJ.delvebot = L["구렁로봇을"]
+
     -- 남은 시간 글자("남은 시간: 4시간 12분", 영어 "4 Hr 12 Min" 등)를 초로. 시간 단위가 하나도 없으면 nil
     --   숫자 바로 뒤의 단위 글자로 가린다 (보상 줄 "복원된 금고 열쇠: 11"처럼 단위가 없는 숫자는 세지 않는다)
     function TV.ParseLeft(text)
@@ -5522,6 +5533,13 @@ QTR.SetupRoute = function()
             local zone = (info and info.name) or L["줄아만"]
             local text = L["쐐기 포탈: 마이사라 동굴"]
             return text .. " (" .. zone .. ")", text, zone, L["쐐기 포탈로 마이사라 동굴"] .. " (" .. zone .. ")"
+        end
+        if key == "delvebot" then
+            -- "장난감: 구렁로봇 (킨도잔의 미궁) (영원노래 숲)", 채팅 "구렁로봇으로 킨도잔의 미궁 (영원노래 숲)"
+            local info = C_Map.GetMapInfo and C_Map.GetMapInfo(TV.DBOT.map)
+            local zone = (info and info.name) or L["영원노래 숲"]
+            local text = L["장난감: 구렁로봇 (킨도잔의 미궁)"]
+            return text .. " (" .. zone .. ")", text, zone, L["구렁로봇으로 킨도잔의 미궁"] .. " (" .. zone .. ")"
         end
         if key == "dundun" then
             -- "장난감: 둔둔 [풍요: 채광 공허굴] (공허폭풍)", 채팅 "둔둔 장난감으로 풍요: 채광 공허굴 (공허폭풍)"
@@ -5847,6 +5865,18 @@ QTR.SetupRoute = function()
                 missing.dundun = L["지금 풍요 지점을 몰라서."]
             end
         end
+        if want("delvebot") and DB.settings.travelDelveBotOn and TV.HasToy(TV.DBOT.item) then
+            local d = DB.delveBotLab and ((DB.travelDest and DB.travelDest.delvebot) or WorldPos(TV.DBOT.map, TV.DBOT.x, TV.DBOT.y))
+            if d and d.c and d.x and d.y then
+                local remain = TV.ItemCD(TV.DBOT.item)
+                table.insert(list, { key = "delvebot", label = TV.NAMES.delvebot, dest = { c = d.c, x = d.x, y = d.y },
+                    cost = TELE_COST, tokens = 1, remain = remain, usable = TV.CDUsable(now + (remain or 0), TV.DBOT.cd) })
+            elseif DB.delveBotLab == false then
+                missing.delvebot = L["로봇 선택지에 킨도잔의 미궁이 없어서 (미궁 업데이트 칩이 필요합니다)."]
+            elseif not DB.delveBotLab then
+                missing.delvebot = L["미궁 칩이 있는지 아직 몰라서. 구렁로봇에게 한 번 말을 걸면 기억합니다."]
+            end
+        end
         return list, why, missing
     end
 
@@ -6126,6 +6156,18 @@ QTR.SetupRoute = function()
         if spellID == TV.MAI.spell then
             return true -- 마이사라 동굴 순간이동: 내리는 곳은 실측 위치로 정해 두어 기억할 것이 없다
         end
+        if spellID == TV.DBOT.spell then
+            -- 구렁로봇 소환: 대화창에서 미궁을 자동으로 고를지 판단할 때 쓴다 (TV.OnGossip). 말을 걸고 고르는 동안까지 1분 기다리며
+            -- 미궁 입구 가까이(실측 위치에서 JUMP 안)에 내렸을 때만 그 자리를 기억한다 (다른 구렁을 고른 경우는 기억하지 않는다)
+            TV.dbotAt = GetTime()
+            local est = WorldPos(TV.DBOT.map, TV.DBOT.x, TV.DBOT.y)
+            TV.LearnLanding(from, 1, 120, function(p)
+                if est and p.c == est.c and Dist(p, est) < JUMP then
+                    DB.travelDest.delvebot = { c = p.c, x = p.x, y = p.y, t = time() }
+                end
+            end)
+            return true
+        end
         if spellID == TV.DunSpell() or spellID == TV.DUN.spell then
             -- 둔둔 장난감: 쓴 때의 풍요 지점(POI)별로 실제로 내린 곳을 기억한다
             local ab = TV.Abundance()
@@ -6172,6 +6214,46 @@ QTR.SetupRoute = function()
         pcall(QTR.OnPlayerSpellcast, spellID)
     end)
 
+    -- 다른 애드온(HDT 꿀구렁 등)이 구렁로봇 선택지를 자동으로 고르기 전에 물어볼 수 있는 신호 (2026-11-08 사용자 요청):
+    --   QTR이 지금 미궁(142847)을 고르려 하면 true. 내비게이션의 지금 단계가 구렁로봇이고, 1분 안에 장난감을 썼고, 설정이 켜져 있을 때
+    --   (Shift는 여기서 보지 않는다. Shift를 누르면 QTR도 고르지 않으니, 그때 다른 애드온이 고를지는 그 애드온이 정한다)
+    function QuestsToRiches_WantsDelveBotLabyrinth()
+        local r = QTR.route and QTR.route[1]
+        return (DB and DB.settings.travelDelveBotOn and r and r.travel == "delvebot" and TV.dbotAt
+            and (GetTime() - TV.dbotAt) < 60) and true or false
+    end
+
+    -- 구렁로봇 대화창: 미궁 칩을 배우고 (선택지 142847이 있는가), 위 신호가 켜져 있고 Shift를 누르지 않았으면 미궁을 고른다
+    function TV.OnGossip()
+        local guid = UnitGUID and UnitGUID("npc")
+        local npc = type(guid) == "string" and tonumber(guid:match("^%a+%-%d+%-%d+%-%d+%-%d+%-(%d+)%-"))
+        if npc ~= TV.DBOT.npc or not (C_GossipInfo and C_GossipInfo.GetOptions) then
+            return
+        end
+        local has = false
+        for _, o in ipairs(C_GossipInfo.GetOptions() or {}) do
+            if o.gossipOptionID == TV.DBOT.option then
+                has = true
+            end
+        end
+        DB.delveBotLab = has and time() or false
+        -- 한 번 쓴 장난감에 한 번만 고른다 (dbotPicked). 신호(dbotAt)는 1분 동안 그대로 두어, 같은 대화창 이벤트를 QTR보다
+        -- 늦게 받는 다른 애드온도 "QTR이 미궁을 골랐다"는 것을 알고 자기 선택을 건너뛸 수 있게 한다
+        if has and QuestsToRiches_WantsDelveBotLabyrinth() and TV.dbotPicked ~= TV.dbotAt
+            and not (IsShiftKeyDown and IsShiftKeyDown()) and C_GossipInfo.SelectOption then
+            TV.dbotPicked = TV.dbotAt
+            C_GossipInfo.SelectOption(TV.DBOT.option)
+        end
+    end
+    QTR.TestOnGossip = TV.OnGossip -- 테스트에서 대화창 열림을 흉내 낼 때
+    local gossipWatch = CreateFrame("Frame")
+    gossipWatch:RegisterEvent("GOSSIP_SHOW")
+    gossipWatch:SetScript("OnEvent", function()
+        if DB then
+            pcall(TV.OnGossip)
+        end
+    end)
+
     -- /qtr hearth: 귀환석 상태 (귀환 지점, 대기시간, 지금 충전 수)
     function QTR.HearthStatus()
         local h, name = HearthBind(), BindName()
@@ -6212,6 +6294,13 @@ QTR.SetupRoute = function()
             Print(L["마이사라 동굴 순간이동: "] .. (DB.settings.travelMaisaraOn and L["켬"] or L["설정에서 끔"])
                 .. ((left >= 60) and L[", %d시간 %d분 뒤 사용 가능"]:format(math.floor(left / 60), left % 60)
                     or (left > 0) and L[", %d분 뒤 사용 가능"]:format(left) or ""))
+        end
+        if TV.HasToy(TV.DBOT.item) then
+            local remain = TV.ItemCD(TV.DBOT.item)
+            Print(L["구렁로봇 7001 (킨도잔의 미궁): "] .. (DB.settings.travelDelveBotOn and L["켬"] or L["설정에서 끔"])
+                .. ((DB.delveBotLab and "") or (DB.delveBotLab == false and L[", 미궁 칩 없음"])
+                    or L[", 미궁 칩 모름 (로봇에게 한 번 말을 걸면 기억합니다)"])
+                .. ((remain and remain > 0) and L[", %d분 뒤 사용 가능"]:format(math.ceil(remain / 60)) or ""))
         end
         -- 장난감이 없어도 설정을 켰으면 보인다 (풍요 지점과 남은 시간을 제대로 읽는지 확인할 수 있게. 2026-11-07 사용자 확인 요청)
         local hasDun = TV.HasToy(TV.DUN.item)
@@ -6344,6 +6433,8 @@ QTR.SetupRoute = function()
             return { type = "spell", spell = TV.MAI.spell }, TV.SpellIcon(TV.MAI.spell)
         elseif key == "dundun" then
             return { type = "toy", toy = TV.DUN.item }, GetItemIconSafe(TV.DUN.item)
+        elseif key == "delvebot" then
+            return { type = "toy", toy = TV.DBOT.item }, GetItemIconSafe(TV.DBOT.item)
         elseif key == "hearth" then
             -- 가방에 귀환석이 있으면 귀환석, 없으면 가진 귀환석 장난감 중 하나
             if GetItemCountSafe(HEARTH_ITEM) > 0 then
@@ -6387,7 +6478,9 @@ QTR.SetupRoute = function()
         end
         tb:SetAttribute("type", attrs.type)
         tb.icon:SetTexture(icon or "Interface\\Icons\\INV_Misc_Rune_01")
-        tb.text:SetText(tostring(r.label) .. L["\n|cffffffff클릭해서 사용"] .. (r == TV.finish and L[" (내비게이션 완료)"] or "") .. "|r")
+        -- 구렁로봇은 쓴 뒤 로봇에게 말을 걸어야 한다 (말을 걸면 미궁을 자동으로 고른다)
+        local hint = (r.travel == "delvebot") and L["\n|cffffffff클릭한 뒤 로봇에게 말을 걸면 미궁으로 갑니다"] or L["\n|cffffffff클릭해서 사용"]
+        tb.text:SetText(tostring(r.label) .. hint .. (r == TV.finish and L[" (내비게이션 완료)"] or "") .. "|r")
         TV.shownKey = key
         if not ta:IsShown() then
             TV.PlaceAlert()
@@ -6817,7 +6910,7 @@ QTR.SetupRoute = function()
         if portalCount > 0 then
             table.insert(uses, L["포탈 %d번"]:format(portalCount))
         end
-        for _, key in ipairs({ "mage", "hearth", "astral", "arcantina", "maisara", "dundun" }) do
+        for _, key in ipairs({ "mage", "hearth", "astral", "arcantina", "maisara", "dundun", "delvebot" }) do
             if travelCount[key] then
                 table.insert(uses, L["%s %d번"]:format(TV.NAMES[key], travelCount[key]))
             end
@@ -6870,7 +6963,7 @@ QTR.SetupRoute = function()
                 listed[w.key] = true
                 Print(L["%s 넣지 않았습니다: %s"]:format(TV.OBJ[w.key] or w.key, w.text))
             end
-            for _, key in ipairs({ "hearth", "astral", "arcantina", "maisara", "dundun" }) do
+            for _, key in ipairs({ "hearth", "astral", "arcantina", "maisara", "dundun", "delvebot" }) do
                 if missing[key] and not listed[key] then
                     Print(L["%s 넣지 않았습니다: %s"]:format(TV.OBJ[key], missing[key]))
                 end
@@ -7680,7 +7773,7 @@ QTR.SetupRoute = function()
             if portals > 0 then
                 table.insert(via, L["포탈 %d번"]:format(portals))
             end
-            for _, key in ipairs({ "mage", "hearth", "astral", "arcantina", "maisara", "dundun" }) do
+            for _, key in ipairs({ "mage", "hearth", "astral", "arcantina", "maisara", "dundun", "delvebot" }) do
                 if hearths[key] then
                     table.insert(via, L["%s %d번"]:format(TV.NAMES[key], hearths[key]))
                 end
@@ -9391,6 +9484,15 @@ local function BuildOptions()
                             .. L["제작자가 장난감이 없어 게임에서 확인하지 못한 기능입니다. 써 보시고 이상하면 알려 주세요."],
                         get = function() return DB.settings.travelDundunOn == true end,
                         set = function(_, val) DB.settings.travelDundunOn = val or nil end,
+                    },
+                    travelDelveBot = {
+                        type = "toggle", name = L["구렁로봇 7001로 킨도잔의 미궁 가기를 동선에 넣기"], order = 6.7, width = "full",
+                        desc = L["구렁로봇을 불러 \"킨도잔의 미궁으로 데려다주십시오.\"를 고르면 영원노래 숲 남쪽 미궁 입구로 순간이동합니다.\n"]
+                            .. L["미궁 업데이트 칩이 있어야 합니다. 로봇에게 한 번 말을 걸면 칩이 있는지 기억합니다.\n"]
+                            .. L["15초 이상 빨라지는 구간이 있으면 한 번 넣고, 그 차례에 로봇에게 말을 걸면 미궁을 자동으로 고릅니다 (Shift를 누르고 말을 걸면 고르지 않습니다).\n"]
+                            .. L["대기시간이 1시간이라 구렁에 갈 때 쓰려면 끄세요."],
+                        get = function() return DB.settings.travelDelveBotOn == true end,
+                        set = function(_, val) DB.settings.travelDelveBotOn = val or nil end,
                     },
                     -- 2026-11-08 사용자 요청 (램값 내비게이션에서 마이사라가 빠진 까닭을 알 수 없었다). 기본 끔
                     travelWhy = {
