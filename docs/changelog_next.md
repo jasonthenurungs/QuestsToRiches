@@ -17,6 +17,8 @@
 - The "Hearthstone not added" chat line now only appears when the new setting above is on.
 - Zul'Aman: quests on the Atal'Aman map are now counted as Zul'Aman. One Zul'Aman special assignment is on this map,
   so after it unlocked, navigation still showed it as "unlocks later" and did not know its location.
+- Navigation: a special assignment that is already in your quest log now counts as unlocked, and while an "unlocks later" stop
+  is in the route, the addon checks every 10 seconds whether it has opened. Before, it only checked right after each quest.
 - Riches tab: characters who did the Liadrin weekly quest last week now show "Done last week" in gray and are not counted.
   Those characters cannot get the quest again this week, so they no longer look like unfinished work.
 
@@ -40,5 +42,7 @@
 - "귀환석은 넣지 않았습니다" 채팅 알림은 위 설정을 켰을 때만 나옵니다.
 - 줄아만: 아탈아만 지도에 있는 퀘스트도 줄아만으로 셉니다. 특별 과제 "다시 우리의 것으로!"가 이 지도에 있어서,
   해금된 뒤에도 내비게이션에 "해금 예정"으로 남고 위치를 몰랐습니다.
+- 내비게이션: 퀘스트 목록에 받아 둔 특별 과제는 열린 것으로 봅니다. 경로에 "해금 예정" 목적지가 남아 있으면 10초마다 열렸는지 확인합니다.
+  예전에는 퀘스트를 완료한 직후에만 확인해서, 게임 정보가 늦게 바뀌면 계속 "해금 예정"으로 남았습니다.
 - 부자되기 탭: 지난주에 리에드린 주간 퀘스트를 한 캐릭터는 회색 "지난주 완료"로 보이고 개수에서 빠집니다.
   그 캐릭터는 이번 주에 퀘스트를 다시 받을 수 없어서, 안 한 숙제처럼 보이지 않게 했습니다.

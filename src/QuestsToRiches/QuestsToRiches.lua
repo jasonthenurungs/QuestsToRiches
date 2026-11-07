@@ -4779,6 +4779,34 @@ QTR.SetupRoute = function()
                     cache = true, cacheItem = src.itemID, expire = left and (time() + left) or src.expire })
             end
         end
+        -- 퀘스트 목록에 받아 둔 특별 과제도 열린 것으로 본다 (2026-11-08 사용자 제보, 압구정: 해금돼서 퀘스트 목록에 있는데
+        --   내비게이션은 계속 "해금 예정". 지도 목록에는 보상 정보를 불러오기 전까지 안 나올 수 있다)
+        --   위치: 배운 위치, 없으면 지금 경로의 해금 예정 목적지 위치 (잠긴 아이콘 위치). 둘 다 없으면 넣지 못한다
+        local added = {}
+        for _, p in ipairs(points) do
+            added[p.questID] = true
+        end
+        for qid, sa in pairs(QTR.SPECIAL_ASSIGNMENTS) do
+            if not added[qid] and C_QuestLog.IsOnQuest and C_QuestLog.IsOnQuest(qid)
+                and not done[qid] and not skip[qid] and not DB.settings.bannedQuests[qid] then
+                local src = DB.cacheSources["q" .. qid]
+                local wp = src and src.wp
+                if not wp then
+                    for _, r in ipairs(QTR.route or {}) do
+                        if r.questID == qid and r.wp then
+                            wp = r.wp
+                        end
+                    end
+                end
+                if wp and not (src and QTR.IsSourceDoneBy(charKey, src, weekStart)) then
+                    local left = QTR.GetSpecialTimeLeft(qid)
+                    table.insert(points, { questID = qid, title = (src and QTR.GetSourceName(src)) or QTR.LiveQuestTitle(qid) or L["특별 과제"],
+                        wp = wp, zone = GetZoneName(sa.mapID), cache = true, cacheItem = src and src.itemID,
+                        expire = left and (time() + left) or (src and src.expire) })
+                    added[qid] = true
+                end
+            end
+        end
         -- 아직 잠긴 특별 과제: 그 지역 전역퀘를 남은 수(need)만큼 하면 열리므로 "해금 예정" 목적지로 넣는다
         --   경로 계산 조건: 같은 지역 골드퀘를 need개 한 뒤에만 갈 수 있다 (그래서 그 지역 퀘스트를 특별 과제 쪽에서 끝내게 된다)
         --   경로의 그 지역 골드퀘가 need개보다 적으면 넣지 않는다 (골드퀘만으로는 열 수 없다)
@@ -4804,7 +4832,7 @@ QTR.SetupRoute = function()
                         end
                     end
                     local src = qid and DB.cacheSources["q" .. qid]
-                    local blocked = qid and (done[qid] or skip[qid] or DB.settings.bannedQuests[qid]
+                    local blocked = qid and (done[qid] or skip[qid] or DB.settings.bannedQuests[qid] or added[qid] -- 이미 열린 것으로 넣음
                         or (src and QTR.IsSourceDoneBy(charKey, src, weekStart)))
                     if not blocked then
                         local wp = src and src.wp
@@ -6902,6 +6930,16 @@ QTR.SetupRoute = function()
         end
         if tickCount % 30 == 0 then
             QTR.RoutePopupUpdate()
+        end
+        -- 10초마다: 해금 예정 특별 과제가 남아 있으면 실제로 열렸는지 본다 (2026-11-08 사용자 제보: 퀘스트 완료 뒤 2초, 5초에만 봐서
+        --   그때 게임 정보가 늦게 바뀌면 열린 뒤에도 계속 "해금 예정"이었다). 열렸으면 RouteWatch가 남은 경로를 다시 짠다
+        if tickCount % 10 == 5 then
+            for _, e in ipairs(QTR.route) do
+                if e.locked then
+                    QTR.RouteWatch()
+                    break
+                end
+            end
         end
         local pos = PlayerPos()
         if not pos then
