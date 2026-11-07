@@ -3714,7 +3714,9 @@ end
 QTR.SetupGQTab = function()
 local GQ_ZONES = {
     { mapID = 2395, allowedMaps = { [2393] = true, [2395] = true, [2424] = true }, metaWidgets = { 7710, 7876 } }, -- 영원노래 숲
-    { mapID = 2437, allowedMaps = { [2437] = true }, metaWidgets = { 7672, 7675 } },                               -- 줄아만
+    -- 줄아만: 2536 아탈아만 (특별 과제 "다시 우리의 것으로!" 91796이 이 지도에 속한다. 2026-11-08 사용자 게임 확인,
+    --   빠져 있어서 해금돼도 내비게이션이 몰랐고 위치도 배우지 못했다)
+    { mapID = 2437, allowedMaps = { [2437] = true, [2536] = true }, metaWidgets = { 7672, 7675 } },
     { mapID = 2405, allowedMaps = { [2405] = true, [2444] = true }, metaWidgets = { 7659, 7668 } },                -- 공허폭풍
     { mapID = 2413, allowedMaps = { [2413] = true }, metaWidgets = { 7618, 7621 } },                               -- 하란다르
     { mapID = 2512, allowedMaps = { [2512] = true }, metaWidgets = { 8259, 8263, 8264 } },                         -- 똬리의 섬

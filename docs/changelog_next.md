@@ -12,6 +12,8 @@
   the same as the button on the Gold Quests tab. Set it under Key Bindings in Settings (or in the game's Key Bindings, AddOns section).
 
 ### Changes
+- Zul'Aman: quests on the Atal'Aman map are now counted as Zul'Aman. One Zul'Aman special assignment is on this map,
+  so after it unlocked, navigation still showed it as "unlocks later" and did not know its location.
 - Riches tab: characters who did the Liadrin weekly quest last week now show "Done last week" in gray and are not counted.
   Those characters cannot get the quest again this week, so they no longer look like unfinished work.
 
@@ -30,5 +32,7 @@
   골드퀘 탭의 버튼을 누른 것과 같습니다. 설정창 단축키 칸(또는 게임 단축키 설정의 애드온 항목)에서 지정해 주세요.
 
 ### 변경
+- 줄아만: 아탈아만 지도에 있는 퀘스트도 줄아만으로 셉니다. 특별 과제 "다시 우리의 것으로!"가 이 지도에 있어서,
+  해금된 뒤에도 내비게이션에 "해금 예정"으로 남고 위치를 몰랐습니다.
 - 부자되기 탭: 지난주에 리에드린 주간 퀘스트를 한 캐릭터는 회색 "지난주 완료"로 보이고 개수에서 빠집니다.
   그 캐릭터는 이번 주에 퀘스트를 다시 받을 수 없어서, 안 한 숙제처럼 보이지 않게 했습니다.
