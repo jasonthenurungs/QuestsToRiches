@@ -139,6 +139,7 @@ ns.Locales.enUS = {
         ["|cffaaaaaa잠김(%d/%d)|r"] = "|cffaaaaaaLocked (%d/%d)|r",
         ["|cffff4444미완료|r"] = "|cffff4444Not done|r",
         ["|cffffd100수행중|r"] = "|cffffd100In progress|r",
+        ["|cff808080지난주 완료|r"] = "|cff808080Done last week|r",
         ["|cffffd100미개봉 %d|r"] = "|cffffd100Unopened %d|r",
         ["|cffffd100가방에 열지 않은 보관함 %d개|r"] = "|cffffd100Unopened caches in bags: %d|r",
         ["|cff808080퀘스트 정보를 불러오는 중...|r"] = "|cff808080Loading quest data...|r",

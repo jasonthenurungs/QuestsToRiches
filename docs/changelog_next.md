@@ -9,6 +9,8 @@
   The author does not own this toy yet, so it has not been tested in game. Please report how it works for you.
 
 ### Changes
+- Riches tab: characters who did the Liadrin weekly quest last week now show "Done last week" in gray and are not counted.
+  Those characters cannot get the quest again this week, so they no longer look like unfinished work.
 
 ---
 
@@ -22,3 +24,5 @@
   제작자가 아직 장난감이 없어 게임에서 확인하지 못했습니다. 써 보시고 어땠는지 알려 주세요.
 
 ### 변경
+- 부자되기 탭: 지난주에 리에드린 주간 퀘스트를 한 캐릭터는 회색 "지난주 완료"로 보이고 개수에서 빠집니다.
+  그 캐릭터는 이번 주에 퀘스트를 다시 받을 수 없어서, 안 한 숙제처럼 보이지 않게 했습니다.

@@ -1582,7 +1582,10 @@ QTR.SILVERMOON_WEEKLY = {
     -- noFlag: 게임의 완료 표시(IsQuestFlaggedCompleted)를 믿지 않는다 (2026-11-05 사용자 제보: 리에드린 주간이 없는 주인데 "완료").
     --   저장 데이터에서 10종이 캐릭터마다 접속 시각에 한꺼번에 완료로 잡혔고, 실제로 한 것은 하나(10-29 93913, 보관함 출처 기록)뿐이었다.
     --   그래서 이 줄은 QTR이 직접 본 완료(QUEST_TURNED_IN)와 수행중만 쓴다. QTR이 꺼진 채 완료한 것은 잡지 못한다
-    { key = "liadrin", name = L["리에드린 주간 퀘스트"], noFlag = true,
+    -- skipNext: 한 번 하면 다음 주에는 받을 수 없다 (2026-11-07 사용자 제보: 10-29에 한 13캐릭터는 11-05 주에 퀘스트가 없고,
+    --   이번 주 처음 만렙이 된 캐릭터는 받음. 유럽 포럼에도 같은 글). 그 캐릭터는 이번 주 "지난주 완료"로 빼고 개수에서도 뺀다.
+    --   2주 주기인지는 11-12 초기화 뒤 13캐릭터가 다시 받는지 봐야 확정 (확인 불가). 위 완료 표시도 "지금 받을 수 없음"이었던 것으로 보인다
+    { key = "liadrin", name = L["리에드린 주간 퀘스트"], noFlag = true, skipNext = true,
       ids = { 93913, 93769, 93889, 93890, 93891, 93892, 93909, 93910, 93911, 93912 } },
 }
 QTR.SILVERMOON_WEEKLY_IDS = {}
@@ -4192,6 +4195,9 @@ end
 function QTR.WeeklyState(key, w, weekStart)
     local on, prog = QTR.WeeklyOnQuest(key, w, weekStart)
     if not on then
+        if QTR.WeeklyLastWeek(key, w, weekStart) then
+            return L["|cff808080지난주 완료|r"], 2
+        end
         return nil
     end
     if prog and prog.p then
@@ -4213,6 +4219,36 @@ function QTR.WeeklyDoneTime(key, w, weekStart)
         end
     end
     return best, bestID
+end
+
+-- 한 번 하면 다음 주에는 받을 수 없는 칸(w.skipNext, 리에드린 주간)을 그 캐릭터가 지난주에 했나: 했으면 그 시각, 아니면 nil
+--   이번 주에 했거나 받아 둔 캐릭터는 부르는 쪽이 먼저 거른다 (받아 두었으면 받을 수 있는 것이므로 그쪽이 우선)
+--   기록: QTR 완료 기록(turnIns), 또는 최정상 보관함을 그 퀘스트 보상으로 받은 기록(cacheGets의 q.
+--   실버문 주간 ID를 넣기(10-30) 전에 한 것은 이것만 남아 있다)
+function QTR.WeeklyLastWeek(key, w, weekStart)
+    if not w.skipNext then
+        return nil
+    end
+    local from = weekStart - 7 * 86400
+    local function inWeek(t)
+        return t and t >= from and t < weekStart
+    end
+    local done = DB.turnIns[key]
+    for _, questID in ipairs(w.ids) do
+        if done and inWeek(done[questID]) then
+            return done[questID]
+        end
+    end
+    for _, g in ipairs(DB.cacheGets[key] or {}) do
+        if g.id == QTR.SILVERMOON_CACHE and g.q and inWeek(g.t) then
+            for _, questID in ipairs(w.ids) do
+                if g.q == questID then
+                    return g.t
+                end
+            end
+        end
+    end
+    return nil
 end
 
 -- 지역별 골드 전역퀘 수집. 반환값: 지역 목록, 아직 불러오는 중인지
@@ -8137,7 +8173,7 @@ end
 -- hidden: 이 퀘스트가 지도에 안 보이는 캐릭터 { [캐릭터키] = true } (맨 아래에 "안 보임"으로)
 -- notGold: 이 캐릭터에게는 보상이 골드가 아님 { [캐릭터키] = true } (맨 아래에 "골드 아님"으로)
 -- state(캐릭터키): 미완료일 때 "미완료" 대신 보일 상태 글자와 정렬 순서 (nil이면 "미완료", 순서 1)
---   실버문 주간 퀘스트 수행중 진행도(순서 0, 2026-11-01), 특별 과제 잠김(2), 미확인(3)
+--   실버문 주간 퀘스트 수행중 진행도(순서 0, 2026-11-01), 특별 과제 잠김(2), 리에드린 지난주 완료(2), 미확인(3)
 local function AddCharRows(entries, targets, doneTime, extraText, hidden, notGold, state)
     local rows, hiddenRows = {}, {}
     for _, key in ipairs(targets) do
@@ -8389,17 +8425,20 @@ function QTR:UpdateRich()
     -- 실버문 주간에 관심 없는 사람에게 숙제처럼 보이면 안 된다)
     --   수행중(받아 둔) 캐릭터가 있어도 그린다 (2026-11-01)
     local weeklyRows = {}
+    --   지난주에 해서 이번 주에 받을 수 없는 캐릭터(리에드린, QTR.WeeklyLastWeek)는 개수에서 뺀다 (2026-11-07)
     for _, w in ipairs(QTR.SILVERMOON_WEEKLY) do
-        local done, doing = 0, 0
+        local done, doing, skip = 0, 0, 0
         for _, k in ipairs(targets) do
             if QTR.WeeklyDoneTime(k, w, weekStart) then
                 done = done + 1
             elseif QTR.WeeklyOnQuest(k, w, weekStart) then
                 doing = doing + 1
+            elseif QTR.WeeklyLastWeek(k, w, weekStart) then
+                skip = skip + 1
             end
         end
         if done + doing > 0 then
-            table.insert(weeklyRows, { w = w, done = done })
+            table.insert(weeklyRows, { w = w, done = done, skip = skip })
         end
     end
     if #sources + #weeklyRows + #others > 0 then
@@ -8460,7 +8499,7 @@ function QTR:UpdateRich()
             Cell("|cffffffff" .. QTR.WeeklyName(w) .. " (" .. smName .. ")|r", COL.richCacheName),
             Cell(FormatTimeLeft(nextReset - now), COL.richCacheTime, "RIGHT"),
             Cell("|T" .. GetItemIconSafe(QTR.SILVERMOON_CACHE) .. ":0|t", COL.gold, "RIGHT"),
-            Cell(FormatProgress(done, #targets), COL.pct, "RIGHT"),
+            Cell(FormatProgress(done, #targets - row.skip), COL.pct, "RIGHT"),
             onClick = ToggleExpanded(key),
             tipQuest = (#w.ids == 1) and w.ids[1] or nil,
         })
