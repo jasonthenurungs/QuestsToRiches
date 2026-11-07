@@ -451,6 +451,7 @@ ns.Locales.enUS = {
         ["완료 기록 %d건의 지역명을 골드퀘 지역 이름으로 바로잡았습니다. (예: 학살자의 오름길은 공허폭풍으로)"] = "Corrected the zone names of %d completion records to their gold quest zones.",
         ["이전 %s 기록과 설정을 옮겨 왔습니다."] = "Imported records and settings from %s.",
         ["로드 완료. /qtr 창 열기, /qtr set 설정창"] = "Loaded. /qtr opens the window, /qtr set opens settings.",
+        ["로드 완료 (v%s). /qtr 창 열기, /qtr set 설정창"] = "Loaded (v%s). /qtr opens the window, /qtr set opens settings.",
         ["제외 퀘스트: "] = "Excluded quest: ",
         ["제외한 퀘스트가 없습니다. /qtr ban 입력 후 한 칸 띄우고 퀘스트를 Shift+클릭하세요."] = "No excluded quests. Type /qtr ban followed by a space and Shift+click a quest.",
         ["퀘스트 링크나 숫자 퀘스트 ID를 넣어주세요."] = "Give a quest link or a numeric quest ID.",

@@ -15,6 +15,7 @@
   the kept Hearthstone charge, and so on).
 
 ### Changes
+- The "Loaded" chat message now shows the addon version, e.g. "Loaded (v1.6.2)".
 - The "Added ... to the route" and "Hearthstone not added" chat lines now only appear when the new setting above is on,
   so the chat stays quieter by default.
 - Zul'Aman: quests on the Atal'Aman map are now counted as Zul'Aman. One Zul'Aman special assignment is on this map,
@@ -41,6 +42,7 @@
   넣었으면 어디서 쓰는지와 줄어드는 시간을, 넣지 않았으면 그 이유를 알립니다 (15초 이상 빨라지는 구간이 없어서, 대기시간 중이라서, 귀환석 1회 남기기 때문에 등).
 
 ### 변경
+- 접속할 때 나오는 "로드 완료" 채팅 메시지에 애드온 버전을 함께 보여 줍니다 (예: "로드 완료 (v1.6.2)").
 - "동선에 넣었습니다", "귀환석은 넣지 않았습니다" 채팅 알림은 위 설정을 켰을 때만 나옵니다. 기본으로는 채팅창이 조용해집니다.
 - 줄아만: 아탈아만 지도에 있는 퀘스트도 줄아만으로 셉니다. 특별 과제 "다시 우리의 것으로!"가 이 지도에 있어서,
   해금된 뒤에도 내비게이션에 "해금 예정"으로 남고 위치를 몰랐습니다.

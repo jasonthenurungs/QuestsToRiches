@@ -1,0 +1,9 @@
+== 1) C_AddOns.GetAddOnMetadata로 TOC 버전을 읽음
+|cffffd100[QTR]|r 로드 완료 (v1.6.2). /qtr 창 열기, /qtr set 설정창
+== 2) 예전 전역 함수 GetAddOnMetadata만 있음
+|cffffd100[QTR]|r 로드 완료 (v9.9.9). /qtr 창 열기, /qtr set 설정창
+== 3) 버전을 못 읽음 -> 예전 문구
+|cffffd100[QTR]|r 로드 완료. /qtr 창 열기, /qtr set 설정창
+== 4) 읽다가 오류 -> 예전 문구
+|cffffd100[QTR]|r 로드 완료. /qtr 창 열기, /qtr set 설정창
+== end

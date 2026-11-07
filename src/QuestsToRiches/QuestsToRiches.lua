@@ -10066,7 +10066,14 @@ function QTR:OnEnable()
     if migratedFrom then
         Print(L["이전 %s 기록과 설정을 옮겨 왔습니다."]:format(migratedFrom))
     end
-    Print(L["로드 완료. /qtr 창 열기, /qtr set 설정창"])
+    -- 애드온 버전도 함께 (2026-11-08 사용자 요청). TOC의 Version을 읽고, 못 읽으면 예전 문구
+    local getMeta = (C_AddOns and C_AddOns.GetAddOnMetadata) or GetAddOnMetadata
+    local okVer, ver = pcall(function() return getMeta and getMeta(ADDON_NAME, "Version") end)
+    if okVer and type(ver) == "string" and ver ~= "" then
+        Print(L["로드 완료 (v%s). /qtr 창 열기, /qtr set 설정창"]:format(ver))
+    else
+        Print(L["로드 완료. /qtr 창 열기, /qtr set 설정창"])
+    end
 end
 
 -------------------------------------------------------------------------------
