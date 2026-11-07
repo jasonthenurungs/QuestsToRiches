@@ -6122,8 +6122,10 @@ QTR.SetupRoute = function()
                 .. ((left >= 60) and L[", %d시간 %d분 뒤 사용 가능"]:format(math.floor(left / 60), left % 60)
                     or (left > 0) and L[", %d분 뒤 사용 가능"]:format(left) or ""))
         end
-        if TV.HasToy(TV.DUN.item) then
-            local remain = TV.ItemCD(TV.DUN.item)
+        -- 장난감이 없어도 설정을 켰으면 보인다 (풍요 지점과 남은 시간을 제대로 읽는지 확인할 수 있게. 2026-11-07 사용자 확인 요청)
+        local hasDun = TV.HasToy(TV.DUN.item)
+        if hasDun or DB.settings.travelDundunOn then
+            local remain = hasDun and TV.ItemCD(TV.DUN.item)
             local ab = TV.Abundance()
             local where = L["지금 풍요 지점 확인 불가"]
             if ab then
@@ -6133,7 +6135,8 @@ QTR.SetupRoute = function()
                     .. ((DB.travelDest and DB.travelDest.dundun and DB.travelDest.dundun[ab.poi]) and ""
                         or L[", 내리는 곳은 아이콘 위치로 어림 (한 번 쓰면 기억합니다)"])
             end
-            Print(L["둔둔 장난감: "] .. (DB.settings.travelDundunOn and L["켬"] or L["설정에서 끔"])
+            Print(L["둔둔 장난감: "] .. (not hasDun and L["없음 (장난감이 있어야 동선에 넣습니다)"]
+                or DB.settings.travelDundunOn and L["켬"] or L["설정에서 끔"])
                 .. ((remain and remain > 0) and L[", %d분 뒤 사용 가능"]:format(math.ceil(remain / 60)) or "") .. ". " .. where)
         end
     end

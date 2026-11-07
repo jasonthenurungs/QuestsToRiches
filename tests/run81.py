@@ -186,6 +186,13 @@ lua.eval(r'''function(QTR, out)
   route("12) 설정 끔 -> 넣지 않음")
   opt.set(nil, false)
   route("12b) 끈 뒤")
+  print("==T 12c) /qtr hearth: 장난감 없고 설정 끔 -> 줄 없음")
+  TOYS[266370] = nil
+  SlashCmdList["QUESTSTORICHES"]("hearth")
+  print("==T 12d) /qtr hearth: 장난감 없고 설정 켬 -> 지점과 남은 시간 줄")
+  opt.set(nil, true)
+  SlashCmdList["QUESTSTORICHES"]("hearth")
+  route("12e) 장난감 없고 설정 켬 -> 넣지 않음")
   print("==T 13) 남은 시간 글자 읽기")
   for _, s in ipairs({ "남은 시간: 4시간 12분", "|cffffffff남은 시간: 45분|r", "Time Left: 4 Hr 12 Min", "2 hours 5 minutes",
       "1일 3시간", " 복원된 금고 열쇠: 11", "8 / 8", "5 Shards of Dundun", "" }) do

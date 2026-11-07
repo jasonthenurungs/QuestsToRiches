@@ -184,6 +184,7 @@ ns.Locales.enUS = {
         ["풍요"] = "Abundance",
         ["풍요 지점이 바뀌었습니다."] = "The Abundance location changed.",
         ["둔둔 장난감: "] = "Dundun toy: ",
+        ["없음 (장난감이 있어야 동선에 넣습니다)"] = "not owned (needed to use it in navigation)",
         ["지금 풍요 지점 확인 불가"] = "current Abundance location unknown",
         ["지금 풍요 지점: "] = "current Abundance location: ",
         [", %d시간 %d분 남음"] = ", %dh %dm left",
