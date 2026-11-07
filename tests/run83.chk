@@ -1,0 +1,15 @@
+Bindings.xml NAVSTART: QuestsToRiches_StartNav()
+|cffffd100[QTR]|r 로드 완료. /qtr 창 열기, /qtr set 설정창
+== 1) 설정에 저장한 키를 접속 때 덮어쓰기 바인딩으로 적용
+  ALT-SHIFT-N -> QUESTSTORICHES_NAVSTART / ALT-SHIFT-R -> QUESTSTORICHES_ROUTE
+  게임 키 설정 화면 이름: 내비게이션 시작!
+== 2) 단축키 = 내비게이션 시작! 버튼 (경로 짜기, 내비게이션 창, 대시보드 닫기)
+  대시보드 열림: true
+  부른 것: RouteStart, RoutePopupUpdate(true)
+  대시보드 열림: false
+== 3) 창이 닫혀 있어도 같다
+  부른 것: RouteStart, RoutePopupUpdate(true)
+== 4) 키를 지우면 바인딩도 빠진다
+|cffffd100[QTR]|r 로드 완료. /qtr 창 열기, /qtr set 설정창
+  ALT-SHIFT-N -> nil / ALT-SHIFT-R -> QUESTSTORICHES_ROUTE
+== end

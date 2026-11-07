@@ -20,6 +20,7 @@ _G["BINDING_HEADER_QUESTSTORICHES"] = "QuestsToRiches"
 _G["BINDING_NAME_QUESTSTORICHES_DASHBOARD"] = L["창 열기/닫기"]
 _G["BINDING_NAME_QUESTSTORICHES_CONFIG"] = L["설정창 열기/닫기"]
 _G["BINDING_NAME_QUESTSTORICHES_ROUTE"] = L["내비게이션 창 열기/닫기"]
+_G["BINDING_NAME_QUESTSTORICHES_NAVSTART"] = L["내비게이션 시작!"]
 
 local AceAddon = LibStub("AceAddon-3.0")
 local QTR = AceAddon:NewAddon(ADDON_NAME, "AceEvent-3.0")
@@ -294,7 +295,7 @@ end
 -- turnIns, cacheSources, cacheGets, cacheKnown: 정점 보관함 부분 설명 참고
 -- activeGQ[퀘스트ID]      = { name, zone, mapID, money, expire } 어느 캐릭터로든 본 현재 골드 전역퀘
 -- gqPrevExpire[퀘스트ID]  = 그 퀘스트 직전 회차의 만료 시각 (이번 회차 완료 판정의 시작점)
--- settings               = { goal, chatNotify, alpha, frameLocked, pos(창 왼쪽 위 기준), keys = { dashboard, config, route } }
+-- settings               = { goal, chatNotify, alpha, frameLocked, pos(창 왼쪽 위 기준), keys = { dashboard, config, route, navStart } }
 --   goal: 목표 골드 (골드 단위, 1 ~ GOAL_MAX). 예전 goalMan(만 골드 단위)은 처음 한 번 옮겨 온다.
 --   dashPinned, navPinned: 대시보드, 내비게이션 창 고정 (Esc로 닫히지 않음). dashScale, navScale: 두 창의 크기 배율 (기본 1)
 --   holdNoWarband: 이 계정 보유량에 전투부대 은행 넣지 않기 (QTR.WarbandCounted 참고)
@@ -7787,6 +7788,14 @@ QTR.SetupRoute = function()
         f:Hide()
     end
 
+    -- 내비게이션 시작 단축키 (2026-11-08 사용자 요청: 창 열기, 1, R을 한 번에). 버튼을 누른 것과 같다
+    function QuestsToRiches_StartNav()
+        if not DB then
+            return
+        end
+        QTR.NavStartFromDashboard()
+    end
+
     local routeBtn = CreateButton(gqPanel, L["내비게이션 시작!"], 110, "R")
     routeBtn:SetPoint("TOPRIGHT", gqPanel, "TOPRIGHT", -20, -4)
     -- 글자가 110에 안 들어가면 (영어 "Start Navigation!") 글자 폭 + 24로 넓힌다 (오른쪽 끝 고정이라 왼쪽으로 늘어난다, 2026-10-31)
@@ -8968,6 +8977,9 @@ local function ApplyKeyBindings()
     if keys.route and keys.route ~= "" then
         SetOverrideBinding(bindOwner, false, keys.route, BIND_ROUTE)
     end
+    if keys.navStart and keys.navStart ~= "" then
+        SetOverrideBinding(bindOwner, false, keys.navStart, "QUESTSTORICHES_NAVSTART") -- 메인 청크 local 한도로 상수 없이
+    end
 end
 
 -- 예전 버전에서 게임 키 설정에 저장했던 키를 처음 한 번 가져온다
@@ -9188,6 +9200,13 @@ local function BuildOptions()
                         type = "keybinding", name = "", order = 4.1, width = 1.2,
                         get = function() return GetSavedKey("route") end,
                         set = function(_, val) SetSavedKey("route", val) end,
+                    },
+                    bindBreak3 = Break(4.5),
+                    bindNavStartLabel = BindLabel(5, L["내비게이션 시작!"]),
+                    bindNavStart = {
+                        type = "keybinding", name = "", order = 5.1, width = 1.2,
+                        get = function() return GetSavedKey("navStart") end,
+                        set = function(_, val) SetSavedKey("navStart", val) end,
                     },
                 },
             },

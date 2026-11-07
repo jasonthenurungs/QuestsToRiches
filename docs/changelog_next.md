@@ -8,6 +8,9 @@
   Turn it on under "Use Dundun's Abundant Travel Method in navigation (experimental)" in Settings.
   The author does not own this toy yet, so it has not been tested in game. Please report how it works for you.
 
+- New key binding: "Start Navigation!". One key starts navigation without opening the window and picking a tab,
+  the same as the button on the Gold Quests tab. Set it under Key Bindings in Settings (or in the game's Key Bindings, AddOns section).
+
 ### Changes
 - Riches tab: characters who did the Liadrin weekly quest last week now show "Done last week" in gray and are not counted.
   Those characters cannot get the quest again this week, so they no longer look like unfinished work.
@@ -22,6 +25,9 @@
   대기시간이 30분이라 한 경로에서 두 번까지 씁니다. 풍요 지점이 끝나기 2분 전부터는 넣지 않고, 안내 중에 지점이 바뀌면 남은 경로를 다시 짭니다.
   설정창 "둔둔의 풍요로운 이동 수단을 동선에 넣기 (시험 기능)"에서 켜 주세요.
   제작자가 아직 장난감이 없어 게임에서 확인하지 못했습니다. 써 보시고 어땠는지 알려 주세요.
+
+- 단축키 "내비게이션 시작!" 추가: 창을 열고 탭을 고를 필요 없이 키 하나로 바로 내비게이션을 시작합니다.
+  골드퀘 탭의 버튼을 누른 것과 같습니다. 설정창 단축키 칸(또는 게임 단축키 설정의 애드온 항목)에서 지정해 주세요.
 
 ### 변경
 - 부자되기 탭: 지난주에 리에드린 주간 퀘스트를 한 캐릭터는 회색 "지난주 완료"로 보이고 개수에서 빠집니다.

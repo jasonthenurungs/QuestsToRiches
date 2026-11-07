@@ -8,4 +8,7 @@
 	<Binding name="QUESTSTORICHES_ROUTE" category="ADDONS">
 		QuestsToRiches_ToggleRoute()
 	</Binding>
+	<Binding name="QUESTSTORICHES_NAVSTART" category="ADDONS">
+		QuestsToRiches_StartNav()
+	</Binding>
 </Bindings>
