@@ -5313,6 +5313,130 @@ QTR.SetupRoute = function()
     TV.NAMES.maisara = L["쐐기 포탈"]
     TV.OBJ.maisara = L["쐐기 포탈을"]
 
+    -- 둔둔의 풍요로운 이동 수단 (2026-11-07 사용자 결정, 인벤 엔젤스쿨님 제안): 장난감 266370, 사용 주문 1278093 (Wowhead 툴팁)
+    --   "현재 풍요 지점으로 이동", 한밤 지역에서만 사용, 대기시간 30분. 업적 "풍요: 아제로스는 둔둔 없이 못 살아"가 있어야 산다
+    --   지금 풍요 지점은 지역 POI가 아니라 이벤트 목록(C_AreaPoiInfo.GetEventsForMap)에 아이콘 UI-EventPoi-abundancebountiful로 나온다
+    --   (2026-11-07 사용자 게임 확인: 공허폭풍 POI 8526 "풍요: 채광 공허굴", 지도 38.8, 53.3). 남은 시간은 POI 정보에 없고
+    --   툴팁 위젯 묶음(tooltipWidgetSet)의 글자 위젯에 "남은 시간: 4시간 12분"으로만 나온다. 위젯 번호는 지점마다 다를 수 있어 박지 않는다
+    --   내리는 곳: 처음에는 이벤트 아이콘 위치로 어림하고, 한 번 타면 실제로 내린 곳을 지점(POI)별로 기억한다 (DB.travelDest.dundun[POI])
+    --   사용자가 장난감이 없어 게임에서 확인하지 못했다 (장난감이 이 지점으로 보내는지, 내리는 곳, 영어 클라이언트 시간 글자 모두 확인 불가)
+    --   그래서 기본 끔, 설정 travelDundunOn으로 켠다. 풍요 지점이 끝나기 2분 전부터는 쓰지 않고 (남은 시간이 분 단위라 여유), 안내 중 지점이 바뀌면 경로를 다시 짠다
+    TV.DUN = { item = 266370, spell = 1278093, cd = 1800, continent = 2537 }
+    TV.NAMES.dundun = L["둔둔 장난감"]
+    TV.OBJ.dundun = L["둔둔 장난감을"]
+
+    -- 남은 시간 글자("남은 시간: 4시간 12분", 영어 "4 Hr 12 Min" 등)를 초로. 시간 단위가 하나도 없으면 nil
+    --   숫자 바로 뒤의 단위 글자로 가린다 (보상 줄 "복원된 금고 열쇠: 11"처럼 단위가 없는 숫자는 세지 않는다)
+    function TV.ParseLeft(text)
+        if type(text) ~= "string" then
+            return nil
+        end
+        text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+        local sec, any = 0, false
+        for num, unit in text:gmatch("(%d+)%s*([^%d%s%p]+)") do
+            local u = unit:lower()
+            local mult
+            if u:find("^시간") or u == "h" or u:find("^hr") or u:find("^hour") then
+                mult = 3600
+            elseif u:find("^분") or u == "m" or u:find("^min") then
+                mult = 60
+            elseif u:find("^일") or u == "d" or u:find("^day") then
+                mult = 86400
+            elseif u:find("^초") or u == "s" or u:find("^sec") then
+                mult = 1
+            end
+            if mult then
+                sec = sec + tonumber(num) * mult
+                any = true
+            end
+        end
+        return any and sec or nil
+    end
+    QTR.TestParseLeft = TV.ParseLeft -- 테스트에서 글자 읽기만 확인할 때
+
+    -- 툴팁 위젯 묶음에서 남은 시간을 읽어 끝나는 시각으로. 못 읽으면 nil
+    function TV.AbundanceExpire(setID)
+        local U = C_UIWidgetManager
+        if not (setID and U and U.GetAllWidgetsBySetID and U.GetTextWithStateWidgetVisualizationInfo) then
+            return nil
+        end
+        local ok, widgets = pcall(U.GetAllWidgetsBySetID, setID)
+        for _, w in ipairs(ok and type(widgets) == "table" and widgets or {}) do
+            local okT, info = pcall(U.GetTextWithStateWidgetVisualizationInfo, w.widgetID)
+            local left = okT and info and TV.ParseLeft(info.text)
+            if left then
+                return time() + left
+            end
+        end
+        return nil
+    end
+
+    -- 지금 풍요 지점: { poi, map, name, zone, dest(월드 좌표), expire(끝나는 시각, 모르면 nil) } 또는 nil
+    --   골드퀘 지역 지도들의 이벤트 목록에서 찾는다. 내린 곳을 기억한 지점이면 그 위치를 도착지로 쓴다
+    function TV.Abundance()
+        if not (C_AreaPoiInfo and C_AreaPoiInfo.GetEventsForMap and C_AreaPoiInfo.GetAreaPOIInfo) then
+            return nil
+        end
+        for _, z in ipairs(GQ_ZONES) do
+            local m = z.mapID
+            local ok, ids = pcall(C_AreaPoiInfo.GetEventsForMap, m)
+            for _, id in ipairs(ok and type(ids) == "table" and ids or {}) do
+                local okI, info = pcall(C_AreaPoiInfo.GetAreaPOIInfo, m, id)
+                local atlas = okI and info and type(info.atlasName) == "string" and info.atlasName:lower() or ""
+                if atlas:find("abundancebountiful", 1, true) and info.position then
+                    local x, y = info.position.x, info.position.y
+                    if info.position.GetXY then
+                        x, y = info.position:GetXY()
+                    end
+                    local dest = x and y and WorldPos(m, x, y)
+                    if dest then
+                        local learned = DB.travelDest and DB.travelDest.dundun and DB.travelDest.dundun[id]
+                        if learned and learned.c and learned.x and learned.y then
+                            dest = { c = learned.c, x = learned.x, y = learned.y }
+                        end
+                        local mi = C_Map.GetMapInfo and C_Map.GetMapInfo(m)
+                        TV.lastAb = { poi = id, map = m, name = info.name or L["풍요"], zone = mi and mi.name,
+                            dest = dest, expire = TV.AbundanceExpire(info.tooltipWidgetSet) }
+                        return TV.lastAb
+                    end
+                end
+            end
+        end
+        return nil
+    end
+
+    -- 지금 한밤 지역에 있는가 (장난감은 한밤 지역에서만 쓸 수 있다): 골드퀘 지역 지도이거나 지도를 위로 올라가 한밤 대륙(2537)
+    function TV.InMidnight()
+        local id = C_Map.GetBestMapForUnit and C_Map.GetBestMapForUnit("player")
+        for _ = 1, 10 do
+            if not id then
+                return false
+            end
+            if id == TV.DUN.continent then
+                return true
+            end
+            for _, z in ipairs(GQ_ZONES) do
+                if z.allowedMaps[id] then
+                    return true
+                end
+            end
+            local info = C_Map.GetMapInfo and C_Map.GetMapInfo(id)
+            id = info and info.parentMapID
+        end
+        return false
+    end
+
+    -- 둔둔 장난감의 사용 주문 ID (게임에 물어 본다. 못 읽으면 알려진 값)
+    function TV.DunSpell()
+        if C_Item and C_Item.GetItemSpell then
+            local ok, _, id = pcall(C_Item.GetItemSpell, TV.DUN.item)
+            if ok and type(id) == "number" then
+                return id
+            end
+        end
+        return TV.DUN.spell
+    end
+
     -- 내비게이션 창과 사용 버튼 창의 이름 (2026-10-27 사용자 요청): "귀환석: 나그네의 쉼터 (실버문)", 마법사는 주문 이름대로 "순간이동: 실버문"
     --   돌려주는 값: 전체 이름, 지역을 뺀 이름(내비게이션 창은 지역을 포탈 줄처럼 따로 붙인다), 지역, 채팅용 이름
     --   채팅은 "다음 목적지: " 뒤에 붙으므로 쌍점 없이 "귀환석으로 나그네의 쉼터 (실버문)" (2026-10-26 쌍점 겹침 수정 유지)
@@ -5331,6 +5455,15 @@ QTR.SetupRoute = function()
             local zone = (info and info.name) or L["줄아만"]
             local text = L["쐐기 포탈: 마이사라 동굴"]
             return text .. " (" .. zone .. ")", text, zone, L["쐐기 포탈로 마이사라 동굴"] .. " (" .. zone .. ")"
+        end
+        if key == "dundun" then
+            -- "장난감: 둔둔 [풍요: 채광 공허굴] (공허폭풍)", 채팅 "둔둔 장난감으로 풍요: 채광 공허굴 (공허폭풍)"
+            local ab = TV.lastAb
+            local name = tostring(inn or (ab and ab.name) or L["풍요"])
+            local zone = ab and ab.name == inn and ab.zone or nil
+            local z = zone and (" (" .. zone .. ")") or ""
+            local text = L["장난감: 둔둔"] .. " [" .. name .. "]"
+            return text .. z, text, zone, L["둔둔 장난감으로 "] .. name .. z
         end
         local b = inn and DB.hearthBinds and DB.hearthBinds[inn]
         -- zoneV 2: 지도 기준으로 읽은 지역 (그전 GetRealZoneText 값은 내린 직후 바뀌기 전 지역이 남을 수 있어 쓰지 않는다)
@@ -5624,6 +5757,23 @@ QTR.SetupRoute = function()
                     usable = TV.CDUsable(now + (remain or 0), TV.MAI.cd) })
             end
         end
+        if want("dundun") and DB.settings.travelDundunOn and TV.HasToy(TV.DUN.item) then
+            local ab = TV.Abundance()
+            if ab then
+                local remain = TV.ItemCD(TV.DUN.item)
+                local cdOk = TV.CDUsable(now + (remain or 0), TV.DUN.cd)
+                -- 풍요 지점이 끝나기 2분 전부터는 쓰지 않는다 (남은 시간 글자가 분 단위이고 시전과 로딩도 있어서. 그 뒤에는 다른 지점으로 가므로). 끝나는 시각을 모르면 따지지 않는다
+                -- 대기시간이 30분이라 한 경로에서 두 번까지 본다. 출발점이 한밤 지역 밖이면 첫 구간에는 못 쓴다 (notFromStart)
+                table.insert(list, { key = "dundun", label = TV.NAMES.dundun, dest = ab.dest, destName = ab.name, poi = ab.poi,
+                    cost = TELE_COST, tokens = 2, notFromStart = not TV.InMidnight(),
+                    usable = function(t, endT, chosen)
+                        if ab.expire and t > ab.expire - 120 then
+                            return false, false
+                        end
+                        return cdOk(t, endT, chosen)
+                    end })
+            end
+        end
         return list, why
     end
 
@@ -5646,7 +5796,7 @@ QTR.SetupRoute = function()
             for _, m in ipairs(methods) do
                 local alt, path = TravelCost(m.dest, p.pos)
                 local save = legs[k] - (alt + m.cost)
-                if save >= HEARTH_MIN_SAVE then
+                if save >= HEARTH_MIN_SAVE and not (k == 1 and m.notFromStart) then
                     table.insert(cands, { k = k, m = m, path = path, save = save })
                 end
             end
@@ -5885,6 +6035,17 @@ QTR.SetupRoute = function()
         if spellID == TV.MAI.spell then
             return true -- 마이사라 동굴 순간이동: 내리는 곳은 실측 위치로 정해 두어 기억할 것이 없다
         end
+        if spellID == TV.DunSpell() or spellID == TV.DUN.spell then
+            -- 둔둔 장난감: 쓴 때의 풍요 지점(POI)별로 실제로 내린 곳을 기억한다
+            local ab = TV.Abundance()
+            if ab then
+                TV.LearnLanding(from, 1, 60, function(p)
+                    DB.travelDest.dundun = DB.travelDest.dundun or {}
+                    DB.travelDest.dundun[ab.poi] = { c = p.c, x = p.x, y = p.y, t = time() }
+                end)
+            end
+            return true
+        end
         return false
     end
 
@@ -5960,6 +6121,20 @@ QTR.SetupRoute = function()
             Print(L["마이사라 동굴 순간이동: "] .. (DB.settings.travelMaisaraOn and L["켬"] or L["설정에서 끔"])
                 .. ((left >= 60) and L[", %d시간 %d분 뒤 사용 가능"]:format(math.floor(left / 60), left % 60)
                     or (left > 0) and L[", %d분 뒤 사용 가능"]:format(left) or ""))
+        end
+        if TV.HasToy(TV.DUN.item) then
+            local remain = TV.ItemCD(TV.DUN.item)
+            local ab = TV.Abundance()
+            local where = L["지금 풍요 지점 확인 불가"]
+            if ab then
+                local leftMin = ab.expire and math.max(0, math.ceil((ab.expire - time()) / 60))
+                where = L["지금 풍요 지점: "] .. tostring(ab.name) .. (ab.zone and (" (" .. ab.zone .. ")") or "")
+                    .. (leftMin and L[", %d시간 %d분 남음"]:format(math.floor(leftMin / 60), leftMin % 60) or L[", 남은 시간 확인 불가"])
+                    .. ((DB.travelDest and DB.travelDest.dundun and DB.travelDest.dundun[ab.poi]) and ""
+                        or L[", 내리는 곳은 아이콘 위치로 어림 (한 번 쓰면 기억합니다)"])
+            end
+            Print(L["둔둔 장난감: "] .. (DB.settings.travelDundunOn and L["켬"] or L["설정에서 끔"])
+                .. ((remain and remain > 0) and L[", %d분 뒤 사용 가능"]:format(math.ceil(remain / 60)) or "") .. ". " .. where)
         end
     end
 
@@ -6073,6 +6248,8 @@ QTR.SetupRoute = function()
             return { type = "toy", toy = ARC_ITEM }, GetItemIconSafe(ARC_ITEM)
         elseif key == "maisara" then
             return { type = "spell", spell = TV.MAI.spell }, TV.SpellIcon(TV.MAI.spell)
+        elseif key == "dundun" then
+            return { type = "toy", toy = TV.DUN.item }, GetItemIconSafe(TV.DUN.item)
         elseif key == "hearth" then
             -- 가방에 귀환석이 있으면 귀환석, 없으면 가진 귀환석 장난감 중 하나
             if GetItemCountSafe(HEARTH_ITEM) > 0 then
@@ -6518,7 +6695,7 @@ QTR.SetupRoute = function()
                 -- 이름은 "귀환석: 나그네의 쉼터 (실버문)". 채팅에는 쌍점이 겹치지 않게 chatLabel을 쓴다 (TV.TravelLabel)
                 local label, text, zone, chat = TV.TravelLabel(u.m.key, u.m.destName)
                 AddEntry({ travel = u.m.key, hearth = (u.m.key == "hearth") or nil, arrival = u.m.dest, bindName = u.m.destName,
-                    label = label, travelText = text, innZone = zone, chatLabel = chat })
+                    label = label, travelText = text, innZone = zone, chatLabel = chat, poi = u.m.poi })
                 portals = u.path
             end
             -- 이 퀘스트로 가는 길에 탈 포탈들(마법사 순간이동 포함)을 먼저 넣는다
@@ -6546,7 +6723,7 @@ QTR.SetupRoute = function()
         if portalCount > 0 then
             table.insert(uses, L["포탈 %d번"]:format(portalCount))
         end
-        for _, key in ipairs({ "mage", "hearth", "astral", "arcantina", "maisara" }) do
+        for _, key in ipairs({ "mage", "hearth", "astral", "arcantina", "maisara", "dundun" }) do
             if travelCount[key] then
                 table.insert(uses, L["%s %d번"]:format(TV.NAMES[key], travelCount[key]))
             end
@@ -6651,6 +6828,19 @@ QTR.SetupRoute = function()
         local pos = PlayerPos()
         if not pos then
             return -- 로딩 화면 등
+        end
+        -- 30초마다: 아직 쓰지 않은 둔둔 장난감 단계가 있는데 풍요 지점이 바뀌었으면 (끝났거나 다른 곳) 남은 경로를 다시 짠다
+        if tickCount % 30 == 15 then
+            for _, e in ipairs(QTR.route) do
+                if e.travel == "dundun" then
+                    local ab = TV.Abundance()
+                    if not ab or ab.poi ~= e.poi then
+                        QTR.RouteStart(L["풍요 지점이 바뀌었습니다."])
+                        return
+                    end
+                    break
+                end
+            end
         end
         local last = QTR.routeLastPos
         QTR.routeLastPos = pos
@@ -7373,7 +7563,7 @@ QTR.SetupRoute = function()
             if portals > 0 then
                 table.insert(via, L["포탈 %d번"]:format(portals))
             end
-            for _, key in ipairs({ "mage", "hearth", "astral", "arcantina", "maisara" }) do
+            for _, key in ipairs({ "mage", "hearth", "astral", "arcantina", "maisara", "dundun" }) do
                 if hearths[key] then
                     table.insert(via, L["%s %d번"]:format(TV.NAMES[key], hearths[key]))
                 end
@@ -9055,6 +9245,14 @@ local function BuildOptions()
                             .. L["15초 이상 빨라지는 구간이 있으면 한 번 넣습니다. 대기시간이 8시간이고 다른 던전 순간이동도 함께 대기시간에 걸리니, 쐐기돌 던전에 갈 때 쓰려면 끄세요."],
                         get = function() return DB.settings.travelMaisaraOn == true end,
                         set = function(_, val) DB.settings.travelMaisaraOn = val or nil end,
+                    },
+                    travelDundun = {
+                        type = "toggle", name = L["둔둔의 풍요로운 이동 수단을 동선에 넣기 (시험 기능)"], order = 6.6, width = "full",
+                        desc = L["지금 풍요가 열린 동굴로 가는 장난감입니다. 대기시간이 30분이라 한 경로에서 두 번까지 넣습니다.\n"]
+                            .. L["풍요 지점이 끝나기 2분 전부터는 넣지 않고, 안내 중에 지점이 바뀌면 남은 경로를 다시 짭니다.\n"]
+                            .. L["제작자가 장난감이 없어 게임에서 확인하지 못한 기능입니다. 써 보시고 이상하면 알려 주세요."],
+                        get = function() return DB.settings.travelDundunOn == true end,
+                        set = function(_, val) DB.settings.travelDundunOn = val or nil end,
                     },
                     travelPopup = {
                         type = "toggle", name = L["귀환석, 순간이동을 쓸 차례에 사용 버튼 창 띄우기"], order = 7, width = "full",
