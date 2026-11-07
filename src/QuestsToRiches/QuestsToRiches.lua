@@ -5724,10 +5724,11 @@ QTR.SetupRoute = function()
         end
     end
 
-    -- 지금 쓸 수 있는 귀환형 이동 목록: { key, label, dest, destName, cost, tokens, usable(t, endT, chosen) }
+    -- 지금 쓸 수 있는 귀환형 이동 목록: { key, label, dest, destName, cost, tokens, usable(t, endT, chosen), remain(남은 대기시간 초) }
     -- only: { [key] = true } 이면 그것만. 두 번째 반환값: 귀환석을 못 넣는 까닭 (귀환 지점 위치를 모를 때)
+    -- 세 번째 반환값: 가지고 있고 설정도 켰는데 목록에 못 넣은 수단의 까닭 { [key] = 문구 } (넣지 않은 이유 알리기, 2026-11-08)
     function TV.RecallMethods(only)
-        local list, why = {}, nil
+        local list, why, missing = {}, nil, {}
         local function want(key)
             return not only or only[key]
         end
@@ -5737,7 +5738,7 @@ QTR.SetupRoute = function()
             if bind then
                 local st = HearthState()
                 table.insert(list, { key = "hearth", label = TV.NAMES.hearth, dest = bind, destName = bind.name,
-                    cost = HEARTH_COST, tokens = st.maxCh, st = st,
+                    cost = HEARTH_COST, tokens = st.maxCh, st = st, remain = st.blocked - now,
                     -- t에 쓸 수 있는가: 이번 경로에서 고른 사용(chosen)과 t를 합쳐 시각 순으로 놓고, 하나하나 그때 충전이 남아 있어야 한다
                     -- (t보다 뒤에 고른 사용도 t에 쓰면 충전이 모자랄 수 있다). 두 번째 값: 1회 남기기
                     usable = function(t, endT, chosen)
@@ -5767,6 +5768,7 @@ QTR.SetupRoute = function()
                 local name = BindName()
                 if name then
                     why = L["귀환 지점(%s) 위치를 아직 몰라서. 이 여관으로 귀환석을 한 번 타면 기억합니다."]:format(name)
+                    missing.hearth = why
                 end
             end
         end
@@ -5778,14 +5780,16 @@ QTR.SetupRoute = function()
             end
             local cd = me.astralCD or ASTRAL_CD
             table.insert(list, { key = "astral", label = TV.NAMES.astral, dest = bind, destName = bind.name,
-                cost = ASTRAL_COST, tokens = 1, usable = TV.CDUsable(now + (remain or 0), cd) })
+                cost = ASTRAL_COST, tokens = 1, remain = remain, usable = TV.CDUsable(now + (remain or 0), cd) })
         end
         if want("arcantina") and not DB.settings.travelArcantinaOff and TV.HasToy(ARC_ITEM) then
             local d = (DB.travelDest and DB.travelDest.arcantina) or (DB.hearthBinds and DB.hearthBinds[ARC_INN])
             if d and d.c and d.x and d.y then
                 local remain = TV.ItemCD(ARC_ITEM)
                 table.insert(list, { key = "arcantina", label = TV.NAMES.arcantina, dest = { c = d.c, x = d.x, y = d.y },
-                    destName = ARC_INN, cost = ARC_COST, tokens = 1, usable = TV.CDUsable(now + (remain or 0), ARC_CD) })
+                    destName = ARC_INN, cost = ARC_COST, tokens = 1, remain = remain, usable = TV.CDUsable(now + (remain or 0), ARC_CD) })
+            else
+                missing.arcantina = L["나오는 곳(%s) 위치를 몰라서. 한 번 쓰거나 그 여관으로 귀환석을 타면 기억합니다."]:format(ARC_INN)
             end
         end
         if want("maisara") and DB.settings.travelMaisaraOn and TV.SpellKnown(TV.MAI.spell) then
@@ -5793,7 +5797,7 @@ QTR.SetupRoute = function()
             if d then
                 local remain = TV.SpellCD(TV.MAI.spell)
                 table.insert(list, { key = "maisara", label = TV.NAMES.maisara, dest = d, cost = TELE_COST, tokens = 1,
-                    usable = TV.CDUsable(now + (remain or 0), TV.MAI.cd) })
+                    remain = remain, usable = TV.CDUsable(now + (remain or 0), TV.MAI.cd) })
             end
         end
         if want("dundun") and DB.settings.travelDundunOn and TV.HasToy(TV.DUN.item) then
@@ -5804,24 +5808,27 @@ QTR.SetupRoute = function()
                 -- 풍요 지점이 끝나기 2분 전부터는 쓰지 않는다 (남은 시간 글자가 분 단위이고 시전과 로딩도 있어서. 그 뒤에는 다른 지점으로 가므로). 끝나는 시각을 모르면 따지지 않는다
                 -- 대기시간이 30분이라 한 경로에서 두 번까지 본다. 출발점이 한밤 지역 밖이면 첫 구간에는 못 쓴다 (notFromStart)
                 table.insert(list, { key = "dundun", label = TV.NAMES.dundun, dest = ab.dest, destName = ab.name, poi = ab.poi,
-                    cost = TELE_COST, tokens = 2, notFromStart = not TV.InMidnight(),
+                    cost = TELE_COST, tokens = 2, notFromStart = not TV.InMidnight(), remain = remain,
                     usable = function(t, endT, chosen)
                         if ab.expire and t > ab.expire - 120 then
                             return false, false
                         end
                         return cdOk(t, endT, chosen)
                     end })
+            else
+                missing.dundun = L["지금 풍요 지점을 몰라서."]
             end
         end
-        return list, why
+        return list, why, missing
     end
 
     -- 순서를 정한 경로(order)에 귀환형 이동을 넣을 자리들: { { k = 목적지 번호, m = 이동, path = 도착점에서 갈 포탈들, save }, ... } (k 순)
     -- 줄어드는 양이 큰 구간부터, 그 시각에 쓸 수 있으면 넣는다 (한 구간에는 하나만)
-    -- 두 번째 반환값: 귀환석을 하나도 넣지 않았을 때 그 이유 (채팅에 한 줄로 알릴 문구. 설정을 껐거나 내 위치를 모르면 nil)
+    -- 두 번째 반환값: 귀환석을 하나도 넣지 않았을 때 그 이유 (설정을 껐거나 내 위치를 모르면 nil)
+    -- 세 번째 반환값: 목록(methods)에 있는데 넣지 않은 수단과 이유 { { key, text }, ... } (넣지 않은 이유 알리기, 2026-11-08)
     function TV.PlanRecalls(order, start, methods, why)
         if not start or #order == 0 then
-            return {}, nil
+            return {}, nil, {}
         end
         local legs, before, sum, prevPos = {}, {}, 0, start
         for k, p in ipairs(order) do
@@ -5849,27 +5856,34 @@ QTR.SetupRoute = function()
         local now = time()
         local chosen, legUsed, total = {}, {}, 0
         local times = {} -- 이동별로 고른 사용 시각
-        local worth, ready = false, false -- 귀환석: 15초 이상 줄어드는 구간이 있었는가, 그중 쓸 수 있는 시각인 곳이 있었는가
+        -- 수단별로 넣지 않은 이유를 가리려고 남기는 것 (2026-11-08):
+        --   worth 15초 이상 줄어드는 구간이 있었나 / ready 그중 쓸 수 있는 시각인 곳이 있었나 /
+        --   taken 쓸 수 있었으나 그 구간에 더 많이 줄어드는 다른 수단이 먼저 들어갔나 / keep 귀환석 1회 남기기 때문에 못 넣었나
+        local seen = {}
         for _, c in ipairs(cands) do
             local key = c.m.key
             times[key] = times[key] or {}
-            if key == "hearth" then
-                worth = true
+            seen[key] = seen[key] or {}
+            local s = seen[key]
+            s.worth = true
+            local t = now + before[c.k] / NAV_SPEED + (c.k - 1) * NAV_HANDLE
+            local endT = now + (sum - total - c.save) / NAV_SPEED + #order * NAV_HANDLE
+            local usable, keep = c.m.usable(t, endT, times[key]) -- 부작용 없는 판정이라 이미 쓴 구간에도 물어본다
+            if usable then
+                s.ready = true
             end
-            if not legUsed[c.k] then
-                local t = now + before[c.k] / NAV_SPEED + (c.k - 1) * NAV_HANDLE
-                local endT = now + (sum - total - c.save) / NAV_SPEED + #order * NAV_HANDLE
-                local usable, keep = c.m.usable(t, endT, times[key])
-                if key == "hearth" and usable then
-                    ready = true
+            if legUsed[c.k] then
+                if usable then
+                    s.taken = true
                 end
-                if usable and keep then
-                    legUsed[c.k] = true
-                    total = total + c.save
-                    c.t = t
-                    table.insert(times[key], t)
-                    table.insert(chosen, c)
-                end
+            elseif usable and keep then
+                legUsed[c.k] = true
+                total = total + c.save
+                c.t = t
+                table.insert(times[key], t)
+                table.insert(chosen, c)
+            elseif usable then
+                s.keep = true
             end
         end
         -- 귀환석 1회 남기기: 다 고른 뒤 끝나는 시각이 당겨졌으니 다시 확인하고, 안 되면 덜 줄어드는 귀환석부터 뺀다
@@ -5902,36 +5916,46 @@ QTR.SetupRoute = function()
                 end
                 total = total - chosen[weakest].save
                 table.remove(chosen, weakest)
+                seen.hearth.keep = true
             end
         end
         table.sort(chosen, function(a, b) return a.k < b.k end)
-        local hasHearth = false
+        -- 넣지 않은 수단과 그 이유 (수단 목록 순): { { key, text }, ... }
+        local used = {}
         for _, c in ipairs(chosen) do
-            if c.m.key == "hearth" then
-                hasHearth = true
-            end
+            used[c.m.key] = true
         end
-        local hearthM
+        local reasons, hearthWhy = {}, nil
         for _, m in ipairs(methods) do
-            if m.key == "hearth" then
-                hearthM = m
+            if not used[m.key] then
+                local s = seen[m.key] or {}
+                local text
+                if not s.worth then
+                    text = L["15초 이상 빨라지는 구간이 없어서."]
+                elseif s.keep then
+                    text = L["마칠 때 1회 남기기 때문에. 지금 쓰면 다 마칠 때까지 대기시간이 끝나지 않습니다. (설정에서 끌 수 있습니다)"]
+                elseif s.taken then
+                    text = L["그 구간에는 더 많이 줄어드는 다른 수단을 넣어서."]
+                elseif m.remain and m.remain > 0 then
+                    local left = math.ceil(m.remain / 60)
+                    text = (left >= 60) and L["대기시간 중이라서 (약 %d시간 %d분 남음)."]:format(math.floor(left / 60), left % 60)
+                        or L["대기시간 중이라서 (약 %d분 남음)."]:format(left)
+                else
+                    text = L["경로에서 쓸 차례에 쓸 수 없어서 (대기시간이나 끝나는 시각)."]
+                end
+                table.insert(reasons, { key = m.key, text = text })
+                if m.key == "hearth" then
+                    hearthWhy = text
+                end
             end
         end
-        if hasHearth or #chosen > 0 then
-            return chosen, nil -- 다른 귀환형 이동을 넣었으면 귀환석 이유는 알리지 않는다
+        -- 두 번째 반환값(예전 형식): 아무것도 넣지 않았을 때 귀환석 이유. 귀환 지점을 몰라 목록에 없으면 받은 why
+        if #chosen > 0 then
+            hearthWhy = nil
+        elseif not hearthWhy then
+            hearthWhy = why
         end
-        if not hearthM then
-            return chosen, why
-        end
-        if not worth then
-            return chosen, L["15초 이상 빨라지는 구간이 없어서."]
-        end
-        if not ready then
-            local wait = hearthM.st.blocked - now
-            return chosen, (wait > 0) and L["귀환석 대기시간 중이라서 (약 %d분 남음)."]:format(math.ceil(wait / 60))
-                or L["귀환석 대기시간 중이라서."]
-        end
-        return chosen, L["마칠 때 1회 남기기 때문에. 지금 쓰면 다 마칠 때까지 대기시간이 끝나지 않습니다. (설정에서 끌 수 있습니다)"]
+        return chosen, hearthWhy, reasons
     end
 
     -- 귀환석만 넣는 자리 (예전 1단계 형식, 시뮬레이션 테스트용): { k, path, save, bind } 또는 nil과 이유
@@ -6660,12 +6684,12 @@ QTR.SetupRoute = function()
         end
         local startPos = PlayerPos()
         TV.RefreshMage() -- 마법사 실버문 순간이동 (포탈처럼 TravelCost에 들어간다)
-        local methods, bindWhy = TV.RecallMethods()
+        local methods, bindWhy, missing = TV.RecallMethods()
         -- 순서와 귀환형 이동 자리를 정하고 실제 비용(이동 합 - 귀환형 이동으로 줄어든 양)을 잰다
         -- 경로 항목을 만들 때 쓸 포탈 목록(p.portals)은 OrderPoints를 부를 때마다 바뀌므로 따로 남긴다
         local function Plan(recalls)
             local o, pl, assumed = OrderPoints(points, startPos, firstIdx, lastSet, recalls)
-            local uses, why = TV.PlanRecalls(o, startPos, methods, bindWhy)
+            local uses, why, reasons = TV.PlanRecalls(o, startPos, methods, bindWhy)
             -- 순서를 짤 때 쓴다고 본 횟수만큼 실제로는 못 쓰면 (대기시간, 1회 남기기) 그 횟수로 한 번 다시 짠다
             if recalls then
                 local got, redo = {}, false
@@ -6680,7 +6704,7 @@ QTR.SetupRoute = function()
                 end
                 if redo then
                     o, pl = OrderPoints(points, startPos, firstIdx, lastSet, recalls)
-                    uses, why = TV.PlanRecalls(o, startPos, methods, bindWhy)
+                    uses, why, reasons = TV.PlanRecalls(o, startPos, methods, bindWhy)
                 end
             end
             local sum, prev, portalsOf = 0, startPos, {}
@@ -6692,7 +6716,7 @@ QTR.SetupRoute = function()
             for _, u in ipairs(uses) do
                 sum = sum - u.save
             end
-            return { order = o, pulled = pl, uses = uses, why = why, cost = sum, portals = portalsOf }
+            return { order = o, pulled = pl, uses = uses, why = why, reasons = reasons, cost = sum, portals = portalsOf }
         end
         -- 귀환형 이동을 고려해 짠 순서와, 순서를 먼저 정하고 귀환형 이동을 끼운 순서(1단계 방식) 중 실제로 빠른 쪽
         -- (순서를 짤 때는 대기시간을 따지지 않아, 대기시간 때문에 원래 노린 자리에 못 쓰면 1단계 방식이 나을 수 있다)
@@ -6704,7 +6728,7 @@ QTR.SetupRoute = function()
             end
         end
         local order, pulled = plan.order, plan.pulled
-        local recallUses, hearthWhyNot = plan.uses, plan.why
+        local recallUses, whyNots = plan.uses, plan.reasons or {}
         local useAt = {}
         for _, u in ipairs(recallUses) do
             useAt[u.k] = u
@@ -6807,9 +6831,21 @@ QTR.SetupRoute = function()
                 Print(L["%s 동선에 넣었습니다: %s 가기 전 (약 %s 단축)"]:format(TV.OBJ[u.m.key], tostring(p.title or p.questID)
                     .. ((p.zone and p.zone ~= "") and (" (" .. p.zone .. ")") or ""), saveText))
             end
-        elseif hearthWhyNot and not reason then
-            -- 넣지 않은 이유는 새로 시작할 때만 알린다 (다시 짤 때마다 알리면 시끄럽다)
-            Print(L["귀환석은 넣지 않았습니다: "] .. hearthWhyNot)
+        end
+        -- 넣지 않은 이유 (설정 "넣지 않은 이유를 채팅창에 알리기", 기본 끔, 2026-11-08 사용자 요청. 그전에는 귀환석만, 아무것도 안 넣었을 때 늘 알렸다)
+        --   가지고 있고 설정도 켠 수단만: 목록에 넣었는데 고르지 않은 것(whyNots)과 위치를 몰라 목록에 못 넣은 것(missing)
+        --   새로 시작할 때만 알린다 (다시 짤 때마다 알리면 시끄럽다)
+        if DB.settings.travelWhyOn and not reason and not quiet then
+            local listed = {}
+            for _, w in ipairs(whyNots) do
+                listed[w.key] = true
+                Print(L["%s 넣지 않았습니다: %s"]:format(TV.OBJ[w.key] or w.key, w.text))
+            end
+            for _, key in ipairs({ "hearth", "astral", "arcantina", "maisara", "dundun" }) do
+                if missing[key] and not listed[key] then
+                    Print(L["%s 넣지 않았습니다: %s"]:format(TV.OBJ[key], missing[key]))
+                end
+            end
         end
         PointFirst()
         QTR.RoutePopupUpdate()
@@ -9316,6 +9352,14 @@ local function BuildOptions()
                             .. L["제작자가 장난감이 없어 게임에서 확인하지 못한 기능입니다. 써 보시고 이상하면 알려 주세요."],
                         get = function() return DB.settings.travelDundunOn == true end,
                         set = function(_, val) DB.settings.travelDundunOn = val or nil end,
+                    },
+                    -- 2026-11-08 사용자 요청 (램값 내비게이션에서 마이사라가 빠진 까닭을 알 수 없었다). 기본 끔
+                    travelWhy = {
+                        type = "toggle", name = L["넣지 않은 이유를 채팅창에 알리기"], order = 6.8, width = "full",
+                        desc = L["내비게이션을 시작할 때, 위의 이동 수단 중 가지고 있고 켜 둔 것을 동선에 넣지 않았으면 그 이유를 한 줄씩 알립니다.\n"]
+                            .. L["예: 15초 이상 빨라지는 구간이 없어서, 대기시간 중이라서, 귀환석 1회 남기기 때문에"],
+                        get = function() return DB.settings.travelWhyOn == true end,
+                        set = function(_, val) DB.settings.travelWhyOn = val or nil end,
                     },
                     travelPopup = {
                         type = "toggle", name = L["귀환석, 순간이동을 쓸 차례에 사용 버튼 창 띄우기"], order = 7, width = "full",

@@ -289,11 +289,9 @@ tip: 77
   button: shown=true type=spell spell=556 item=nil toy=nil text=영혼의 귀환: 실버문 | 클릭해서 사용
 ==T T1b astral also on cooldown -> nothing
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 2번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 실버문행 포탈 (하란다르)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
   route: 실버문행 포탈 (하란다르) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
 ==T T1c astral setting off -> nothing
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 2번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 실버문행 포탈 (하란다르)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
   route: 실버문행 포탈 (하란다르) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
 ==T T2 hearth + astral both ready, keep off, quests in 똬리 and 공허폭풍
 |cffffd100[QTR]|r 내비게이션: 3곳 (포탈 2번, 귀환석 1번, 영혼의 귀환 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 귀환석으로 실버문
@@ -302,7 +300,6 @@ tip: 77
   route: 귀환석: 실버문 / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문) / 영혼의 귀환: 실버문 / 공허폭풍행 포탈 (실버문) / 3. V1 공허폭풍 (실버문)
 ==T T3 arcantina, exit unknown -> nothing
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 2번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 실버문행 포탈 (하란다르)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
   route: 실버문행 포탈 (하란다르) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
 |cffffd100[QTR]|r 귀환 지점: 실버문 (위치 기억함)
 |cffffd100[QTR]|r 대기시간 15분, 최대 충전 1회, 지금 쓸 수 있는 충전 0회 (14분 뒤)
@@ -321,15 +318,12 @@ tip: 77
   navlog last stop: arcantina
 ==T T3d arcantina setting off -> nothing
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 2번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 실버문행 포탈 (하란다르)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
   route: 실버문행 포탈 (하란다르) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
 ==T T3e arcantina on cooldown -> nothing
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 2번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 실버문행 포탈 (하란다르)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
   route: 실버문행 포탈 (하란다르) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. C2 똬리 (실버문) / 2. C1 똬리 (실버문)
 ==T T4 mage in 공허폭풍 far side -> teleport to Silvermoon instead of flying to the portal
 |cffffd100[QTR]|r 내비게이션: 2곳 (순간이동 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V2 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. V2 공허폭풍 (실버문) / 순간이동: 실버문 / 2. E1 영원노래 (실버문)
   button: shown=false type=toy spell=nil item=nil toy=253629 text=장난감: 아르칸티나 열쇠 | 클릭해서 사용
 |cffffd100[QTR]|r 귀환 지점: 실버문 (위치 기억함)
@@ -338,11 +332,9 @@ tip: 77
 |cffffd100[QTR]|r 마법사 실버문 순간이동: 찾음 (순간이동: 실버문)
 ==T T4b mage setting off -> portal
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V2 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
   route: 1. V2 공허폭풍 (실버문) / 실버문행 포탈 (공허폭풍) / 2. E1 영원노래 (실버문)
 ==T T4c mage knows only the old (Burning Crusade) Silvermoon teleport -> portal
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V2 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 귀환석 대기시간 중이라서 (약 14분 남음).
   route: 1. V2 공허폭풍 (실버문) / 실버문행 포탈 (공허폭풍) / 2. E1 영원노래 (실버문)
 |cffffd100[QTR]|r 귀환 지점: 실버문 (위치 기억함)
 |cffffd100[QTR]|r 대기시간 15분, 최대 충전 1회, 지금 쓸 수 있는 충전 0회 (14분 뒤)
@@ -353,12 +345,10 @@ tip: 77
   after Midnight spell, landing: 0 8538 -4823
 ==T T4e wrong learned landing (old Silvermoon) -> removed, teleport used
 |cffffd100[QTR]|r 내비게이션: 2곳 (순간이동 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V2 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. V2 공허폭풍 (실버문) / 순간이동: 실버문 / 2. E1 영원노래 (실버문)
   travelDest.mage:
 ==T T4f mage with hearth ready -> teleport, not hearth
 |cffffd100[QTR]|r 내비게이션: 2곳 (순간이동 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V2 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. V2 공허폭풍 (실버문) / 순간이동: 실버문 / 2. E1 영원노래 (실버문)
 ==T T5 cast astral recall -> learn cooldown and bind
   astralCD: 540  hearthBinds[새 여관]: true  hearth uses: 0
@@ -413,19 +403,16 @@ tip: 77
     2단계: Q1(2395) > Q5(2395) > Q2(2512) > Q4(2437) > Q3(2437) > Q6(2413) / 귀환석: Q6(2413)
 ==T T9a mage finishes in 공허폭풍 -> Silvermoon teleport
 |cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. V9 공허폭풍 (실버문)
 |cffffd100[QTR]|r 내비게이션을 마쳤습니다.
   button: shown=true type=spell spell=1259190 item=nil toy=nil text=순간이동: 실버문 | 클릭해서 사용 (내비게이션 완료)
 ==T T9b shaman -> astral recall
 |cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. V9 공허폭풍 (실버문)
 |cffffd100[QTR]|r 내비게이션을 마쳤습니다.
   button: shown=true type=spell spell=556 item=nil toy=nil text=영혼의 귀환: 실버문 | 클릭해서 사용 (내비게이션 완료)
 ==T T9c warrior, hearth ready -> hearthstone
 |cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. V9 공허폭풍 (실버문)
 |cffffd100[QTR]|r 내비게이션을 마쳤습니다.
   button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
@@ -433,13 +420,11 @@ tip: 77
   button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
 ==T T9e hearth on cooldown -> nothing
 |cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. V9 공허폭풍 (실버문)
 |cffffd100[QTR]|r 내비게이션을 마쳤습니다.
   button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
 ==T T9f route popup off, finish popup on -> hearthstone
 |cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. V9 공허폭풍 (실버문)
 |cffffd100[QTR]|r 내비게이션을 마쳤습니다.
   button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
@@ -448,37 +433,31 @@ tip: 77
   button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
 ==T T9h finish popup setting off -> nothing
 |cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. V9 공허폭풍 (실버문)
 |cffffd100[QTR]|r 내비게이션을 마쳤습니다.
   button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
 ==T T9i finish next to the inn -> nothing
 |cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. S9 실버문 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. S9 실버문 (실버문)
 |cffffd100[QTR]|r 내비게이션을 마쳤습니다.
   button: shown=false type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
 ==T T9j mage, teleport unchecked -> hearthstone
 |cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. V9 공허폭풍 (실버문)
 |cffffd100[QTR]|r 내비게이션을 마쳤습니다.
   button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
 ==T T9k hearth unchecked, Arcantina key owned -> Arcantina key
 |cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. V9 공허폭풍 (실버문)
 |cffffd100[QTR]|r 내비게이션을 마쳤습니다.
   button: shown=true type=toy spell=nil item=nil toy=253629 text=장난감: 아르칸티나 열쇠 | 클릭해서 사용 (내비게이션 완료)
 ==T T9l hearth unchecked, key on cooldown -> nothing, quietly (no chat line)
 |cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. V9 공허폭풍 (실버문)
 |cffffd100[QTR]|r 내비게이션을 마쳤습니다.
   button: shown=false type=toy spell=nil item=nil toy=253629 text=장난감: 아르칸티나 열쇠 | 클릭해서 사용 (내비게이션 완료)
 ==T T9m hearth and key unchecked -> nothing
 |cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
-|cffffd100[QTR]|r 귀환석은 넣지 않았습니다: 15초 이상 빨라지는 구간이 없어서.
   route: 1. V9 공허폭풍 (실버문)
 |cffffd100[QTR]|r 내비게이션을 마쳤습니다.
   button: shown=false type=toy spell=nil item=nil toy=253629 text=장난감: 아르칸티나 열쇠 | 클릭해서 사용 (내비게이션 완료)
