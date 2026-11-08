@@ -1,0 +1,11 @@
+|cffffd100[QTR]|r 로드 완료. /qtr 창 열기, /qtr set 설정창
+==T 1) 한 곳짜리 경로
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. G1 줄아만 (줄아만)
+  route: 1. G1 줄아만 (줄아만)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+|cffffd100[QTR]|r 퀘81 (줄아만) +1,063|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 오늘 1개, 1,063|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 달성률 +0.02% / |cff00ff00달성 예상 1일 단축|r
+==T 2) 마친 뒤 결과 줄 (창 안에 들어감)
+  |TInterface\RaidFrame\ReadyCheck-Ready:14:14:0:0|t소요 시간 1분 미만, 퀘스트 1개, 획득 골드 1,063|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t, 진척도 +0.02%p | 다음 추천: 남은 골드퀘가 있는 다른 캐릭터가 없습니다.
+==T 3) 창보다 길게 재지면 진척도부터 다음 줄로
+  |TInterface\RaidFrame\ReadyCheck-Ready:14:14:0:0|t소요 시간 1분 미만, 퀘스트 1개, 획득 골드 1,063|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t, | 진척도 +0.02%p | 다음 추천: 남은 골드퀘가 있는 다른 캐릭터가 없습니다.
+==T end

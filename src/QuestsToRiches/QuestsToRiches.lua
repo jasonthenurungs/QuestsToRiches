@@ -7987,6 +7987,7 @@ QTR.SetupRoute = function()
         --               다 마쳤으면 결과 한 줄: "체크 소요 시간 17분, 퀘스트 5개, 획득 골드 6,015, 진척도 +0.09%p"
         local doneText = FormatGold(doneGold) .. (doneCache > 0 and L[", 정점 보관함 %d개"]:format(doneCache) or "")
         local foot
+        local wrapped = false
         if places > 0 then
             foot = DONE_CHECK .. "|cffffffff" .. L["획득 %s  남은 골드 %s"]:format(doneText, FormatGold(leftGold))
             if leftCache > 0 then
@@ -7997,14 +7998,23 @@ QTR.SetupRoute = function()
             local elapsed = (QTR.navStart and QTR.navFinish) and (QTR.navFinish - QTR.navStart) or nil
             local goal = GetGoalGold() * 10000
             local pct = (goal > 0) and string.format("+%.2f%%p", doneGold / goal * 100) or "-"
-            foot = DONE_CHECK .. "|cffffffff" .. L["소요 시간 %s, 퀘스트 %d개, 획득 골드 %s"]:format(elapsed and FormatDuration(elapsed) or "-", doneCount, doneText)
-                .. "|r" .. L[", 진척도 |cff00ff00%s|r"]:format(pct)
+            local head = DONE_CHECK .. "|cffffffff" .. L["소요 시간 %s, 퀘스트 %d개, 획득 골드 %s"]:format(elapsed and FormatDuration(elapsed) or "-", doneCount, FormatGold(doneGold))
+            local cachePart = (doneCache > 0) and L[", 정점 보관함 %d개"]:format(doneCache) or ""
+            local pctPart = L[", 진척도 |cff00ff00%s|r"]:format(pct)
+            foot = head .. cachePart .. "|r" .. pctPart
+            -- 창보다 길면 "정점 보관함"(없으면 "진척도")부터 다음 줄로 (2026-11-08 사용자 요청: 완료 결과가 창 밖으로 넘쳤다)
+            popFoot:SetText(foot)
+            if (popFoot:GetStringWidth() or 0) > POP_W - 24 then
+                local rest = (cachePart .. pctPart):gsub("^,%s*", "")
+                foot = head .. ",|r\n|cffffffff" .. rest .. "|r"
+                wrapped = true
+            end
         end
-        local footLines = 1
+        local footLines = wrapped and 2 or 1
         -- 다 마쳤으면 결과 아래에 다음 추천 캐릭터 (한 바퀴를 끝낸 지금이 다음 캐릭터를 고를 때)
         if places == 0 and QTR.RecommendText then
             foot = foot .. "\n" .. QTR.RecommendText()
-            footLines = 2
+            footLines = footLines + 1
         end
         popFoot:ClearAllPoints()
         popFoot:SetPoint("TOPLEFT", pop, "TOPLEFT", 12, y - 6)
