@@ -1,6 +1,6 @@
 # 마이사라 동굴 순간이동 (2026-11-01): 쐐기돌 던전 순간이동 "심연의 동굴의 길"(1254559)을 귀환형 이동으로 동선에 넣는다
-#   줄아만 마이사라 동굴 입구(2437, 0.445193, 0.393821)에 내린다. 대기시간 8시간, 설정 travelMaisaraOn으로 켠다 (2026-11-02부터 기본 끔)
-#   배운 캐릭터만, 대기시간 중이면 넣지 않음, 사용 버튼 창은 그 주문, 내리면 다음 목적지로, /qtr hearth 상태 줄
+#   줄아만 마이사라 동굴 입구(2437, 0.445193, 0.393821)에 내린다. 쿨타임 8시간, 설정 travelMaisaraOn으로 켠다 (2026-11-02부터 기본 끔)
+#   배운 캐릭터만, 쿨타임 중이면 넣지 않음, 사용 버튼 창은 그 주문, 내리면 다음 목적지로, /qtr hearth 상태 줄
 import os as _os
 TD = _os.path.dirname(_os.path.abspath(__file__)) + '/'
 from lupa import LuaRuntime
@@ -85,7 +85,7 @@ lua.eval(r'''function(QTR, out)
   function IsInGuild() return true end
   function UnitRace() return "x", "Orc" end
   function UnitClass() return "x", "WARRIOR" end
-  -- 귀환석은 대기시간 중 (마이사라 동굴 순간이동만 보려고)
+  -- 귀환석은 쿨타임 중 (마이사라 동굴 순간이동만 보려고)
   ICD = { [6948] = { NOWT - 60, 900 } }
   C_Container.GetItemCooldown = function(id) local c = ICD[id] or { 0, 0 }; return c[1], c[2], 1 end
   KNOWN = {}
@@ -143,9 +143,9 @@ lua.eval(r'''function(QTR, out)
   Tick()
   print("  first: " .. tostring(QTR.route and QTR.route[1].label))
   SCD[1254559] = { NOWT - 60, 28800 }
-  print("==T 4) /qtr hearth (대기시간 중)")
+  print("==T 4) /qtr hearth (쿨타임 중)")
   SlashCmdList["QUESTSTORICHES"]("hearth")
-  route("5) 대기시간 중 -> 넣지 않음")
+  route("5) 쿨타임 중 -> 넣지 않음")
   SCD[1254559] = nil
   OPTIONS.args.travelGroup.args.travelMaisara.set(nil, false)
   print("  setting travelMaisaraOn = " .. tostring(DB.settings.travelMaisaraOn) .. " / toggle get = " .. tostring(OPTIONS.args.travelGroup.args.travelMaisara.get()))

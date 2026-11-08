@@ -1,6 +1,6 @@
 # 넣지 않은 이유를 채팅창에 알리기 (2026-11-08 사용자 요청, 기본 끔): 수단별 이유, 위치를 몰라 못 넣은 수단, 다시 짤 때는 조용히
-#   줄아만 마이사라 동굴 입구(2437, 0.445193, 0.393821)에 내린다. 대기시간 8시간, 설정 travelMaisaraOn으로 켠다 (2026-11-02부터 기본 끔)
-#   배운 캐릭터만, 대기시간 중이면 넣지 않음, 사용 버튼 창은 그 주문, 내리면 다음 목적지로, /qtr hearth 상태 줄
+#   줄아만 마이사라 동굴 입구(2437, 0.445193, 0.393821)에 내린다. 쿨타임 8시간, 설정 travelMaisaraOn으로 켠다 (2026-11-02부터 기본 끔)
+#   배운 캐릭터만, 쿨타임 중이면 넣지 않음, 사용 버튼 창은 그 주문, 내리면 다음 목적지로, /qtr hearth 상태 줄
 import os as _os
 TD = _os.path.dirname(_os.path.abspath(__file__)) + '/'
 from lupa import LuaRuntime
@@ -85,7 +85,7 @@ lua.eval(r'''function(QTR, out)
   function IsInGuild() return true end
   function UnitRace() return "x", "Orc" end
   function UnitClass() return "x", "WARRIOR" end
-  -- 귀환석은 대기시간 중 (마이사라 동굴 순간이동만 보려고)
+  -- 귀환석은 쿨타임 중 (마이사라 동굴 순간이동만 보려고)
   ICD = { [6948] = { NOWT - 60, 900 } }
   C_Container.GetItemCooldown = function(id) local c = ICD[id] or { 0, 0 }; return c[1], c[2], 1 end
   KNOWN = {}
@@ -120,7 +120,7 @@ lua.eval(r'''function(QTR, out)
       .. " text=" .. clean(rawget(tb.text, "_text")):gsub("\n", " | "))
   end
 
-  -- 출발: 실버문, 목적지: 줄아만 셋. 귀환석(실버문 귀환)은 대기시간 중, 마이사라는 배움
+  -- 출발: 실버문, 목적지: 줄아만 셋. 귀환석(실버문 귀환)은 쿨타임 중, 마이사라는 배움
   for k in pairs(Q) do Q[k] = nil end
   Q[91811] = { map = 2437, title = "그을린 거울", money = 10000000, t = 86400, x = 0.5514, y = 0.1807 }
   Q[91805] = { map = 2437, title = "잠복굴의 가지", money = 10000000, t = 86400, x = 0.4047, y = 0.4956 }
@@ -130,10 +130,10 @@ lua.eval(r'''function(QTR, out)
   print("  설정 기본값: " .. tostring(OPTIONS.args.travelGroup.args.travelWhy.get()))
   route("1) 기본(끔): 마이사라를 넣어도 넣었다는 알림, 귀환석 이유 모두 알리지 않음 (2026-11-08 사용자 결정)", 2393, 0.567, 0.652)
   SCD[1254559] = { NOWT - 60, 28800 }
-  route("1b) 기본(끔), 마이사라 대기시간 중 -> 여전히 알리지 않음", 2393, 0.567, 0.652)
+  route("1b) 기본(끔), 마이사라 쿨타임 중 -> 여전히 알리지 않음", 2393, 0.567, 0.652)
   OPTIONS.args.travelGroup.args.travelWhy.set(nil, true)
   print("  켬 -> travelWhyOn = " .. tostring(DB.settings.travelWhyOn))
-  route("2) 켬: 마이사라와 귀환석 둘 다 대기시간 중 -> 둘 다 이유", 2393, 0.567, 0.652)
+  route("2) 켬: 마이사라와 귀환석 둘 다 쿨타임 중 -> 둘 다 이유", 2393, 0.567, 0.652)
   SCD[1254559] = nil
   route("3) 켬: 마이사라를 넣음 -> 넣은 알림, 귀환석만 이유", 2393, 0.567, 0.652)
   route("4) 켬: 줄아만 안에서 출발 -> 15초 이상 빨라지는 구간이 없어서", 2437, 0.50, 0.40)

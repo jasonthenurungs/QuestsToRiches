@@ -1,5 +1,5 @@
 # 둔둔의 풍요로운 이동 수단 (2026-11-07, 엔젤스쿨님 제안, 사용자 결정 "일단 구현, 필요한 사람만 켜기")
-#   장난감 266370, 주문 1278093, 대기시간 30분, 설정 travelDundunOn (기본 끔)
+#   장난감 266370, 주문 1278093, 쿨타임 30분, 설정 travelDundunOn (기본 끔)
 #   지금 풍요 지점: 이벤트 목록(GetEventsForMap)의 아이콘 UI-EventPoi-abundancebountiful, 남은 시간: 툴팁 위젯 글자
 #   장난감 없음/설정 끔이면 넣지 않음, 켜면 넣음, 사용 버튼은 장난감, 쓰면 내린 곳을 지점별로 기억,
 #   지점이 바뀌면 다시 짜기, 끝나기 직전이면 넣지 않음, 한밤 밖에서 출발하면 첫 구간에는 쓰지 않음, 남은 시간 글자 읽기
@@ -107,7 +107,7 @@ lua.eval(r'''function(QTR, out)
   function IsInGuild() return true end
   function UnitRace() return "x", "Orc" end
   function UnitClass() return "x", "WARRIOR" end
-  -- 귀환석은 대기시간 중 (둔둔 장난감만 보려고)
+  -- 귀환석은 쿨타임 중 (둔둔 장난감만 보려고)
   ICD = { [6948] = { NOWT - 60, 900 } }
   C_Container.GetItemCooldown = function(id) local c = ICD[id] or { 0, 0 }; return c[1], c[2], 1 end
   function IsPlayerSpell(id) return false end
@@ -163,9 +163,9 @@ lua.eval(r'''function(QTR, out)
   Tick()
   print("  first: " .. tostring(QTR.route and QTR.route[1].label))
   ICD[266370] = { NOWT - 60, 1800 }
-  print("==T 5) /qtr hearth (대기시간 중, 내린 곳 기억함)")
+  print("==T 5) /qtr hearth (쿨타임 중, 내린 곳 기억함)")
   SlashCmdList["QUESTSTORICHES"]("hearth")
-  route("6) 대기시간 중 -> 넣지 않음")
+  route("6) 쿨타임 중 -> 넣지 않음")
   ICD[266370] = nil
   route("7) 다시 쓸 수 있음 -> 넣음 (도착지는 기억한 곳)")
   print("  arrival: " .. string.format("c=%d x=%.1f y=%.1f", QTR.route[1].arrival.c, QTR.route[1].arrival.x, QTR.route[1].arrival.y))

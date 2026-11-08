@@ -1,6 +1,6 @@
 # 구렁로봇 7001로 킨도잔의 미궁 (2026-11-08 사용자 결정, 기본 끔): 칩 학습, 동선, 사용 버튼, 미궁 자동 선택과 다른 애드온용 신호, 내린 곳 기억
-#   줄아만 마이사라 동굴 입구(2437, 0.445193, 0.393821)에 내린다. 대기시간 8시간, 설정 travelMaisaraOn으로 켠다 (2026-11-02부터 기본 끔)
-#   배운 캐릭터만, 대기시간 중이면 넣지 않음, 사용 버튼 창은 그 주문, 내리면 다음 목적지로, /qtr hearth 상태 줄
+#   줄아만 마이사라 동굴 입구(2437, 0.445193, 0.393821)에 내린다. 쿨타임 8시간, 설정 travelMaisaraOn으로 켠다 (2026-11-02부터 기본 끔)
+#   배운 캐릭터만, 쿨타임 중이면 넣지 않음, 사용 버튼 창은 그 주문, 내리면 다음 목적지로, /qtr hearth 상태 줄
 import os as _os
 TD = _os.path.dirname(_os.path.abspath(__file__)) + '/'
 from lupa import LuaRuntime
@@ -85,7 +85,7 @@ lua.eval(r'''function(QTR, out)
   function IsInGuild() return true end
   function UnitRace() return "x", "Orc" end
   function UnitClass() return "x", "WARRIOR" end
-  -- 귀환석은 대기시간 중 (마이사라 동굴 순간이동만 보려고)
+  -- 귀환석은 쿨타임 중 (마이사라 동굴 순간이동만 보려고)
   ICD = { [6948] = { NOWT - 60, 900 } }
   C_Container.GetItemCooldown = function(id) local c = ICD[id] or { 0, 0 }; return c[1], c[2], 1 end
   KNOWN = {}
@@ -135,7 +135,7 @@ lua.eval(r'''function(QTR, out)
   function IsShiftKeyDown() return SHIFT end
   local function picked() local r = table.concat(PICKED, ","); PICKED = {}; return r == "" and "없음" or r end
   for k in pairs(Q) do Q[k] = nil end
-  -- 영원노래 숲 남쪽(미궁 입구 가까이) 퀘스트 하나, 하란다르 먼 구석에서 출발 (귀환석은 대기시간 중)
+  -- 영원노래 숲 남쪽(미궁 입구 가까이) 퀘스트 하나, 하란다르 먼 구석에서 출발 (귀환석은 쿨타임 중)
   Q[71] = { map = 2395, title = "E1 영원노래 남쪽", money = 10000000, t = 86400, x = 0.60, y = 0.74 }
   DB.settings.travelWhyOn = true
   route("1) 장난감은 있지만 설정 기본 끔 -> 넣지 않음")
@@ -208,9 +208,9 @@ lua.eval(r'''function(QTR, out)
   print("  delveBotLab: " .. tostring(DB.delveBotLab))
   NPCGUID = "Vehicle-0-3058-0-18913-232267-00006FAC77"
   QTR.TestOnGossip()
-  print("==T 11) 대기시간 중 -> 이유")
+  print("==T 11) 쿨타임 중 -> 이유")
   ICD[230850] = { NOWT - 60, 3600 }
-  route("11) 대기시간")
+  route("11) 쿨타임")
   ICD[230850] = { 0, 0 }
   print("==T 12) /qtr hearth")
   SlashCmdList["QUESTSTORICHES"]("hearth")

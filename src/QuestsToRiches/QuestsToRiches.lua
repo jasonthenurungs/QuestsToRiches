@@ -6082,20 +6082,20 @@ QTR.SetupRoute = function()
                 if not s.worth then
                     text = L["15초 이상 빨라지는 구간이 없어서."]
                 elseif s.keep then
-                    text = L["마칠 때 1회 남기기 때문에. 지금 쓰면 다 마칠 때까지 대기시간이 끝나지 않습니다. (설정에서 끌 수 있습니다)"]
+                    text = L["마칠 때 1회 남기기 때문에. 지금 쓰면 다 마칠 때까지 쿨타임이 끝나지 않습니다. (설정에서 끌 수 있습니다)"]
                 elseif s.prefBy and s.prefBy.pref then
                     -- 차이가 1초 미만이면 "약 0초" 대신 "거의 같아서" (2026-11-08 게임: 줄아만 91801은 두 도착점에서 거리가 약 10야드 차이)
                     local obj = TV.OBJ[s.prefBy.m.key] or s.prefBy.m.key
-                    text = (s.prefBy.pref.sec < 1) and L["줄어드는 시간이 거의 같아서 대기시간이 짧은 %s 대신 넣어서."]:format(obj)
-                        or L["줄어드는 시간 차이가 약 %d초뿐이라 대기시간이 짧은 %s 대신 넣어서."]:format(s.prefBy.pref.sec, obj)
+                    text = (s.prefBy.pref.sec < 1) and L["줄어드는 시간이 거의 같아서 쿨타임이 짧은 %s 대신 넣어서."]:format(obj)
+                        or L["줄어드는 시간 차이가 약 %d초뿐이라 쿨타임이 짧은 %s 대신 넣어서."]:format(s.prefBy.pref.sec, obj)
                 elseif s.taken then
                     text = L["그 구간에는 더 많이 줄어드는 다른 수단을 넣어서."]
                 elseif m.remain and m.remain > 0 then
                     local left = math.ceil(m.remain / 60)
-                    text = (left >= 60) and L["대기시간 중이라서 (약 %d시간 %d분 남음)."]:format(math.floor(left / 60), left % 60)
-                        or L["대기시간 중이라서 (약 %d분 남음)."]:format(left)
+                    text = (left >= 60) and L["쿨타임 중이라서 (약 %d시간 %d분 남음)."]:format(math.floor(left / 60), left % 60)
+                        or L["쿨타임 중이라서 (약 %d분 남음)."]:format(left)
                 else
-                    text = L["경로에서 쓸 차례에 쓸 수 없어서 (대기시간이나 끝나는 시각)."]
+                    text = L["경로에서 쓸 차례에 쓸 수 없어서 (쿨타임이나 끝나는 시각)."]
                 end
                 table.insert(reasons, { key = m.key, text = text })
                 if m.key == "hearth" then
@@ -6366,7 +6366,7 @@ QTR.SetupRoute = function()
         local now = time()
         Print(L["귀환 지점: "] .. tostring(name or L["확인 불가"])
             .. (h and L[" (위치 기억함)"] or L[" (위치 모름: 귀환석을 한 번 타면 기억합니다)"]))
-        Print(L["대기시간 %d분, 최대 충전 %d회, 지금 쓸 수 있는 충전 %d회"]:format(math.floor(st.cd / 60), st.maxCh,
+        Print(L["쿨타임 %d분, 최대 충전 %d회, 지금 쓸 수 있는 충전 %d회"]:format(math.floor(st.cd / 60), st.maxCh,
             (now < st.blocked) and 0 or HearthCharges(st, st.uses, now))
             .. ((now < st.blocked) and L[" (%d분 뒤)"]:format(math.ceil((st.blocked - now) / 60)) or ""))
         Print(L["동선에 넣기: "] .. (DB.settings.hearthOff and L["끔"] or L["켬"])
@@ -6383,7 +6383,7 @@ QTR.SetupRoute = function()
             local remain = TV.SpellCD(ASTRAL_SPELL)
             local me = MyChar() or {}
             Print(L["영혼의 귀환: "] .. (DB.settings.travelAstralOff and L["설정에서 끔"] or L["켬"])
-                .. L[", 대기시간 %d분"]:format(math.floor((me.astralCD or ASTRAL_CD) / 60))
+                .. L[", 쿨타임 %d분"]:format(math.floor((me.astralCD or ASTRAL_CD) / 60))
                 .. ((remain and remain > 0) and L[" (%d분 뒤 사용 가능)"]:format(math.ceil(remain / 60)) or ""))
         end
         if TV.HasToy(ARC_ITEM) then
@@ -7083,8 +7083,8 @@ QTR.SetupRoute = function()
                 local saveText = (saveSec < 60) and L["%d초"]:format(saveSec) or L["%d분"]:format(math.floor(saveSec / 60 + 0.5))
                 Print(L["%s 동선에 넣었습니다: %s 가기 전 (약 %s 단축)"]:format(TV.OBJ[u.m.key], tostring(p.title or p.questID)
                     .. ((p.zone and p.zone ~= "") and (" (" .. p.zone .. ")") or ""), saveText)
-                    .. (u.pref and ((u.pref.sec < 1) and L[" 걸리는 시간이 %s 쪽과 거의 같아 대기시간이 짧은 쪽을 넣었습니다."]:format(TV.NAMES[u.pref.over] or u.pref.over)
-                        or L[" %s보다 약 %d초 느리지만 대기시간이 짧아서 넣었습니다."]:format(TV.NAMES[u.pref.over] or u.pref.over, u.pref.sec)) or ""))
+                    .. (u.pref and ((u.pref.sec < 1) and L[" 걸리는 시간이 %s 쪽과 거의 같아 쿨타임이 짧은 쪽을 넣었습니다."]:format(TV.NAMES[u.pref.over] or u.pref.over)
+                        or L[" %s보다 약 %d초 느리지만 쿨타임이 짧아서 넣었습니다."]:format(TV.NAMES[u.pref.over] or u.pref.over, u.pref.sec)) or ""))
             end
         end
         -- 넣지 않은 이유 (설정 "이동 수단을 넣었는지와 그 이유를 채팅창에 알리기", 기본 끔, 2026-11-08 사용자 요청. 그전에는 귀환석만, 아무것도 안 넣었을 때 늘 알렸다)
@@ -9345,7 +9345,7 @@ local function BuildOptions()
                 args = {
                     desc = {
                         type = "description",
-                        name = L["|cffffff00/qtr : 창 열기/닫기\n/qtr gq : 골드퀘 탭 열기\n/qtr rich : 부자되기 탭 열기\n/qtr stats : 획득량 탭 열기\n/qtr hold : 보유량 탭 열기\n/qtr set : 설정창 열기/닫기\n/qtr list : 캐릭터별 저장된 보유 골드 출력\n/qtr ban, /qtr unban : 추적 제외 퀘스트 추가, 해제 (퀘스트 Shift+클릭)\n/qtr route : 남은 골드퀘 내비게이션 (/qtr route clear : 경로안내 중지)\n/qtr hearth : 귀환석 상태 (귀환 지점, 대기시간, 쓸 수 있는 충전 수)\n/qtr pos [메모] : 지금 위치의 지도 ID와 좌표 저장 (list : 목록, clear : 지우기)\n골드퀘 탭의 퀘스트 줄 클릭: 웨이포인트\n창 위에 마우스를 올리고 숫자키 1~4: 탭 전환\n창 위에 마우스를 올리고 탭 버튼 단축키: 골드퀘 R 내비게이션 시작 / 획득량 Q W E R 보기, T 현재 / 보유량 Q W 보기, T 오늘\n획득량, 보유량 탭의 이전/다음: 쉼표, 마침표 또는 마우스 휠|r\n|cffaaaaaa모든 설정은 계정 공통이라 모든 서버, 모든 캐릭터에 같이 적용됩니다.|r"],
+                        name = L["|cffffff00/qtr : 창 열기/닫기\n/qtr gq : 골드퀘 탭 열기\n/qtr rich : 부자되기 탭 열기\n/qtr stats : 획득량 탭 열기\n/qtr hold : 보유량 탭 열기\n/qtr set : 설정창 열기/닫기\n/qtr list : 캐릭터별 저장된 보유 골드 출력\n/qtr ban, /qtr unban : 추적 제외 퀘스트 추가, 해제 (퀘스트 Shift+클릭)\n/qtr route : 남은 골드퀘 내비게이션 (/qtr route clear : 경로안내 중지)\n/qtr hearth : 귀환석 상태 (귀환 지점, 쿨타임, 쓸 수 있는 충전 수)\n/qtr pos [메모] : 지금 위치의 지도 ID와 좌표 저장 (list : 목록, clear : 지우기)\n골드퀘 탭의 퀘스트 줄 클릭: 웨이포인트\n창 위에 마우스를 올리고 숫자키 1~4: 탭 전환\n창 위에 마우스를 올리고 탭 버튼 단축키: 골드퀘 R 내비게이션 시작 / 획득량 Q W E R 보기, T 현재 / 보유량 Q W 보기, T 오늘\n획득량, 보유량 탭의 이전/다음: 쉼표, 마침표 또는 마우스 휠|r\n|cffaaaaaa모든 설정은 계정 공통이라 모든 서버, 모든 캐릭터에 같이 적용됩니다.|r"],
                         order = 1, fontSize = "medium", width = "full",
                     },
                 },
@@ -9578,7 +9578,7 @@ local function BuildOptions()
                 args = {
                     hearthOn = {
                         type = "toggle", name = L["귀환석을 동선에 넣기"], order = 2, width = "full",
-                        desc = L["귀환석을 쓰면 15초 이상 빨라지는 구간이 있으면 한 번 넣습니다. 귀환석 모양 장난감도 같은 대기시간이라 함께 쓸 수 있습니다.\n"]
+                        desc = L["귀환석을 쓰면 15초 이상 빨라지는 구간이 있으면 한 번 넣습니다. 귀환석 모양 장난감도 같은 쿨타임이라 함께 쓸 수 있습니다.\n"]
                             .. L["귀환 지점 위치는 귀환석을 한 번 타면 캐릭터별로 기억합니다. 길드 혜택(빠른 귀환)과 인간 종족 특성도 반영합니다.\n"]
                             .. L["/qtr hearth 로 지금 상태를 볼 수 있습니다."],
                         get = function() return not DB.settings.hearthOff end,
@@ -9586,33 +9586,33 @@ local function BuildOptions()
                     },
                     travelAstral = {
                         type = "toggle", name = L["주술사 영혼의 귀환을 동선에 넣기"], order = 4, width = "full",
-                        desc = L["귀환 지점으로 가는 주술사 기술입니다. 대기시간이 귀환석과 따로라 귀환석과 함께 쓸 수 있습니다."],
+                        desc = L["귀환 지점으로 가는 주술사 기술입니다. 쿨타임이 귀환석과 따로라 귀환석과 함께 쓸 수 있습니다."],
                         get = function() return not DB.settings.travelAstralOff end,
                         set = function(_, val) DB.settings.travelAstralOff = not val end,
                     },
                     travelMage = {
                         type = "toggle", name = L["마법사 실버문 순간이동을 동선에 넣기"], order = 5, width = "full",
-                        desc = L["대기시간이 없어 포탈처럼 필요할 때마다 씁니다."],
+                        desc = L["쿨타임이 없어 포탈처럼 필요할 때마다 씁니다."],
                         get = function() return not DB.settings.travelMageOff end,
                         set = function(_, val) DB.settings.travelMageOff = not val end,
                     },
                     travelArcantina = {
                         type = "toggle", name = L["아르칸티나로 통하는 개인 열쇠를 동선에 넣기"], order = 6, width = "full",
                         desc = L["아르칸티나에 들어갔다가 나가는 차원문을 타면 실버문 여관(나그네의 쉼터)으로 나옵니다.\n"]
-                            .. L["로딩이 두 번이라 귀환석보다 비용을 조금 크게(약 30초) 잡습니다. 대기시간은 귀환석과 따로입니다."],
+                            .. L["로딩이 두 번이라 귀환석보다 비용을 조금 크게(약 30초) 잡습니다. 쿨타임은 귀환석과 따로입니다."],
                         get = function() return not DB.settings.travelArcantinaOff end,
                         set = function(_, val) DB.settings.travelArcantinaOff = not val end,
                     },
                     travelMaisara = {
                         type = "toggle", name = L["마이사라 동굴 순간이동을 동선에 넣기"], order = 6.5, width = "full",
                         desc = L["쐐기돌 던전 마이사라 동굴을 10단계 이상으로 마치면 받는 순간이동(심연의 동굴의 길)으로 줄아만 마이사라 동굴 입구에 내립니다.\n"]
-                            .. L["15초 이상 빨라지는 구간이 있으면 한 번 넣습니다. 대기시간이 8시간이고 다른 던전 순간이동도 함께 대기시간에 걸리니, 쐐기돌 던전에 갈 때 쓰려면 끄세요."],
+                            .. L["15초 이상 빨라지는 구간이 있으면 한 번 넣습니다. 쿨타임이 8시간이고 다른 던전 순간이동도 함께 쿨타임에 걸리니, 쐐기돌 던전에 갈 때 쓰려면 끄세요."],
                         get = function() return DB.settings.travelMaisaraOn == true end,
                         set = function(_, val) DB.settings.travelMaisaraOn = val or nil end,
                     },
                     travelDundun = {
                         type = "toggle", name = L["둔둔의 풍요로운 이동 수단을 동선에 넣기 (시험 기능)"], order = 6.6, width = "full",
-                        desc = L["지금 풍요가 열린 동굴로 가는 장난감입니다. 대기시간이 30분이라 한 경로에서 두 번까지 넣습니다.\n"]
+                        desc = L["지금 풍요가 열린 동굴로 가는 장난감입니다. 쿨타임이 30분이라 한 경로에서 두 번까지 넣습니다.\n"]
                             .. L["풍요 지점이 끝나기 2분 전부터는 넣지 않고, 안내 중에 지점이 바뀌면 남은 경로를 다시 짭니다.\n"]
                             .. L["제작자가 장난감이 없어 게임에서 확인하지 못한 기능입니다. 써 보시고 이상하면 알려 주세요."],
                         get = function() return DB.settings.travelDundunOn == true end,
@@ -9623,7 +9623,7 @@ local function BuildOptions()
                         desc = L["구렁로봇을 불러 \"킨도잔의 미궁으로 데려다주십시오.\"를 고르면 영원노래 숲 남쪽 미궁 입구로 순간이동합니다.\n"]
                             .. L["미궁 업데이트 칩이 있어야 합니다. 로봇에게 한 번 말을 걸면 칩이 있는지 기억합니다.\n"]
                             .. L["15초 이상 빨라지는 구간이 있으면 한 번 넣고, 그 차례에 로봇에게 말을 걸면 미궁을 자동으로 고릅니다 (Shift를 누르고 말을 걸면 고르지 않습니다).\n"]
-                            .. L["대기시간이 1시간이라 구렁에 갈 때 쓰려면 끄세요."],
+                            .. L["쿨타임이 1시간이라 구렁에 갈 때 쓰려면 끄세요."],
                         get = function() return DB.settings.travelDelveBotOn == true end,
                         set = function(_, val) DB.settings.travelDelveBotOn = val or nil end,
                     },
@@ -9632,7 +9632,7 @@ local function BuildOptions()
                         type = "toggle", name = L["이동 수단을 넣었는지와 그 이유를 채팅창에 알리기"], order = 6.8, width = "full",
                         desc = L["내비게이션을 시작할 때, 위의 이동 수단 중 가지고 있고 켜 둔 것을 동선에 넣었으면 어디서 쓰는지와 줄어드는 시간을,\n"]
                             .. L["넣지 않았으면 그 이유를 한 줄씩 알립니다.\n"]
-                            .. L["예: 15초 이상 빨라지는 구간이 없어서, 대기시간 중이라서, 귀환석 1회 남기기 때문에"],
+                            .. L["예: 15초 이상 빨라지는 구간이 없어서, 쿨타임 중이라서, 귀환석 1회 남기기 때문에"],
                         get = function() return DB.settings.travelWhyOn == true end,
                         set = function(_, val) DB.settings.travelWhyOn = val or nil end,
                     },
@@ -10439,7 +10439,7 @@ SlashCmdList["QUESTSTORICHES"] = function(msg)
         Print(L["/qtr list : 캐릭터별 저장된 보유 골드 출력"])
         Print(L["/qtr ban (퀘스트 Shift+클릭) : 추적 제외 / /qtr unban : 제외 해제"])
         Print(L["/qtr route : 남은 골드퀘 내비게이션 / /qtr route clear : 경로안내 중지"])
-        Print(L["/qtr hearth : 귀환석 상태 (귀환 지점, 대기시간, 쓸 수 있는 충전 수)"])
+        Print(L["/qtr hearth : 귀환석 상태 (귀환 지점, 쿨타임, 쓸 수 있는 충전 수)"])
         Print(L["/qtr pos [메모] : 지금 위치의 지도 ID와 좌표 저장 (/qtr pos list : 목록, /qtr pos clear : 지우기)"])
         Print(L["창 위에 마우스를 올리고 숫자키 1~4 : 탭 전환"])
         Print(L["골드퀘 탭 창 위에 마우스를 올리고 R : 내비게이션 시작"])

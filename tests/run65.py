@@ -216,7 +216,7 @@ lua.eval("""function(out, QTR)
   function UnitRace() return "x", "Orc" end
   CLASS = "SHAMAN"
   function UnitClass() return "x", CLASS end
-  -- 아이템 대기시간: 귀환석(6948), 아르칸티나 열쇠(253629)
+  -- 아이템 쿨타임: 귀환석(6948), 아르칸티나 열쇠(253629)
   ICD = { [6948] = { 0, 0 }, [253629] = { 0, 0 } }
   C_Container.GetItemCooldown = function(id) local c = ICD[id] or { 0, 0 }; return c[1], c[2], 1 end
   KNOWN = {}
@@ -269,7 +269,7 @@ lua.eval("""function(out, QTR)
       .. " item=" .. tostring(rawget(tb, "a_item")) .. " toy=" .. tostring(rawget(tb, "a_toy")) .. " text=" .. clean(rawget(tb.text, "_text")):gsub("\\n", " | "))
   end
 
-  -- 1) 주술사: 귀환석은 대기시간 중, 영혼의 귀환은 쓸 수 있다
+  -- 1) 주술사: 귀환석은 쿨타임 중, 영혼의 귀환은 쓸 수 있다
   KNOWN[556] = true
   ICD[6948] = { NOWT - 60, 900 }
   route("T1 shaman, hearth on cooldown -> astral recall")
@@ -316,7 +316,7 @@ lua.eval("""function(out, QTR)
   ICD[253629] = { 0, 0 }
   TOYS[253629] = nil
 
-  -- 4) 마법사 실버문 순간이동: 주문책 순간이동 묶음에서 찾고, 포탈처럼 경로에 넣는다 (대기시간 없음)
+  -- 4) 마법사 실버문 순간이동: 주문책 순간이동 묶음에서 찾고, 포탈처럼 경로에 넣는다 (쿨타임 없음)
   CLASS = "MAGE"
   KNOWN[1259190] = true
   for k in pairs(Q) do Q[k] = nil end
@@ -361,7 +361,7 @@ lua.eval("""function(out, QTR)
   ICD[6948] = { NOWT - 60, 900 }
   KNOWN[32272] = nil
 
-  -- 5) 영혼의 귀환 시전: 대기시간 길이와 귀환 지점을 기억한다
+  -- 5) 영혼의 귀환 시전: 쿨타임 길이와 귀환 지점을 기억한다
   print("==T T5 cast astral recall -> learn cooldown and bind")
   CLASS = "SHAMAN"
   KNOWN[556] = true
@@ -540,7 +540,7 @@ lua.eval("""function(out, QTR)
     elseif t2 > t1 + 0.5 then worse = worse + 1 else same = same + 1 end
   end
   print(string.format("  나아짐 %d, 같음 %d, 나빠짐 %d, 나아진 경우 평균 %.0f초", better, same, worse, better > 0 and gain / better or 0))
-  print("  (순서를 짤 때는 대기시간을 따지지 않아 나빠질 수도 있으나, RouteStart는 두 방식 중 실제로 빠른 쪽을 고른다)")
+  print("  (순서를 짤 때는 쿨타임을 따지지 않아 나빠질 수도 있으나, RouteStart는 두 방식 중 실제로 빠른 쪽을 고른다)")
   if example then
     print(string.format("  가장 나아진 예 (%.0f초 -> %.0f초)", example.t1, example.t2))
     print("    1단계: " .. example.a)

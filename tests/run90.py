@@ -1,6 +1,6 @@
-# 대기시간이 짧은 수단 우선 (2026-11-08 사용자 결정): 같은 구간에서 30초 안이면 대기시간이 짧은 수단, 내비 기록에 표지 (run.pref)
-#   줄아만 마이사라 동굴 입구(2437, 0.445193, 0.393821)에 내린다. 대기시간 8시간, 설정 travelMaisaraOn으로 켠다 (2026-11-02부터 기본 끔)
-#   배운 캐릭터만, 대기시간 중이면 넣지 않음, 사용 버튼 창은 그 주문, 내리면 다음 목적지로, /qtr hearth 상태 줄
+# 쿨타임이 짧은 수단 우선 (2026-11-08 사용자 결정): 같은 구간에서 30초 안이면 쿨타임이 짧은 수단, 내비 기록에 표지 (run.pref)
+#   줄아만 마이사라 동굴 입구(2437, 0.445193, 0.393821)에 내린다. 쿨타임 8시간, 설정 travelMaisaraOn으로 켠다 (2026-11-02부터 기본 끔)
+#   배운 캐릭터만, 쿨타임 중이면 넣지 않음, 사용 버튼 창은 그 주문, 내리면 다음 목적지로, /qtr hearth 상태 줄
 import os as _os
 TD = _os.path.dirname(_os.path.abspath(__file__)) + '/'
 from lupa import LuaRuntime
@@ -85,7 +85,7 @@ lua.eval(r'''function(QTR, out)
   function IsInGuild() return true end
   function UnitRace() return "x", "Orc" end
   function UnitClass() return "x", "WARRIOR" end
-  -- 귀환석은 대기시간 중 (마이사라 동굴 순간이동만 보려고)
+  -- 귀환석은 쿨타임 중 (마이사라 동굴 순간이동만 보려고)
   ICD = { [6948] = { NOWT - 60, 900 } }
   C_Container.GetItemCooldown = function(id) local c = ICD[id] or { 0, 0 }; return c[1], c[2], 1 end
   KNOWN = {}
@@ -143,7 +143,7 @@ lua.eval(r'''function(QTR, out)
     return #t > 0 and table.concat(t, ", ") or "없음"
   end
   local SM = { 2393, 0.49910, 0.48728 } -- 실버문 (8862,-4736)
-  route("1) 차이 약 17초 -> 대기시간 1시간인 구렁로봇을 넣고 기록에 표지", SM[1], SM[2], SM[3])
+  route("1) 차이 약 17초 -> 쿨타임 1시간인 구렁로봇을 넣고 기록에 표지", SM[1], SM[2], SM[3])
   print("  기록 표지: " .. lastPref())
   print("==T 2) 같은 회차에서 다시 짜도 표지는 한 번만")
   QTR.RouteStart("test", true)
@@ -153,11 +153,11 @@ lua.eval(r'''function(QTR, out)
   print("  기록 표지: " .. lastPref())
   Q[81] = G1
   SCD[1254559] = { NOWT - 60, 8 * 3600 }
-  route("4) 쐐기 포탈 대기시간 중 -> 구렁로봇, 표지 없음 (어차피 못 쓰므로)", SM[1], SM[2], SM[3])
+  route("4) 쐐기 포탈 쿨타임 중 -> 구렁로봇, 표지 없음 (어차피 못 쓰므로)", SM[1], SM[2], SM[3])
   print("  기록 표지: " .. lastPref())
   SCD[1254559] = nil
   ICD[230850] = { NOWT - 60, 3600 }
-  route("5) 구렁로봇 대기시간 중 -> 쐐기 포탈, 표지 없음", SM[1], SM[2], SM[3])
+  route("5) 구렁로봇 쿨타임 중 -> 쐐기 포탈, 표지 없음", SM[1], SM[2], SM[3])
   print("  기록 표지: " .. lastPref())
   ICD[230850] = { 0, 0 }
   DB.settings.travelWhyOn = false
