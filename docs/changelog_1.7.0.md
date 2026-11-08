@@ -1,4 +1,4 @@
-## (next version, number to be decided)
+## 1.7.0
 
 ### New
 - Navigation (experimental, off by default): Dundun's Abundant Travel Method can be used in the route.
@@ -24,21 +24,23 @@
   when the portal would be only about 15 seconds faster, so the M+ portals stay available.
 - Navigation: the M+ portal to Maisara Caverns is now added only when it makes part of the route 45 seconds or more faster
   (15 seconds for the other travel methods). It was sometimes used inside Zul'Aman to save about 15 seconds, which is not worth an 8-hour cooldown.
-- The "Loaded" chat message now shows the addon version, e.g. "Loaded (v1.6.2)".
+- The "Loaded" chat message now shows the addon version, e.g. "Loaded (v1.7.0)".
 - The "Added ... to the route" and "Hearthstone not added" chat lines now only appear when the new setting above is on,
   so the chat stays quieter by default.
-- Isle of Quel'Danas: the gold quest "Hexes and Lies" was left out of the lists and navigation because it is on a smaller map inside the island
-  (Tomb of the Wandering Priest). Quests on any map inside a gold-quest zone now count for that zone.
+- Isle of Quel'Danas: a gold quest was left out of the lists and navigation because it is on a smaller map inside the island
+  (quest ID 96329, map ID 2642). Quests on any map inside a gold-quest zone now count for that zone.
 - Zul'Aman: quests on the Atal'Aman map are now counted as Zul'Aman. One Zul'Aman special assignment is on this map,
   so after it unlocked, navigation still showed it as "unlocks later" and did not know its location.
 - Navigation: a special assignment that is already in your quest log now counts as unlocked, and while an "unlocks later" stop
   is in the route, the addon checks every 10 seconds whether it has opened. Before, it only checked right after each quest.
 - Riches tab: characters who did the Liadrin weekly quest last week now show "Done last week" in gray and are not counted.
   Those characters cannot get the quest again this week, so they no longer look like unfinished work.
+- Navigation window: the summary shown when every stop is done now moves to a second line when it is too long for the window,
+  instead of running past its edge. The travel ability use window also widens to fit long text.
 
 ---
 
-## (다음 버전, 번호는 정해지면) (한국어)
+## 1.7.0 (한국어)
 
 ### 새 기능
 - 내비게이션 (시험 기능, 기본 끔): 둔둔의 풍요로운 이동 수단을 동선에 넣을 수 있습니다.
@@ -61,7 +63,7 @@
   예를 들어 쐐기 포탈(마이사라 동굴, 8시간)이 구렁로봇(1시간)보다 15초쯤만 빠르면 구렁로봇을 넣어서, 쐐기 포탈을 아껴 둡니다.
 - 내비게이션: 쐐기 포탈(마이사라 동굴)은 45초 이상 빨라지는 구간이 있을 때만 넣습니다 (다른 이동 수단은 15초).
   줄아만 안에서 15초쯤 줄이려고 8시간 쿨타임을 쓰는 경우가 있었습니다.
-- 접속할 때 나오는 "로드 완료" 채팅 메시지에 애드온 버전을 함께 보여 줍니다 (예: "로드 완료 (v1.6.2)").
+- 접속할 때 나오는 "로드 완료" 채팅 메시지에 애드온 버전을 함께 보여 줍니다 (예: "로드 완료 (v1.7.0)").
 - "동선에 넣었습니다", "귀환석은 넣지 않았습니다" 채팅 알림은 위 설정을 켰을 때만 나옵니다. 기본으로는 채팅창이 조용해집니다.
 - 똬리의 섬: 골드퀘 "사술과 거짓"이 섬 안의 작은 지도(방황하는 사제의 무덤)에 있어서 목록과 내비게이션에서 빠졌습니다.
   이제 골드퀘 지역 안의 어느 지도에 있는 퀘스트든 그 지역 퀘스트로 셉니다.
@@ -71,3 +73,5 @@
   예전에는 퀘스트를 완료한 직후에만 확인해서, 게임 정보가 늦게 바뀌면 계속 "해금 예정"으로 남았습니다.
 - 부자되기 탭: 지난주에 리에드린 주간 퀘스트를 한 캐릭터는 회색 "지난주 완료"로 보이고 개수에서 빠집니다.
   그 캐릭터는 이번 주에 퀘스트를 다시 받을 수 없어서, 안 한 숙제처럼 보이지 않게 했습니다.
+- 내비게이션 창: 모두 마쳤을 때 나오는 결과 줄이 창보다 길면 둘째 줄로 넘깁니다 (창 밖으로 넘치던 문제).
+  이동 기술 사용 창도 글이 길면 그만큼 넓어집니다.

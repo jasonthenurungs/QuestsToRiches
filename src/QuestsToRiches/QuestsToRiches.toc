@@ -3,7 +3,7 @@
 ## Notes: Daily gold world quest log per character and gold goal progress
 ## Notes-koKR: 캐릭터별 골드 전역퀘 일일 수행 기록과 목표 골드 진행률
 ## Author: Jason
-## Version: 1.6.2
+## Version: 1.7.0
 ## SavedVariables: QuestsToRichesDB, GoldQuestMakeMeRichDB, RoadToGold5MDB
 ## IconTexture: Interface\AddOns\QuestsToRiches\Media\MinimapIcon
 ## AddonCompartmentFunc: QuestsToRiches_OnAddonCompartmentClick

@@ -27,7 +27,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
   (dashboard and navigation window separately).
 
 ## Navigation
-- Press "Start Navigation!" (or R) on the Gold Quests tab.
+- Press "Start Navigation!" (or R) on the Gold Quests tab, or set a key binding that starts it directly.
 - Orders all remaining gold quests and unlocked special assignments nearest-first,
   using portals when they are faster, and plans locked special assignments after the quests that unlock them.
 - Hearthstone: when it saves time, a hearthstone (or a hearthstone toy) is added to the route,
@@ -36,6 +36,11 @@ Works on Korean and English clients (all windows, settings and messages are tran
 - Travel abilities: Mage Teleport: Silvermoon, Shaman Astral Recall, the Personal Key to the Arcantina
   and the Maisara Caverns Mythic+ teleport (to Zul'Aman) are used when they are faster. Each can be turned off
   (the Mythic+ teleport is off by default, turn it on in Settings).
+  When two of them save almost the same time, the one with the shorter cooldown is used.
+- Delve-O-Bot 7001 to the Labyrinth of Kindo'jan (off by default, needs the Labyrinth update chip):
+  the Labyrinth is picked automatically when you talk to the bot on that step.
+- Dundun's Abundant Travel Method (experimental, off by default): goes to the cave where Abundance is currently active.
+- Optional chat lines at the start of navigation: which travel methods were added, and why the others were not.
 - Use button: when the next step is a hearthstone or a travel ability, click the small window to use it.
 - Quests about to expire are shown in orange and moved earlier; expired quests are removed.
 - Right-click a quest line: do it first, do it last, skip it this time, or never show it again.
@@ -59,7 +64,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
 
 ## Other
 - Minimap button and addon compartment entry.
-- Account-wide keybindings: dashboard, settings, navigation window.
+- Account-wide keybindings: dashboard, settings, navigation window, start navigation.
 - Exclude quests you never do (/qtr ban).
 - Optional chat notice with each gold quest you complete.
 - Merge character records after a rename (Settings > Character management).
@@ -114,12 +119,16 @@ Works on Korean and English clients (all windows, settings and messages are tran
 - 대시보드를 고정하면 Esc로 닫히지 않음. 창 크기 80% ~ 150% 설정 (대시보드와 내비게이션 창 따로)
 
 ## 내비게이션
-- 골드퀘 탭의 "내비게이션 시작!" 버튼 (또는 R)
+- 골드퀘 탭의 "내비게이션 시작!" 버튼 (또는 R), 또는 바로 시작하는 단축키 지정
 - 남은 골드퀘와 잠금 해제된 특별 과제를 가까운 순서로 잇고, 포탈이 빠르면 포탈을 거쳐 가도록 편성
   잠긴 특별 과제는 그 지역 골드퀘를 마친 뒤에 가도록 편성
 - 귀환석: 빨라지는 구간이 있으면 귀환석(또는 귀환석 장난감)을 동선에 넣고, 방문 순서도 귀환석을 고려해 편성
   길드 혜택과 인간 종족 특성(2회 충전)을 반영하고, 마칠 때 1회 남기기 가능
 - 이동 기술: 마법사 실버문 순간이동, 주술사 영혼의 귀환, 아르칸티나로 통하는 개인 열쇠, 쐐기돌 던전 마이사라 동굴 순간이동(줄아만)을 더 빠를 때 사용 (각각 끌 수 있음, 쐐기 순간이동은 기본 끔이라 설정에서 켜야 함)
+  줄어드는 시간이 거의 같으면 쿨타임이 짧은 쪽을 사용
+- 구렁로봇 7001로 킨도잔의 미궁 가기 (기본 끔, 미궁 업데이트 칩 필요): 그 차례에 로봇에게 말을 걸면 미궁을 자동으로 고름
+- 둔둔의 풍요로운 이동 수단 (시험 기능, 기본 끔): 지금 풍요가 열린 동굴로 이동
+- 내비게이션을 시작할 때 어떤 이동 수단을 넣었는지와 나머지를 넣지 않은 이유를 채팅창에 알리기 (선택)
 - 사용 버튼 창: 다음 단계가 귀환석이나 이동 기술이면 작은 창을 눌러 바로 사용
 - 곧 만료되는 퀘스트는 주황색으로 표시하고 앞으로 당기며, 만료되면 경로에서 뺌
 - 퀘스트 줄 우클릭: 가장 먼저, 마지막에, 이번만 빼기, 더 이상 안 하기
@@ -140,7 +149,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
 
 ## 그 밖의 기능
 - 미니맵 버튼, 애드온 보관함 등록
-- 계정 공통 단축키: 대시보드, 설정창, 내비게이션 창
+- 계정 공통 단축키: 대시보드, 설정창, 내비게이션 창, 내비게이션 시작
 - 하지 않는 퀘스트 추적 제외 (/qtr ban)
 - 골드퀘 완료 시 채팅 알림 (선택)
 - 캐릭터 이름을 바꿨을 때 옛 이름 기록 합치기 (설정창 "캐릭터 관리")
@@ -151,7 +160,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
 - /qtr gq, /qtr rich, /qtr stats, /qtr hold : 탭 열기
 - /qtr set : 설정창
 - /qtr route : 내비게이션 시작 (/qtr route clear : 중지)
-- /qtr hearth : 귀환석과 이동 기술 상태 (귀환 지점, 대기시간, 충전)
+- /qtr hearth : 귀환석과 이동 기술 상태 (귀환 지점, 쿨타임, 충전)
 - /qtr ban, /qtr unban : 추적 제외 추가, 해제 (퀘스트 Shift+클릭)
 - /qtr list : 캐릭터별 저장된 보유 골드
 
