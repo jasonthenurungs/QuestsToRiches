@@ -472,6 +472,7 @@ ns.Locales.enUS = {
         ["이전 %s 기록과 설정을 옮겨 왔습니다."] = "Imported records and settings from %s.",
         ["로드 완료. /qtr 창 열기, /qtr set 설정창"] = "Loaded. /qtr opens the window, /qtr set opens settings.",
         ["로드 완료 (v%s). /qtr 창 열기, /qtr set 설정창"] = "Loaded (v%s). /qtr opens the window, /qtr set opens settings.",
+        ["이번 버전부터 이동 수단 채팅 알림(동선에 넣었습니다, 넣지 않았습니다)은 기본으로 나오지 않습니다. 보고 싶으면 설정창 '동선에 넣는 이동 수단' 묶음에서 '이동 수단을 넣었는지와 그 이유를 채팅창에 알리기'를 켜 주세요."] = "From this version, the travel method chat lines (added to the route, not added) are off by default. To see them, turn on 'Tell me in chat which travel methods were used, and why not' under 'Travel methods used in navigation' in Settings.",
         ["제외 퀘스트: "] = "Excluded quest: ",
         ["제외한 퀘스트가 없습니다. /qtr ban 입력 후 한 칸 띄우고 퀘스트를 Shift+클릭하세요."] = "No excluded quests. Type /qtr ban followed by a space and Shift+click a quest.",
         ["퀘스트 링크나 숫자 퀘스트 ID를 넣어주세요."] = "Give a quest link or a numeric quest ID.",

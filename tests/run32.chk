@@ -319,3 +319,4 @@ A) route: 1. 퀘 A (공허폭풍) / 2. 퀘 C (하란다르) / 3. 퀘 B (공허�
 B) rerouted: 1. 수요와 공급 (공허폭풍) / 2. 퀘 C (하란다르) / 3. 퀘 B (공허폭풍)
 |cffffd100[QTR]|r 퀘 C (공허폭풍) +1,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 오늘 2개, 2,046|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 달성률 +0.02% / |cff00ff00달성 예상 12시간 16분 단축|r
 C) no new -> added: 2  route left: 2
+|cffffd100[QTR]|r 이번 버전부터 이동 수단 채팅 알림(동선에 넣었습니다, 넣지 않았습니다)은 기본으로 나오지 않습니다. 보고 싶으면 설정창 '동선에 넣는 이동 수단' 묶음에서 '이동 수단을 넣었는지와 그 이유를 채팅창에 알리기'를 켜 주세요.

@@ -412,6 +412,15 @@ local function InitDB()
     RoadToGold5MDB = nil
     QuestsToRichesDB = QuestsToRichesDB or {}
     DB = QuestsToRichesDB
+    -- 1.7.0: 이동 수단 채팅 알림을 한 번 끄고, 예전부터 쓰던 사람에게만 접속할 때 한 번 알린다 (2026-11-08 사용자 요청)
+    --   1.6.2까지는 "동선에 넣었습니다", "귀환석은 넣지 않았습니다"가 늘 나왔고, 1.7.0부터는 설정(기본 끔)을 켰을 때만 나온다
+    if not DB.whyNotice170 then
+        DB.whyNotice170 = true
+        if DB.settings then
+            DB.settings.travelWhyOn = nil
+        end
+        QTR.whyNotice = DB.chars ~= nil and next(DB.chars) ~= nil
+    end
     DB.chars = DB.chars or {}
     DB.days = DB.days or {}
     DB.snapshots = DB.snapshots or {}
@@ -10353,6 +10362,10 @@ function QTR:OnEnable()
         Print(L["로드 완료 (v%s). /qtr 창 열기, /qtr set 설정창"]:format(ver))
     else
         Print(L["로드 완료. /qtr 창 열기, /qtr set 설정창"])
+    end
+    if QTR.whyNotice then
+        QTR.whyNotice = nil
+        Print(L["이번 버전부터 이동 수단 채팅 알림(동선에 넣었습니다, 넣지 않았습니다)은 기본으로 나오지 않습니다. 보고 싶으면 설정창 '동선에 넣는 이동 수단' 묶음에서 '이동 수단을 넣었는지와 그 이유를 채팅창에 알리기'를 켜 주세요."])
     end
 end
 

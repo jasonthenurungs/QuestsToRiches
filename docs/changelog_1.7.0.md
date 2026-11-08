@@ -26,8 +26,8 @@
   (15 seconds for the other travel methods). It was sometimes used inside Zul'Aman to save about 15 seconds, which is not worth an 8-hour cooldown.
 - The "Loaded" chat message now shows the addon version, e.g. "Loaded (v1.7.0)".
 - The "Added ... to the route" and "Hearthstone not added" chat lines now only appear when the new setting above is on,
-  so the chat stays quieter by default.
-- Isle of Quel'Danas: a gold quest was left out of the lists and navigation because it is on a smaller map inside the island
+  so the chat stays quieter by default. A one-time chat message after the update tells you where to turn them back on.
+- Isle of Quel'Danas: the gold quest "Hexes and Hoaxes" was left out of the lists and navigation because it is on a smaller map inside the island
   (quest ID 96329, map ID 2642). Quests on any map inside a gold-quest zone now count for that zone.
 - Zul'Aman: quests on the Atal'Aman map are now counted as Zul'Aman. One Zul'Aman special assignment is on this map,
   so after it unlocked, navigation still showed it as "unlocks later" and did not know its location.
@@ -64,7 +64,7 @@
 - 내비게이션: 쐐기 포탈(마이사라 동굴)은 45초 이상 빨라지는 구간이 있을 때만 넣습니다 (다른 이동 수단은 15초).
   줄아만 안에서 15초쯤 줄이려고 8시간 쿨타임을 쓰는 경우가 있었습니다.
 - 접속할 때 나오는 "로드 완료" 채팅 메시지에 애드온 버전을 함께 보여 줍니다 (예: "로드 완료 (v1.7.0)").
-- "동선에 넣었습니다", "귀환석은 넣지 않았습니다" 채팅 알림은 위 설정을 켰을 때만 나옵니다. 기본으로는 채팅창이 조용해집니다.
+- "동선에 넣었습니다", "귀환석은 넣지 않았습니다" 채팅 알림은 위 설정을 켰을 때만 나옵니다. 기본으로는 채팅창이 조용해집니다. 업데이트 후 처음 접속할 때 한 번만, 다시 켜는 곳을 채팅창에 알려 드립니다.
 - 똬리의 섬: 골드퀘 "사술과 거짓"이 섬 안의 작은 지도(방황하는 사제의 무덤)에 있어서 목록과 내비게이션에서 빠졌습니다.
   이제 골드퀘 지역 안의 어느 지도에 있는 퀘스트든 그 지역 퀘스트로 셉니다.
 - 줄아만: 아탈아만 지도에 있는 퀘스트도 줄아만으로 셉니다. 특별 과제 "다시 우리의 것으로!"가 이 지도에 있어서,
