@@ -3719,8 +3719,40 @@ local GQ_ZONES = {
     { mapID = 2437, allowedMaps = { [2437] = true, [2536] = true }, metaWidgets = { 7672, 7675 } },
     { mapID = 2405, allowedMaps = { [2405] = true, [2444] = true }, metaWidgets = { 7659, 7668 } },                -- 공허폭풍
     { mapID = 2413, allowedMaps = { [2413] = true }, metaWidgets = { 7618, 7621 } },                               -- 하란다르
-    { mapID = 2512, allowedMaps = { [2512] = true }, metaWidgets = { 8259, 8263, 8264 } },                         -- 똬리의 섬
+    -- 똬리의 섬: 2642 방황하는 사제의 무덤 (골드퀘 "사술과 거짓" 96329가 이 지도에 속한다. 2026-11-08 사용자 게임 확인, 동선에서 빠졌다)
+    { mapID = 2512, allowedMaps = { [2512] = true, [2642] = true }, metaWidgets = { 8259, 8263, 8264 } },
 }
+
+-- 지도가 그 지역 것인가: allowedMaps에 있거나, 상위 지도를 따라 올라가 그 지역 대표 지도가 나오면 (하위 지도)
+--   2026-11-08: 아탈아만(2536), 방황하는 사제의 무덤(2642)처럼 지역 안의 하위 지도에 속한 퀘스트가 빠지는 일이 되풀이되어
+--   목록에 없는 하위 지도도 받는다. 대표 지도 조회에 섞여 나오는 이웃 지역은 대표 지도의 자식이 아니라서 걸러진다.
+--   한 번 찾은 결과는 allowedMaps(인정)와 notMaps(아님)에 남긴다
+QTR.ZoneHasMap = function(zone, mapID)
+    if not mapID then
+        return false
+    end
+    if zone.allowedMaps[mapID] then
+        return true
+    end
+    if zone.notMaps and zone.notMaps[mapID] then
+        return false
+    end
+    local id = mapID
+    for _ = 1, 6 do
+        local info = C_Map.GetMapInfo and C_Map.GetMapInfo(id)
+        id = info and info.parentMapID
+        if not id or id == 0 then
+            break
+        end
+        if id == zone.mapID then
+            zone.allowedMaps[mapID] = true
+            return true
+        end
+    end
+    zone.notMaps = zone.notMaps or {}
+    zone.notMaps[mapID] = true
+    return false
+end
 
 local META_TOTAL = 3
 local META_ICON = 1542860
@@ -3980,7 +4012,7 @@ end
 -- 세 번째 값: 수행 가능이면 특별 과제 퀘스트 ID, 잠김이면 지도의 특별 과제 표시(POI) 정보 (지역 줄 툴팁용)
 local function GetZoneMetaState(zone, quests)
     for _, v in ipairs(quests) do
-        if zone.allowedMaps[v.mapID] and C_QuestLog.IsWorldQuest(v.questID) and IsSpecialAssignmentQuest(v.questID) then
+        if QTR.ZoneHasMap(zone, v.mapID) and C_QuestLog.IsWorldQuest(v.questID) and IsSpecialAssignmentQuest(v.questID) then
             return true, META_TOTAL, v.questID
         end
     end
@@ -4270,7 +4302,7 @@ local function CollectGoldQuests()
         end
         for _, v in ipairs(quests) do
             local questID = v.questID
-            if questID and not seen[questID] and zone.allowedMaps[v.mapID] and C_QuestLog.IsWorldQuest(questID) then
+            if questID and not seen[questID] and QTR.ZoneHasMap(zone, v.mapID) and C_QuestLog.IsWorldQuest(questID) then
                 local title = C_TaskQuest.GetQuestInfoByQuestID(questID)
                 local hasReward = true
                 if HaveQuestRewardData and not HaveQuestRewardData(questID) then
@@ -8242,7 +8274,7 @@ QTR.SpecialState = function(key, src, since)
     local mapID = sa and sa.mapID
     if not mapID and src.wp then
         for _, zone in ipairs(GQ_ZONES) do
-            if zone.allowedMaps[src.wp[1]] then
+            if QTR.ZoneHasMap(zone, src.wp[1]) then
                 mapID = zone.mapID
                 break
             end
