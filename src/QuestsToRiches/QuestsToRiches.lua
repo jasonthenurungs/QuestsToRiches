@@ -4995,7 +4995,8 @@ QTR.SetupRoute = function()
                         for r = 1, #rc do
                             if left[r] > 0 then
                                 local save = legs[idx] - rc[r][j]
-                                if save >= bestSave then
+                                -- 수단마다 넣는 기준 (minSave, 없으면 15초): 쐐기 포탈은 45초
+                                if save >= (recalls[r].minSave or HEARTH_MIN_SAVE) and (not bestIdx or save >= bestSave) then
                                     bestSave, bestIdx, bestR = save, idx, r
                                 end
                             end
@@ -5376,7 +5377,9 @@ QTR.SetupRoute = function()
     --   시전 8.8초라 비용은 다른 순간이동처럼 어림한다 (TELE_COST). 설정 travelMaisaraOn으로 켠다
     --   기본 끔 (2026-11-02 사용자 결정: 쐐기를 즐기는 사람은 모르는 사이에 8시간 대기시간이 걸리면 싫어할 것. 1.6.0은 기본 켬이었다)
     --   이름은 "쐐기 포탈" (같은 날 사용자 요청: 주문 이름 "심연의 동굴의 길"보다 알아보기 쉽게)
-    TV.MAI = { spell = 1254559, map = 2437, x = 0.445193, y = 0.393821, cd = 8 * 3600 }
+    --   넣는 기준은 45초 이상 빨라질 때 (2026-11-08 사용자 결정. 다른 수단은 15초: 같은 줄아만 안에서 16초 줄이려고
+    --   8시간 쿨타임을 쓰는 것이 부자연스러웠다. 16초는 순간이동 비용 어림의 오차 범위 안이기도 하다)
+    TV.MAI = { spell = 1254559, map = 2437, x = 0.445193, y = 0.393821, cd = 8 * 3600, minSave = 45 * NAV_SPEED }
     TV.NAMES.maisara = L["쐐기 포탈"]
     TV.OBJ.maisara = L["쐐기 포탈을"]
 
@@ -5850,7 +5853,7 @@ QTR.SetupRoute = function()
             if d then
                 local remain = TV.SpellCD(TV.MAI.spell)
                 table.insert(list, { key = "maisara", label = TV.NAMES.maisara, dest = d, cost = TELE_COST, tokens = 1,
-                    remain = remain, cdLen = TV.MAI.cd, usable = TV.CDUsable(now + (remain or 0), TV.MAI.cd) })
+                    remain = remain, cdLen = TV.MAI.cd, minSave = TV.MAI.minSave, usable = TV.CDUsable(now + (remain or 0), TV.MAI.cd) })
             end
         end
         if want("dundun") and DB.settings.travelDundunOn and TV.HasToy(TV.DUN.item) then
@@ -5907,7 +5910,7 @@ QTR.SetupRoute = function()
             for mi, m in ipairs(methods) do
                 local alt, path = TravelCost(m.dest, p.pos)
                 local save = legs[k] - (alt + m.cost)
-                if save >= HEARTH_MIN_SAVE and not (k == 1 and m.notFromStart) then
+                if save >= (m.minSave or HEARTH_MIN_SAVE) and not (k == 1 and m.notFromStart) then
                     table.insert(cands, { k = k, m = m, mi = mi, path = path, save = save })
                 end
             end
@@ -6080,7 +6083,7 @@ QTR.SetupRoute = function()
                 local s = seen[m.key] or {}
                 local text
                 if not s.worth then
-                    text = L["15초 이상 빨라지는 구간이 없어서."]
+                    text = L["%d초 이상 빨라지는 구간이 없어서."]:format(math.floor((m.minSave or HEARTH_MIN_SAVE) / NAV_SPEED + 0.5))
                 elseif s.keep then
                     text = L["마칠 때 1회 남기기 때문에. 지금 쓰면 다 마칠 때까지 쿨타임이 끝나지 않습니다. (설정에서 끌 수 있습니다)"]
                 elseif s.prefBy and s.prefBy.pref then
@@ -9606,7 +9609,7 @@ local function BuildOptions()
                     travelMaisara = {
                         type = "toggle", name = L["마이사라 동굴 순간이동을 동선에 넣기"], order = 6.5, width = "full",
                         desc = L["쐐기돌 던전 마이사라 동굴을 10단계 이상으로 마치면 받는 순간이동(심연의 동굴의 길)으로 줄아만 마이사라 동굴 입구에 내립니다.\n"]
-                            .. L["15초 이상 빨라지는 구간이 있으면 한 번 넣습니다. 쿨타임이 8시간이고 다른 던전 순간이동도 함께 쿨타임에 걸리니, 쐐기돌 던전에 갈 때 쓰려면 끄세요."],
+                            .. L["45초 이상 빨라지는 구간이 있으면 한 번 넣습니다 (다른 수단은 15초. 쿨타임이 길어서 확실히 빨라질 때만). 쿨타임이 8시간이고 다른 던전 순간이동도 함께 쿨타임에 걸리니, 쐐기돌 던전에 갈 때 쓰려면 끄세요."],
                         get = function() return DB.settings.travelMaisaraOn == true end,
                         set = function(_, val) DB.settings.travelMaisaraOn = val or nil end,
                     },

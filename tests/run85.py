@@ -120,7 +120,7 @@ lua.eval(r'''function(QTR, out)
       .. " text=" .. clean(rawget(tb.text, "_text")):gsub("\n", " | "))
   end
 
-  -- 출발: 실버문, 목적지: 줄아만 셋. 귀환석(실버문 귀환)은 쿨타임 중, 마이사라는 배움
+  -- 출발: 하란다르 먼 구석 (쐐기 포탈은 45초 이상 빨라질 때만 넣어서, 2026-11-08), 목적지: 줄아만 셋. 귀환석(실버문 귀환)은 쿨타임 중, 마이사라는 배움
   for k in pairs(Q) do Q[k] = nil end
   Q[91811] = { map = 2437, title = "그을린 거울", money = 10000000, t = 86400, x = 0.5514, y = 0.1807 }
   Q[91805] = { map = 2437, title = "잠복굴의 가지", money = 10000000, t = 86400, x = 0.4047, y = 0.4956 }
@@ -128,14 +128,14 @@ lua.eval(r'''function(QTR, out)
   KNOWN[1254559] = true
   OPTIONS.args.travelGroup.args.travelMaisara.set(nil, true)
   print("  설정 기본값: " .. tostring(OPTIONS.args.travelGroup.args.travelWhy.get()))
-  route("1) 기본(끔): 마이사라를 넣어도 넣었다는 알림, 귀환석 이유 모두 알리지 않음 (2026-11-08 사용자 결정)", 2393, 0.567, 0.652)
+  route("1) 기본(끔): 마이사라를 넣어도 넣었다는 알림, 귀환석 이유 모두 알리지 않음 (2026-11-08 사용자 결정)", 2413, 0.95, 0.95)
   SCD[1254559] = { NOWT - 60, 28800 }
-  route("1b) 기본(끔), 마이사라 쿨타임 중 -> 여전히 알리지 않음", 2393, 0.567, 0.652)
+  route("1b) 기본(끔), 마이사라 쿨타임 중 -> 여전히 알리지 않음", 2413, 0.95, 0.95)
   OPTIONS.args.travelGroup.args.travelWhy.set(nil, true)
   print("  켬 -> travelWhyOn = " .. tostring(DB.settings.travelWhyOn))
-  route("2) 켬: 마이사라와 귀환석 둘 다 쿨타임 중 -> 둘 다 이유", 2393, 0.567, 0.652)
+  route("2) 켬: 마이사라와 귀환석 둘 다 쿨타임 중 -> 둘 다 이유", 2413, 0.95, 0.95)
   SCD[1254559] = nil
-  route("3) 켬: 마이사라를 넣음 -> 넣은 알림, 귀환석만 이유", 2393, 0.567, 0.652)
+  route("3) 켬: 마이사라를 넣음 -> 넣은 알림, 귀환석만 이유", 2413, 0.95, 0.95)
   route("4) 켬: 줄아만 안에서 출발 -> 15초 이상 빨라지는 구간이 없어서", 2437, 0.50, 0.40)
   print("==T 5) 다시 짤 때(순간이동 감지 등)는 알리지 않음")
   QTR.RouteStart("순간이동을 감지했습니다.", true)
