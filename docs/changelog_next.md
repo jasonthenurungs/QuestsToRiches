@@ -19,6 +19,9 @@
   the kept Hearthstone charge, and so on).
 
 ### Changes
+- Navigation: when two travel methods save almost the same time for the same part of the route (within 30 seconds),
+  the one with the shorter cooldown is used. For example, Delve-O-Bot (1 hour) is used instead of the M+ portal to Maisara Caverns (8 hours)
+  when the portal would be only about 15 seconds faster, so the M+ portals stay available.
 - The "Loaded" chat message now shows the addon version, e.g. "Loaded (v1.6.2)".
 - The "Added ... to the route" and "Hearthstone not added" chat lines now only appear when the new setting above is on,
   so the chat stays quieter by default.
@@ -50,6 +53,8 @@
   넣었으면 어디서 쓰는지와 줄어드는 시간을, 넣지 않았으면 그 이유를 알립니다 (15초 이상 빨라지는 구간이 없어서, 대기시간 중이라서, 귀환석 1회 남기기 때문에 등).
 
 ### 변경
+- 내비게이션: 같은 구간에서 두 이동 수단으로 줄어드는 시간이 비슷하면 (30초 안), 대기시간이 짧은 쪽을 씁니다.
+  예를 들어 쐐기 포탈(마이사라 동굴, 8시간)이 구렁로봇(1시간)보다 15초쯤만 빠르면 구렁로봇을 넣어서, 쐐기 포탈을 아껴 둡니다.
 - 접속할 때 나오는 "로드 완료" 채팅 메시지에 애드온 버전을 함께 보여 줍니다 (예: "로드 완료 (v1.6.2)").
 - "동선에 넣었습니다", "귀환석은 넣지 않았습니다" 채팅 알림은 위 설정을 켰을 때만 나옵니다. 기본으로는 채팅창이 조용해집니다.
 - 줄아만: 아탈아만 지도에 있는 퀘스트도 줄아만으로 셉니다. 특별 과제 "다시 우리의 것으로!"가 이 지도에 있어서,

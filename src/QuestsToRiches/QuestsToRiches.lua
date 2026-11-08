@@ -5784,7 +5784,7 @@ QTR.SetupRoute = function()
             if bind then
                 local st = HearthState()
                 table.insert(list, { key = "hearth", label = TV.NAMES.hearth, dest = bind, destName = bind.name,
-                    cost = HEARTH_COST, tokens = st.maxCh, st = st, remain = st.blocked - now,
+                    cost = HEARTH_COST, tokens = st.maxCh, st = st, remain = st.blocked - now, cdLen = st.cd,
                     -- t에 쓸 수 있는가: 이번 경로에서 고른 사용(chosen)과 t를 합쳐 시각 순으로 놓고, 하나하나 그때 충전이 남아 있어야 한다
                     -- (t보다 뒤에 고른 사용도 t에 쓰면 충전이 모자랄 수 있다). 두 번째 값: 1회 남기기
                     usable = function(t, endT, chosen)
@@ -5826,14 +5826,14 @@ QTR.SetupRoute = function()
             end
             local cd = me.astralCD or ASTRAL_CD
             table.insert(list, { key = "astral", label = TV.NAMES.astral, dest = bind, destName = bind.name,
-                cost = ASTRAL_COST, tokens = 1, remain = remain, usable = TV.CDUsable(now + (remain or 0), cd) })
+                cost = ASTRAL_COST, tokens = 1, remain = remain, cdLen = cd, usable = TV.CDUsable(now + (remain or 0), cd) })
         end
         if want("arcantina") and not DB.settings.travelArcantinaOff and TV.HasToy(ARC_ITEM) then
             local d = (DB.travelDest and DB.travelDest.arcantina) or (DB.hearthBinds and DB.hearthBinds[ARC_INN])
             if d and d.c and d.x and d.y then
                 local remain = TV.ItemCD(ARC_ITEM)
                 table.insert(list, { key = "arcantina", label = TV.NAMES.arcantina, dest = { c = d.c, x = d.x, y = d.y },
-                    destName = ARC_INN, cost = ARC_COST, tokens = 1, remain = remain, usable = TV.CDUsable(now + (remain or 0), ARC_CD) })
+                    destName = ARC_INN, cost = ARC_COST, tokens = 1, remain = remain, cdLen = ARC_CD, usable = TV.CDUsable(now + (remain or 0), ARC_CD) })
             else
                 missing.arcantina = L["나오는 곳(%s) 위치를 몰라서. 한 번 쓰거나 그 여관으로 귀환석을 타면 기억합니다."]:format(ARC_INN)
             end
@@ -5843,7 +5843,7 @@ QTR.SetupRoute = function()
             if d then
                 local remain = TV.SpellCD(TV.MAI.spell)
                 table.insert(list, { key = "maisara", label = TV.NAMES.maisara, dest = d, cost = TELE_COST, tokens = 1,
-                    remain = remain, usable = TV.CDUsable(now + (remain or 0), TV.MAI.cd) })
+                    remain = remain, cdLen = TV.MAI.cd, usable = TV.CDUsable(now + (remain or 0), TV.MAI.cd) })
             end
         end
         if want("dundun") and DB.settings.travelDundunOn and TV.HasToy(TV.DUN.item) then
@@ -5854,7 +5854,7 @@ QTR.SetupRoute = function()
                 -- 풍요 지점이 끝나기 2분 전부터는 쓰지 않는다 (남은 시간 글자가 분 단위이고 시전과 로딩도 있어서. 그 뒤에는 다른 지점으로 가므로). 끝나는 시각을 모르면 따지지 않는다
                 -- 대기시간이 30분이라 한 경로에서 두 번까지 본다. 출발점이 한밤 지역 밖이면 첫 구간에는 못 쓴다 (notFromStart)
                 table.insert(list, { key = "dundun", label = TV.NAMES.dundun, dest = ab.dest, destName = ab.name, poi = ab.poi,
-                    cost = TELE_COST, tokens = 2, notFromStart = not TV.InMidnight(), remain = remain,
+                    cost = TELE_COST, tokens = 2, notFromStart = not TV.InMidnight(), remain = remain, cdLen = TV.DUN.cd,
                     usable = function(t, endT, chosen)
                         if ab.expire and t > ab.expire - 120 then
                             return false, false
@@ -5870,7 +5870,7 @@ QTR.SetupRoute = function()
             if d and d.c and d.x and d.y then
                 local remain = TV.ItemCD(TV.DBOT.item)
                 table.insert(list, { key = "delvebot", label = TV.NAMES.delvebot, dest = { c = d.c, x = d.x, y = d.y },
-                    cost = TELE_COST, tokens = 1, remain = remain, usable = TV.CDUsable(now + (remain or 0), TV.DBOT.cd) })
+                    cost = TELE_COST, tokens = 1, remain = remain, cdLen = TV.DBOT.cd, usable = TV.CDUsable(now + (remain or 0), TV.DBOT.cd) })
             elseif DB.delveBotLab == false then
                 missing.delvebot = L["로봇 선택지에 킨도잔의 미궁이 없어서 (미궁 업데이트 칩이 필요합니다)."]
             elseif not DB.delveBotLab then
@@ -5897,11 +5897,11 @@ QTR.SetupRoute = function()
         end
         local cands = {}
         for k, p in ipairs(order) do
-            for _, m in ipairs(methods) do
+            for mi, m in ipairs(methods) do
                 local alt, path = TravelCost(m.dest, p.pos)
                 local save = legs[k] - (alt + m.cost)
                 if save >= HEARTH_MIN_SAVE and not (k == 1 and m.notFromStart) then
-                    table.insert(cands, { k = k, m = m, path = path, save = save })
+                    table.insert(cands, { k = k, m = m, mi = mi, path = path, save = save })
                 end
             end
         end
@@ -5909,39 +5909,123 @@ QTR.SetupRoute = function()
             if a.save ~= b.save then
                 return a.save > b.save
             end
-            return a.k < b.k
-        end)
-        local now = time()
-        local chosen, legUsed, total = {}, {}, 0
-        local times = {} -- 이동별로 고른 사용 시각
-        -- 수단별로 넣지 않은 이유를 가리려고 남기는 것 (2026-11-08):
-        --   worth 15초 이상 줄어드는 구간이 있었나 / ready 그중 쓸 수 있는 시각인 곳이 있었나 /
-        --   taken 쓸 수 있었으나 그 구간에 더 많이 줄어드는 다른 수단이 먼저 들어갔나 / keep 귀환석 1회 남기기 때문에 못 넣었나
-        local seen = {}
-        for _, c in ipairs(cands) do
-            local key = c.m.key
-            times[key] = times[key] or {}
-            seen[key] = seen[key] or {}
-            local s = seen[key]
-            s.worth = true
-            local t = now + before[c.k] / NAV_SPEED + (c.k - 1) * NAV_HANDLE
-            local endT = now + (sum - total - c.save) / NAV_SPEED + #order * NAV_HANDLE
-            local usable, keep = c.m.usable(t, endT, times[key]) -- 부작용 없는 판정이라 이미 쓴 구간에도 물어본다
-            if usable then
-                s.ready = true
+            if a.k ~= b.k then
+                return a.k < b.k
             end
-            if legUsed[c.k] then
-                if usable then
-                    s.taken = true
+            return a.mi < b.mi
+        end)
+        -- 대기시간이 짧은 수단 우선 (2026-11-08 사용자 결정): 같은 구간에서 가장 많이 줄어드는 수단(best)보다 30초 안으로 덜 줄어드는,
+        -- 대기시간(m.cdLen)이 더 짧은 수단이 있으면 그것을 best 바로 앞에서 본다 (그중 가장 많이 줄어드는 것 하나).
+        -- 그 수단을 그 시각에 쓸 수 없으면 원래 순서대로 best를 본다. 고른 것에는 c.pref = { over = best 키, sec = 차이 초 }
+        -- best를 어차피 다른 구간에서 쓰게 되면 아낄 것이 없으니 그 구간은 우선하지 않고 다시 고른다 (noPref, 최대 구간 수만큼).
+        -- 고른 결과들 중 줄어드는 양이 가장 큰 것을 쓴다 (다시 고른 것이 늘 빠르지는 않다: 한 번씩만 쓰는 수단의 자리가 바뀌므로)
+        -- (2026-11-08 게임: 줄아만 퀘스트에 8시간짜리 쐐기 포탈이 1시간짜리 구렁로봇보다 약 15초 빨라 쐐기 포탈이 들어갔다)
+        local PREF_SAVE = 30 * NAV_SPEED
+        local now = time()
+        local noPref = {}
+        local chosen, legUsed, total, times, seen, best
+        for _ = 1, #order + 1 do
+            local bestOn, prefOn = {}, {}
+            for _, c in ipairs(cands) do
+                c.rank, c.prefOver, c.pref, c.t = c.save, nil, nil, nil
+                local b = bestOn[c.k]
+                if not b then
+                    bestOn[c.k] = c
+                elseif not noPref[c.k] and not prefOn[c.k] and c.m.cdLen and b.m.cdLen and c.m.cdLen < b.m.cdLen
+                    and b.save - c.save <= PREF_SAVE then
+                    prefOn[c.k] = c
+                    c.rank = b.save + 0.001
+                    c.prefOver = b
                 end
-            elseif usable and keep then
-                legUsed[c.k] = true
-                total = total + c.save
-                c.t = t
-                table.insert(times[key], t)
-                table.insert(chosen, c)
-            elseif usable then
-                s.keep = true
+            end
+            table.sort(cands, function(a, b)
+                if a.rank ~= b.rank then
+                    return a.rank > b.rank
+                end
+                if a.k ~= b.k then
+                    return a.k < b.k
+                end
+                if a.save ~= b.save then
+                    return a.save > b.save
+                end
+                return a.mi < b.mi -- 똑같으면 수단 목록 순 (정렬이 매번 같게)
+            end)
+            chosen, legUsed, total = {}, {}, 0
+            times = {} -- 이동별로 고른 사용 시각
+            -- 수단별로 넣지 않은 이유를 가리려고 남기는 것 (2026-11-08):
+            --   worth 15초 이상 줄어드는 구간이 있었나 / ready 그중 쓸 수 있는 시각인 곳이 있었나 /
+            --   taken 쓸 수 있었으나 그 구간에 더 많이 줄어드는 다른 수단이 먼저 들어갔나 / keep 귀환석 1회 남기기 때문에 못 넣었나 /
+            --   prefBy 대기시간이 짧은 수단에 그 구간을 내주었나
+            seen = {}
+            for _, c in ipairs(cands) do
+                local key = c.m.key
+                times[key] = times[key] or {}
+                seen[key] = seen[key] or {}
+                local s = seen[key]
+                s.worth = true
+                local t = now + before[c.k] / NAV_SPEED + (c.k - 1) * NAV_HANDLE
+                local endT = now + (sum - total - c.save) / NAV_SPEED + #order * NAV_HANDLE
+                local usable, keep = c.m.usable(t, endT, times[key]) -- 부작용 없는 판정이라 이미 쓴 구간에도 물어본다
+                if usable then
+                    s.ready = true
+                end
+                if legUsed[c.k] then
+                    if usable then
+                        s.taken = true
+                        if legUsed[c.k].prefOver == c then
+                            s.prefBy = legUsed[c.k]
+                        end
+                    end
+                elseif usable and keep then
+                    legUsed[c.k] = c
+                    total = total + c.save
+                    c.t = t
+                    -- best도 그때 쓸 수 있었을 때만 "대기시간 때문에 골랐다"로 남긴다 (어차피 못 쓰는 것보다 우선한 것은 아니므로)
+                    local b = c.prefOver
+                    if b and b.m.usable(t, endT, times[b.m.key] or {}) then
+                        c.pref = { over = b.m.key, sec = math.floor((b.save - c.save) / NAV_SPEED + 0.5) }
+                    else
+                        c.prefOver = nil
+                    end
+                    table.insert(times[key], t)
+                    table.insert(chosen, c)
+                elseif usable then
+                    s.keep = true
+                end
+            end
+            -- 이번 결과를 남긴다 (다시 고른 결과가 더 느리면 이쪽을 쓴다)
+            local snap = { chosen = chosen, total = total, seen = seen, vals = {} }
+            for i, c in ipairs(chosen) do
+                snap.vals[i] = { t = c.t, pref = c.pref }
+            end
+            if not best or total >= best.total then
+                best = snap
+            end
+            -- 우선해서 아낀 수단(best)을 다른 구간에서 썼으면 그 구간은 우선을 풀고 다시 고른다
+            local usedKey, redo = {}, false
+            for _, c in ipairs(chosen) do
+                usedKey[c.m.key] = true
+            end
+            for _, c in ipairs(chosen) do
+                if c.pref and usedKey[c.pref.over] and not noPref[c.k] then
+                    noPref[c.k] = true
+                    redo = true
+                end
+            end
+            if not redo then
+                break
+            end
+        end
+        -- 줄어든 양이 가장 큰 결과 (같으면 나중 것). 아낀 수단을 결국 다른 구간에서 썼으면 "대기시간 때문에 골랐다" 표지는 지운다
+        chosen, total, seen = best.chosen, best.total, best.seen
+        local usedKey = {}
+        for i, c in ipairs(chosen) do
+            c.t, c.pref = best.vals[i].t, best.vals[i].pref
+            usedKey[c.m.key] = true
+        end
+        for _, c in ipairs(chosen) do
+            if c.pref and usedKey[c.pref.over] then
+                c.pref = nil
             end
         end
         -- 귀환석 1회 남기기: 다 고른 뒤 끝나는 시각이 당겨졌으니 다시 확인하고, 안 되면 덜 줄어드는 귀환석부터 뺀다
@@ -5992,6 +6076,9 @@ QTR.SetupRoute = function()
                     text = L["15초 이상 빨라지는 구간이 없어서."]
                 elseif s.keep then
                     text = L["마칠 때 1회 남기기 때문에. 지금 쓰면 다 마칠 때까지 대기시간이 끝나지 않습니다. (설정에서 끌 수 있습니다)"]
+                elseif s.prefBy and s.prefBy.pref then
+                    text = L["줄어드는 시간 차이가 약 %d초뿐이라 대기시간이 짧은 %s 대신 넣어서."]:format(s.prefBy.pref.sec,
+                        TV.OBJ[s.prefBy.m.key] or s.prefBy.m.key)
                 elseif s.taken then
                     text = L["그 구간에는 더 많이 줄어드는 다른 수단을 넣어서."]
                 elseif m.remain and m.remain > 0 then
@@ -6617,6 +6704,7 @@ QTR.SetupRoute = function()
     --   설정 navLogAll이 켜져 있으면 지우지 않는다 (/qtr navlog all, 개발 PC용. 2026-11-01 사용자 요청: 10번으로는 주말 기록이 모자람)
     -- DB.navLog = { { start = { t, c, x, y }, stops = { { q 또는 portal, t, c, x, y }, ... }, afk = { { s, e }, ... } }, ... }
     --   c, x, y: 그 순간의 월드 좌표 (대륙 ID, 야드)
+    --   pref = { { t, key, over, sec }, ... }: 대기시간이 짧아서 over 대신 key를 넣었을 때 (계산상 sec초 느림, 2026-11-08)
     function QTR.NavLogStart()
         DB.navLog = DB.navLog or {}
         local p = PlayerPos()
@@ -6863,6 +6951,21 @@ QTR.SetupRoute = function()
         local useAt = {}
         for _, u in ipairs(recallUses) do
             useAt[u.k] = u
+            -- 대기시간이 짧아서 고른 수단은 기록에 표지를 남긴다 (나중에 분석용, 2026-11-08 사용자 요청)
+            --   run.pref = { { t, key, over, sec }, ... }: key를 over 대신 넣었고, 계산상 sec초 느리다. 다시 짤 때 같은 것은 한 번만
+            local run = QTR.navRun
+            if u.pref and run then
+                run.pref = run.pref or {}
+                local dup = false
+                for _, e in ipairs(run.pref) do
+                    if e.key == u.m.key and e.over == u.pref.over then
+                        dup = true
+                    end
+                end
+                if not dup then
+                    table.insert(run.pref, { t = time(), key = u.m.key, over = u.pref.over, sec = u.pref.sec })
+                end
+            end
         end
         local tomtom = HasTomTom()
         QTR.route = {}
@@ -6961,7 +7064,8 @@ QTR.SetupRoute = function()
                 local saveSec = math.floor(u.save / NAV_SPEED + 0.5)
                 local saveText = (saveSec < 60) and L["%d초"]:format(saveSec) or L["%d분"]:format(math.floor(saveSec / 60 + 0.5))
                 Print(L["%s 동선에 넣었습니다: %s 가기 전 (약 %s 단축)"]:format(TV.OBJ[u.m.key], tostring(p.title or p.questID)
-                    .. ((p.zone and p.zone ~= "") and (" (" .. p.zone .. ")") or ""), saveText))
+                    .. ((p.zone and p.zone ~= "") and (" (" .. p.zone .. ")") or ""), saveText)
+                    .. (u.pref and L[" %s보다 약 %d초 느리지만 대기시간이 짧아서 넣었습니다."]:format(TV.NAMES[u.pref.over] or u.pref.over, u.pref.sec) or ""))
             end
         end
         -- 넣지 않은 이유 (설정 "이동 수단을 넣었는지와 그 이유를 채팅창에 알리기", 기본 끔, 2026-11-08 사용자 요청. 그전에는 귀환석만, 아무것도 안 넣었을 때 늘 알렸다)
