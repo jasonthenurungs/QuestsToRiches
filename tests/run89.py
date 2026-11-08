@@ -179,11 +179,28 @@ lua.eval(r'''function(QTR, out)
   NOWT = NOWT + 61
   print("  신호: " .. tostring(QuestsToRiches_WantsDelveBotLabyrinth()))
   NOWT = NOWT - 61
-  print("==T 9) 칩이 없는 계정 (선택지에 미궁 없음) -> 배우고 넣지 않음")
-  OPTS = { OPTS[1], OPTS[2] }
+  print("==T 9) 계정에서 칩을 본 뒤 다른 캐릭터 대화창에 미궁이 없어도 칩이 있다고 본다 (2026-11-08 사용자 요청)")
+  local labOpts = OPTS
+  OPTS = { labOpts[1], labOpts[2] }
+  QTR.TestOnGossip()
+  print("  delveBotLab 그대로: " .. tostring(DB.delveBotLab ~= false and DB.delveBotLab ~= nil))
+  route("9a) 여전히 구렁로봇을 넣음")
+  print("==T 9b) 선택지를 읽지 못한 대화창 (다른 애드온이 먼저 골라 닫힘 등) -> 배우지 않음")
+  local before = DB.delveBotLab
+  OPTS = {}
+  QTR.TestOnGossip()
+  print("  바뀌지 않음: " .. tostring(DB.delveBotLab == before))
+  print("==T 9c) 칩을 본 적이 없는 계정 (선택지에 미궁 없음) -> 배우고 넣지 않음")
+  local landing = DB.travelDest.delvebot
+  DB.delveBotLab, DB.travelDest.delvebot = nil, nil
+  OPTS = { labOpts[1], labOpts[2] }
   QTR.TestOnGossip()
   print("  delveBotLab: " .. tostring(DB.delveBotLab))
-  route("9b) 칩 없음")
+  route("9c) 칩 없음")
+  print("==T 9d) false로 덮였어도 미궁 입구에 내린 기록이 있으면 칩이 있다고 본다 (그날 게임의 상태)")
+  DB.travelDest.delvebot = landing
+  print("  delveBotLab: " .. tostring(DB.delveBotLab))
+  route("9d) 구렁로봇을 넣음")
   print("==T 10) 다른 NPC의 대화창은 무시")
   NPCGUID = "Creature-0-3058-0-18913-12345-00006FAC77"
   OPTS = { { gossipOptionID = 142847, name = "x" } }
