@@ -4741,20 +4741,36 @@ QTR.SetupRoute = function()
             table.insert(nodes, pp[i].to)
             portalOf[#nodes] = i
         end
-        local teleNode
+        local teleNodes = {}
         if mageTele and mageTele.pos then
             table.insert(nodes, mageTele.pos)
-            teleNode = #nodes
-            portalOf[teleNode] = "mage"
+            teleNodes[#nodes] = true
+            portalOf[#nodes] = "mage"
+        end
+        -- 하라니르 뿌리걸음 (2026-11-08): 쿨타임이 없어 마법사 순간이동처럼 넣는다 (QTR.rootTele, TV.RefreshRoot가 채운다).
+        --   하란다르 안 세계수 뿌리 가까이에서 쓰면 그 세계수(다른 대륙)로 가 버리므로 출발점이 뿌리 가까이면 넣지 않는다
+        local root = QTR.rootTele
+        if root and root.pos then
+            local nearRoot = false
+            for _, r in ipairs(root.roots) do
+                if a.c == r.c and Dist(a, r) < root.near then
+                    nearRoot = true
+                end
+            end
+            if not nearRoot then
+                table.insert(nodes, root.pos)
+                teleNodes[#nodes] = true
+                portalOf[#nodes] = "root"
+            end
         end
         local dist, prev, done = {}, {}, {}
         for k = 1, #nodes do
             dist[k] = math.huge
         end
         dist[1] = 0
-        if teleNode then
+        for k in pairs(teleNodes) do
             -- 순간이동은 어디서 쓰든 비용이 같으니 출발점에서 바로 쓰는 것이 가장 싸다
-            dist[teleNode], prev[teleNode] = TELE_COST, 1
+            dist[k], prev[k] = TELE_COST, 1
         end
         for _ = 1, #nodes do
             local u, best = nil, math.huge
@@ -4768,7 +4784,7 @@ QTR.SetupRoute = function()
             end
             done[u] = true
             for k = 2, #nodes do
-                if not done[k] and k ~= teleNode then
+                if not done[k] and not teleNodes[k] then
                     local d = dist[u] + Dist(nodes[u], pp[portalOf[k]].from) + PORTAL_COST
                     if d < dist[k] then
                         dist[k], prev[k] = d, u
@@ -5408,7 +5424,7 @@ QTR.SetupRoute = function()
     local ARC_COST = 30 * NAV_SPEED
     local ARC_INN = QTR.GameText("ARC_INN") or "나그네의 쉼터" -- 아르칸티나에서 나오면 서는 실버문 여관 (여관 이름은 클라이언트 언어)
     local TV = {} -- 이 부분의 함수와 상태 (SetupRoute의 local 수를 아끼려고 한 표에 둔다)
-    TV.NAMES = { hearth = L["귀환석"], astral = L["영혼의 귀환"], arcantina = L["아르칸티나 열쇠"], mage = L["순간이동"] }
+    TV.NAMES = { hearth = L["귀환석"], astral = L["영혼의 귀환"], arcantina = L["아르칸티나 열쇠"], mage = L["순간이동"], root = L["뿌리걸음"] }
     TV.OBJ = { hearth = L["귀환석을"], astral = L["영혼의 귀환을"], arcantina = L["아르칸티나 열쇠를"] }
     TV.BY = { hearth = L["귀환석으로"], astral = L["영혼의 귀환으로"], arcantina = L["아르칸티나 열쇠로"], mage = L["순간이동으로"] }
     -- 마이사라 동굴 순간이동 (2026-11-01 사용자 요청): 쐐기돌 던전 마이사라 동굴을 10단계 이상으로 마치면 받는 주문
@@ -5574,6 +5590,12 @@ QTR.SetupRoute = function()
     function TV.TravelLabel(key, inn)
         if key == "mage" then
             return L["순간이동: 실버문"], L["순간이동: 실버문"], nil, L["순간이동으로 실버문"]
+        end
+        if key == "root" then
+            -- "뿌리걸음: 요람 (하란다르)", 채팅 "뿌리걸음으로 요람 (하란다르)" (지역 이름은 게임에서 읽는다)
+            local info = C_Map.GetMapInfo and C_Map.GetMapInfo(TV.ROOT.map)
+            local zone = (info and info.name) or L["하란다르"]
+            return L["뿌리걸음: 요람"] .. " (" .. zone .. ")", L["뿌리걸음: 요람"], zone, L["뿌리걸음으로 요람"] .. " (" .. zone .. ")"
         end
         if key == "arcantina" then
             return L["장난감: 아르칸티나 열쇠"], L["장난감: 아르칸티나 열쇠"], nil, L["아르칸티나 열쇠 (장난감)"]
@@ -5804,6 +5826,29 @@ QTR.SetupRoute = function()
         if pos then
             mageTele = { spell = id, pos = pos }
         end
+    end
+
+    -- 하라니르 종족 기술 뿌리걸음 (2026-11-08 인벤 김다크님 제안, 사용자 "한번 테스트해보자"):
+    --   주문 1238686 (게임 툴팁 확인), 시전 7.5초(툴팁), 쿨타임 없음(위키). 하란다르의 요람으로 순간이동한다.
+    --   하란다르 안 세계수 뿌리 가까이에서 쓰면 그 세계수(다른 대륙)로 간다. 뿌리 좌표는 warcraft.wiki.gg (하란다르 지도 2413 기준으로 보았다),
+    --   "가까이"의 거리는 확인 불가라 넉넉히 150야드로 둔다.
+    --   요람에 내리는 곳은 확인 불가라, 한 번 써서 하란다르 대륙에 내린 곳을 기억한 뒤부터 동선에 넣는다 (DB.travelDest.root)
+    TV.ROOT = { spell = 1238686, map = 2413, near = 150,
+        roots = { { 0.7645, 0.4740 }, { 0.6495, 0.1902 }, { 0.2854, 0.8684 }, { 0.3586, 0.2074 } } }
+    function TV.RefreshRoot()
+        QTR.rootTele = nil
+        if DB.settings.travelRootOff or not TV.SpellKnown(TV.ROOT.spell) then
+            return
+        end
+        local d = DB.travelDest and DB.travelDest.root
+        if not d then
+            return
+        end
+        local roots = {}
+        for _, r in ipairs(TV.ROOT.roots) do
+            table.insert(roots, WorldPos(TV.ROOT.map, r[1], r[2]))
+        end
+        QTR.rootTele = { spell = TV.ROOT.spell, pos = { c = d.c, x = d.x, y = d.y }, roots = roots, near = TV.ROOT.near }
     end
 
     -- 대기시간만 있는 귀환형 이동: t에 쓸 수 있는가 (blocked 전에는 못 쓰고, 이번 경로에서 고른 사용과 cd만큼 떨어져야 한다)
@@ -6293,6 +6338,16 @@ QTR.SetupRoute = function()
             TV.LearnLanding(from, 1, 60, save("mage"))
             return true
         end
+        if spellID == TV.ROOT.spell then
+            -- 뿌리걸음: 하란다르와 같은 대륙에 내렸을 때만 요람으로 기억한다 (세계수 뿌리 곁에서 써서 다른 대륙으로 갔으면 기억하지 않는다)
+            TV.LearnLanding(from, 1, 60, function(p)
+                local h = WorldPos(TV.ROOT.map, 0.5, 0.5)
+                if h and p.c == h.c then
+                    save("root")(p)
+                end
+            end)
+            return true
+        end
         if spellID == TV.MAI.spell then
             return true -- 마이사라 동굴 순간이동: 내리는 곳은 실측 위치로 정해 두어 기억할 것이 없다
         end
@@ -6422,6 +6477,11 @@ QTR.SetupRoute = function()
             Print(L["마법사 실버문 순간이동: "] .. (DB.settings.travelMageOff and L["설정에서 끔"]
                 or (mageTele and L["찾음 (%s)"]:format(tostring(TV.SpellName(mageTele.spell) or mageTele.spell))
                 or L["아직 배우지 않음 (한밤 실버문 순간이동을 배우면 동선에 넣습니다)"])))
+        end
+        if TV.SpellKnown(TV.ROOT.spell) then
+            Print(L["뿌리걸음: "] .. (DB.settings.travelRootOff and L["설정에서 끔"]
+                or ((DB.travelDest and DB.travelDest.root) and L["켬 (요람 위치 기억함)"]
+                or L["켬, 요람 위치 모름 (하란다르의 세계수 뿌리에서 떨어진 곳에서 한 번 쓰면 기억하고 그 뒤부터 동선에 넣습니다)"])))
         end
         if TV.SpellKnown(ASTRAL_SPELL) then
             local remain = TV.SpellCD(ASTRAL_SPELL)
@@ -6574,7 +6634,7 @@ QTR.SetupRoute = function()
     end
     function TV.ButtonAction(r)
         local key = r.travel
-        if key == "mage" and r.spell then
+        if (key == "mage" or key == "root") and r.spell then
             return { type = "spell", spell = r.spell }, TV.SpellIcon(r.spell)
         elseif key == "astral" then
             return { type = "spell", spell = ASTRAL_SPELL }, TV.SpellIcon(ASTRAL_SPELL)
@@ -6965,6 +7025,7 @@ QTR.SetupRoute = function()
         end
         local startPos = PlayerPos()
         TV.RefreshMage() -- 마법사 실버문 순간이동 (포탈처럼 TravelCost에 들어간다)
+        TV.RefreshRoot() -- 하라니르 뿌리걸음 (같은 방식)
         local methods, bindWhy, missing = TV.RecallMethods()
         -- 순서와 귀환형 이동 자리를 정하고 실제 비용(이동 합 - 귀환형 이동으로 줄어든 양)을 잰다
         -- 경로 항목을 만들 때 쓸 포탈 목록(p.portals)은 OrderPoints를 부를 때마다 바뀌므로 따로 남긴다
@@ -7067,6 +7128,11 @@ QTR.SetupRoute = function()
                     local label, text, _, chat = TV.TravelLabel("mage")
                     AddEntry({ travel = "mage", spell = mageTele and mageTele.spell, arrival = mageTele and mageTele.pos,
                         label = label, travelText = text, chatLabel = chat })
+                elseif pi == "root" then
+                    CountTravel("root")
+                    local label, text, zone, chat = TV.TravelLabel("root")
+                    AddEntry({ travel = "root", spell = QTR.rootTele and QTR.rootTele.spell, arrival = QTR.rootTele and QTR.rootTele.pos,
+                        label = label, travelText = text, innZone = zone, chatLabel = chat })
                 else
                     portalCount = portalCount + 1
                     local pp = PortalPositions()[pi]
@@ -7085,7 +7151,7 @@ QTR.SetupRoute = function()
         if portalCount > 0 then
             table.insert(uses, L["포탈 %d번"]:format(portalCount))
         end
-        for _, key in ipairs({ "mage", "hearth", "astral", "arcantina", "maisara", "dundun", "delvebot" }) do
+        for _, key in ipairs({ "mage", "root", "hearth", "astral", "arcantina", "maisara", "dundun", "delvebot" }) do
             if travelCount[key] then
                 table.insert(uses, L["%s %d번"]:format(TV.NAMES[key], travelCount[key]))
             end
@@ -7950,7 +8016,7 @@ QTR.SetupRoute = function()
             if portals > 0 then
                 table.insert(via, L["포탈 %d번"]:format(portals))
             end
-            for _, key in ipairs({ "mage", "hearth", "astral", "arcantina", "maisara", "dundun", "delvebot" }) do
+            for _, key in ipairs({ "mage", "root", "hearth", "astral", "arcantina", "maisara", "dundun", "delvebot" }) do
                 if hearths[key] then
                     table.insert(via, L["%s %d번"]:format(TV.NAMES[key], hearths[key]))
                 end
@@ -9649,6 +9715,15 @@ local function BuildOptions()
                         desc = L["쿨타임이 없어 포탈처럼 필요할 때마다 씁니다."],
                         get = function() return not DB.settings.travelMageOff end,
                         set = function(_, val) DB.settings.travelMageOff = not val end,
+                    },
+                    -- 2026-11-08 인벤 김다크님 제안 (하라니르 종족 기술). 기본 켬 (마법사 순간이동과 같이)
+                    travelRoot = {
+                        type = "toggle", name = L["하라니르 뿌리걸음을 동선에 넣기"], order = 5.5, width = "full",
+                        desc = L["하란다르의 요람으로 가는 종족 기술입니다. 쿨타임이 없어 포탈처럼 필요할 때마다 씁니다.\n"]
+                            .. L["요람에 내리는 곳을 알아야 해서, 하란다르의 세계수 뿌리에서 떨어진 곳에서 한 번 써야 동선에 들어갑니다.\n"]
+                            .. L["세계수 뿌리 가까이에서는 다른 대륙의 세계수로 가므로 그 근처에서는 넣지 않습니다."],
+                        get = function() return not DB.settings.travelRootOff end,
+                        set = function(_, val) DB.settings.travelRootOff = not val end,
                     },
                     travelArcantina = {
                         type = "toggle", name = L["아르칸티나로 통하는 개인 열쇠를 동선에 넣기"], order = 6, width = "full",
