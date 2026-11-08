@@ -6084,8 +6084,10 @@ QTR.SetupRoute = function()
                 elseif s.keep then
                     text = L["마칠 때 1회 남기기 때문에. 지금 쓰면 다 마칠 때까지 대기시간이 끝나지 않습니다. (설정에서 끌 수 있습니다)"]
                 elseif s.prefBy and s.prefBy.pref then
-                    text = L["줄어드는 시간 차이가 약 %d초뿐이라 대기시간이 짧은 %s 대신 넣어서."]:format(s.prefBy.pref.sec,
-                        TV.OBJ[s.prefBy.m.key] or s.prefBy.m.key)
+                    -- 차이가 1초 미만이면 "약 0초" 대신 "거의 같아서" (2026-11-08 게임: 줄아만 91801은 두 도착점에서 거리가 약 10야드 차이)
+                    local obj = TV.OBJ[s.prefBy.m.key] or s.prefBy.m.key
+                    text = (s.prefBy.pref.sec < 1) and L["줄어드는 시간이 거의 같아서 대기시간이 짧은 %s 대신 넣어서."]:format(obj)
+                        or L["줄어드는 시간 차이가 약 %d초뿐이라 대기시간이 짧은 %s 대신 넣어서."]:format(s.prefBy.pref.sec, obj)
                 elseif s.taken then
                     text = L["그 구간에는 더 많이 줄어드는 다른 수단을 넣어서."]
                 elseif m.remain and m.remain > 0 then
@@ -7081,7 +7083,8 @@ QTR.SetupRoute = function()
                 local saveText = (saveSec < 60) and L["%d초"]:format(saveSec) or L["%d분"]:format(math.floor(saveSec / 60 + 0.5))
                 Print(L["%s 동선에 넣었습니다: %s 가기 전 (약 %s 단축)"]:format(TV.OBJ[u.m.key], tostring(p.title or p.questID)
                     .. ((p.zone and p.zone ~= "") and (" (" .. p.zone .. ")") or ""), saveText)
-                    .. (u.pref and L[" %s보다 약 %d초 느리지만 대기시간이 짧아서 넣었습니다."]:format(TV.NAMES[u.pref.over] or u.pref.over, u.pref.sec) or ""))
+                    .. (u.pref and ((u.pref.sec < 1) and L[" 걸리는 시간이 %s 쪽과 거의 같아 대기시간이 짧은 쪽을 넣었습니다."]:format(TV.NAMES[u.pref.over] or u.pref.over)
+                        or L[" %s보다 약 %d초 느리지만 대기시간이 짧아서 넣었습니다."]:format(TV.NAMES[u.pref.over] or u.pref.over, u.pref.sec)) or ""))
             end
         end
         -- 넣지 않은 이유 (설정 "이동 수단을 넣었는지와 그 이유를 채팅창에 알리기", 기본 끔, 2026-11-08 사용자 요청. 그전에는 귀환석만, 아무것도 안 넣었을 때 늘 알렸다)

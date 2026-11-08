@@ -163,5 +163,10 @@ lua.eval(r'''function(QTR, out)
   DB.settings.travelWhyOn = false
   route("6) 알림 설정 끔 -> 채팅 없이 구렁로봇, 표지는 남김", SM[1], SM[2], SM[3])
   print("  기록 표지: " .. lastPref())
+  DB.settings.travelWhyOn = true
+  -- 2026-11-08 게임 (연남동누렁스): 줄아만 91801 황혼의 파멸. 두 도착점에서 거리가 약 10야드 차이라 "약 0초"로 나왔다
+  Q[81] = { map = 2437, title = "G3 91801 자리", money = 10634778, t = 86400, x = 0.3757914900779724, y = 0.7215083837509155 }
+  route("7) 차이 1초 미만 -> 거의 같다는 문구", SM[1], SM[2], SM[3])
+  print("  기록 표지: " .. lastPref())
   print("==T end")
 end''')(addon, out)
