@@ -6396,6 +6396,8 @@ QTR.SetupRoute = function()
     tb.text = tb:CreateFontString(nil, "OVERLAY", "GameFontNormal")
     tb.text:SetPoint("LEFT", tb.icon, "RIGHT", 10, 0)
     tb.text:SetJustifyH("LEFT")
+    tb.measure = tb:CreateFontString(nil, "OVERLAY", "GameFontNormal") -- 줄마다 너비를 재는 숨긴 글자
+    tb.measure:Hide()
 
     function TV.PlaceAlert()
         ta:ClearAllPoints()
@@ -6480,7 +6482,15 @@ QTR.SetupRoute = function()
         tb.icon:SetTexture(icon or "Interface\\Icons\\INV_Misc_Rune_01")
         -- 구렁로봇은 쓴 뒤 로봇에게 말을 걸어야 한다 (말을 걸면 미궁을 자동으로 고른다)
         local hint = (r.travel == "delvebot") and L["\n|cffffffff클릭한 뒤 로봇에게 말을 걸면 미궁으로 갑니다"] or L["\n|cffffffff클릭해서 사용"]
-        tb.text:SetText(tostring(r.label) .. hint .. (r == TV.finish and L[" (내비게이션 완료)"] or "") .. "|r")
+        local shown = tostring(r.label) .. hint .. (r == TV.finish and L[" (내비게이션 완료)"] or "") .. "|r"
+        tb.text:SetText(shown)
+        -- 글이 길면 창을 넓힌다 (2026-11-08: 구렁로봇 안내가 창 밖으로 넘쳤다). 아이콘 왼쪽 10 + 36 + 간격 10 + 오른쪽 여백 14
+        local textW = 0
+        for line in shown:gmatch("[^\n]+") do
+            tb.measure:SetText(line)
+            textW = math.max(textW, tb.measure:GetStringWidth() or 0)
+        end
+        ta:SetWidth(math.max(290, math.ceil(textW) + 70))
         TV.shownKey = key
         if not ta:IsShown() then
             TV.PlaceAlert()
