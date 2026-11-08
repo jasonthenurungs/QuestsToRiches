@@ -1,5 +1,5 @@
 # 하라니르 뿌리걸음 (2026-11-08 인벤 김다크님 제안, 사용자 "한번 테스트해보자"): 주문 1238686, 쿨타임 없음, 하란다르 요람으로
-#   요람 위치를 한 번 써서 배운 뒤부터 마법사 순간이동처럼 TravelCost에 넣는다. 세계수 뿌리 가까이(150야드)에서는 넣지 않는다
+#   요람 위치는 어림값으로 시작해 한 번 써서 내린 곳을 배우면 그것으로, 마법사 순간이동처럼 TravelCost에 넣는다. 세계수 뿌리 가까이(150야드)에서는 넣지 않는다
 #   다른 대륙에 내리면 배우지 않음, 설정 travelRootOff, 사용 버튼 창은 그 주문, /qtr hearth 상태 줄
 import os as _os
 TD = _os.path.dirname(_os.path.abspath(__file__)) + '/'
@@ -121,6 +121,7 @@ lua.eval(r'''function(QTR, out)
   end
 
   local ROOT = 1238686
+  DB.settings.travelWhyOn = true
   local function dest()
     local d = DB.travelDest and DB.travelDest.root
     return d and (d.c .. " " .. math.floor(d.x + 0.5) .. " " .. math.floor(d.y + 0.5)) or "없음"
@@ -131,7 +132,7 @@ lua.eval(r'''function(QTR, out)
   local SM = { 2393, 0.49910, 0.48728 } -- 실버문 (8862,-4736)
   route("1) 기술을 모름 -> 넣지 않음", SM[1], SM[2], SM[3])
   KNOWN[ROOT] = true
-  route("2) 배웠지만 요람 위치 모름 -> 넣지 않음", SM[1], SM[2], SM[3])
+  route("2) 배웠고 요람 위치 모름 -> 어림 위치(하란다르 0.509, 0.507)로 넣음", SM[1], SM[2], SM[3])
   print("==T 2b) /qtr hearth")
   SlashCmdList["QUESTSTORICHES"]("hearth")
   print("==T 3) 세계수 뿌리 곁에서 써서 다른 대륙(c=1)으로 감 -> 배우지 않음")

@@ -5832,8 +5832,10 @@ QTR.SetupRoute = function()
     --   주문 1238686 (게임 툴팁 확인), 시전 7.5초(툴팁), 쿨타임 없음(위키). 하란다르의 요람으로 순간이동한다.
     --   하란다르 안 세계수 뿌리 가까이에서 쓰면 그 세계수(다른 대륙)로 간다. 뿌리 좌표는 warcraft.wiki.gg (하란다르 지도 2413 기준으로 보았다),
     --   "가까이"의 거리는 확인 불가라 넉넉히 150야드로 둔다.
-    --   요람에 내리는 곳은 확인 불가라, 한 번 써서 하란다르 대륙에 내린 곳을 기억한 뒤부터 동선에 넣는다 (DB.travelDest.root)
-    TV.ROOT = { spell = 1238686, map = 2413, near = 150,
+    --   요람에 내리는 곳: 한 번 써서 하란다르 대륙에 내린 곳을 기억한다 (DB.travelDest.root). 그전에는 어림 위치 den을 쓴다
+    --   (2026-11-08 처음에는 기억한 뒤부터만 넣었으나, 볶음밥의로아 시험에서 써 보기 전이라 들어가지 않아 어림값을 넣었다.
+    --    어림값: 요람은 소굴 위쪽이라 하라티 병참장교 나이나르(소굴, 하란다르 50.9, 50.7, 위키) 자리로 둔다. 확인 불가)
+    TV.ROOT = { spell = 1238686, map = 2413, near = 150, den = { 0.509, 0.507 },
         roots = { { 0.7645, 0.4740 }, { 0.6495, 0.1902 }, { 0.2854, 0.8684 }, { 0.3586, 0.2074 } } }
     function TV.RefreshRoot()
         QTR.rootTele = nil
@@ -5841,14 +5843,15 @@ QTR.SetupRoute = function()
             return
         end
         local d = DB.travelDest and DB.travelDest.root
-        if not d then
+        local pos = d and { c = d.c, x = d.x, y = d.y } or WorldPos(TV.ROOT.map, TV.ROOT.den[1], TV.ROOT.den[2])
+        if not pos then
             return
         end
         local roots = {}
         for _, r in ipairs(TV.ROOT.roots) do
             table.insert(roots, WorldPos(TV.ROOT.map, r[1], r[2]))
         end
-        QTR.rootTele = { spell = TV.ROOT.spell, pos = { c = d.c, x = d.x, y = d.y }, roots = roots, near = TV.ROOT.near }
+        QTR.rootTele = { spell = TV.ROOT.spell, pos = pos, roots = roots, near = TV.ROOT.near }
     end
 
     -- 대기시간만 있는 귀환형 이동: t에 쓸 수 있는가 (blocked 전에는 못 쓰고, 이번 경로에서 고른 사용과 cd만큼 떨어져야 한다)
@@ -6481,7 +6484,7 @@ QTR.SetupRoute = function()
         if TV.SpellKnown(TV.ROOT.spell) then
             Print(L["뿌리걸음: "] .. (DB.settings.travelRootOff and L["설정에서 끔"]
                 or ((DB.travelDest and DB.travelDest.root) and L["켬 (요람 위치 기억함)"]
-                or L["켬, 요람 위치 모름 (하란다르의 세계수 뿌리에서 떨어진 곳에서 한 번 쓰면 기억하고 그 뒤부터 동선에 넣습니다)"])))
+                or L["켬, 요람 위치는 어림 (하란다르의 세계수 뿌리에서 떨어진 곳에서 한 번 쓰면 실제로 내린 곳을 기억합니다)"])))
         end
         if TV.SpellKnown(ASTRAL_SPELL) then
             local remain = TV.SpellCD(ASTRAL_SPELL)
@@ -7209,6 +7212,16 @@ QTR.SetupRoute = function()
             for _, key in ipairs({ "hearth", "astral", "arcantina", "maisara", "dundun", "delvebot" }) do
                 if missing[key] and not listed[key] then
                     Print(L["%s 넣지 않았습니다: %s"]:format(TV.OBJ[key], missing[key]))
+                end
+            end
+            -- 뿌리걸음 (2026-11-08 볶음밥의로아 시험에서 알림이 없었다): 포탈처럼 들어가므로 몇 번 넣었는지, 안 넣었으면 그 까닭
+            if TV.SpellKnown(TV.ROOT.spell) and not DB.settings.travelRootOff then
+                if travelCount.root then
+                    Print(L["뿌리걸음을 동선에 넣었습니다: %d번 (포탈처럼 더 빠른 구간마다)"]:format(travelCount.root))
+                else
+                    Print(L["%s 넣지 않았습니다: %s"]:format(L["뿌리걸음을"], QTR.rootTele
+                        and L["요람을 거쳐 더 빨라지는 구간이 없어서 (세계수 뿌리 근처에서는 쓰지 않습니다)."]
+                        or L["요람 위치를 읽지 못해서."]))
                 end
             end
         end
@@ -9720,7 +9733,7 @@ local function BuildOptions()
                     travelRoot = {
                         type = "toggle", name = L["하라니르 뿌리걸음을 동선에 넣기"], order = 5.5, width = "full",
                         desc = L["하란다르의 요람으로 가는 종족 기술입니다. 쿨타임이 없어 포탈처럼 필요할 때마다 씁니다.\n"]
-                            .. L["요람에 내리는 곳을 알아야 해서, 하란다르의 세계수 뿌리에서 떨어진 곳에서 한 번 써야 동선에 들어갑니다.\n"]
+                            .. L["요람에 내리는 곳은 처음에는 어림으로 잡고, 하란다르의 세계수 뿌리에서 떨어진 곳에서 한 번 쓰면 실제로 내린 곳을 기억합니다.\n"]
                             .. L["세계수 뿌리 가까이에서는 다른 대륙의 세계수로 가므로 그 근처에서는 넣지 않습니다."],
                         get = function() return not DB.settings.travelRootOff end,
                         set = function(_, val) DB.settings.travelRootOff = not val end,
