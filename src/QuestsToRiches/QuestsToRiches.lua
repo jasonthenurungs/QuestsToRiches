@@ -4770,7 +4770,8 @@ QTR.SetupRoute = function()
         dist[1] = 0
         for k in pairs(teleNodes) do
             -- 순간이동은 어디서 쓰든 비용이 같으니 출발점에서 바로 쓰는 것이 가장 싸다
-            dist[k], prev[k] = TELE_COST, 1
+            -- 뿌리걸음이 "귀환" 상태면 먼저 귀환하고 다시 써야 요람으로 가므로 두 번 값 (TV.RefreshRoot의 twice)
+            dist[k], prev[k] = TELE_COST * ((portalOf[k] == "root" and root.twice) and 2 or 1), 1
         end
         for _ = 1, #nodes do
             local u, best = nil, math.huge
@@ -5835,7 +5836,10 @@ QTR.SetupRoute = function()
     --   요람에 내리는 곳: 한 번 써서 하란다르 대륙에 내린 곳을 기억한다 (DB.travelDest.root). 그전에는 어림 위치 den을 쓴다
     --   (2026-11-08 처음에는 기억한 뒤부터만 넣었으나, 볶음밥의로아 시험에서 써 보기 전이라 들어가지 않아 어림값을 넣었다.
     --    어림값: 요람은 소굴 위쪽이라 하라티 병참장교 나이나르(소굴, 하란다르 50.9, 50.7, 위키) 자리로 둔다. 확인 불가)
-    TV.ROOT = { spell = 1238686, map = 2413, near = 150, den = { 0.509, 0.507 },
+    --   한 번 쓰면 주문이 "뿌리걸음: 귀환"(1238695, 2026-11-08 사용자 게임 툴팁)으로 바뀌어, 쓰면 직전에 뿌리걸음을 쓴 곳으로 돌아간다.
+    --   그 상태(back)에서는 귀환 -> 뿌리걸음 두 번을 써야 요람으로 가므로 비용을 두 배로 잡고, 사용 창에 그렇게 알린다.
+    --   귀환하면 요람 근처가 아닌 곳으로 순간이동하므로 남은 경로를 다시 짜고, 그때는 뿌리걸음 상태라 다시 뿌리걸음 단계가 나온다
+    TV.ROOT = { spell = 1238686, back = 1238695, map = 2413, near = 150, den = { 0.509, 0.507 },
         roots = { { 0.7645, 0.4740 }, { 0.6495, 0.1902 }, { 0.2854, 0.8684 }, { 0.3586, 0.2074 } } }
     function TV.RefreshRoot()
         QTR.rootTele = nil
@@ -5851,7 +5855,16 @@ QTR.SetupRoute = function()
         for _, r in ipairs(TV.ROOT.roots) do
             table.insert(roots, WorldPos(TV.ROOT.map, r[1], r[2]))
         end
-        QTR.rootTele = { spell = TV.ROOT.spell, pos = pos, roots = roots, near = TV.ROOT.near }
+        QTR.rootTele = { spell = TV.ROOT.spell, pos = pos, roots = roots, near = TV.ROOT.near, twice = TV.RootReturning() }
+    end
+    -- 뿌리걸음이 지금 "뿌리걸음: 귀환"으로 바뀌어 있는가 (주문 덮어쓰기로 읽는다)
+    function TV.RootReturning()
+        local f = (C_Spell and C_Spell.GetOverrideSpell) or FindSpellOverrideByID
+        if not f then
+            return false
+        end
+        local ok, id = pcall(f, TV.ROOT.spell)
+        return (ok and id == TV.ROOT.back) and true or false
     end
 
     -- 대기시간만 있는 귀환형 이동: t에 쓸 수 있는가 (blocked 전에는 못 쓰고, 이번 경로에서 고른 사용과 cd만큼 떨어져야 한다)
@@ -6484,7 +6497,8 @@ QTR.SetupRoute = function()
         if TV.SpellKnown(TV.ROOT.spell) then
             Print(L["뿌리걸음: "] .. (DB.settings.travelRootOff and L["설정에서 끔"]
                 or ((DB.travelDest and DB.travelDest.root) and L["켬 (요람 위치 기억함)"]
-                or L["켬, 요람 위치는 어림 (하란다르의 세계수 뿌리에서 떨어진 곳에서 한 번 쓰면 실제로 내린 곳을 기억합니다)"])))
+                or L["켬, 요람 위치는 어림 (하란다르의 세계수 뿌리에서 떨어진 곳에서 한 번 쓰면 실제로 내린 곳을 기억합니다)"]))
+                .. (TV.RootReturning() and L[" / 지금 뿌리걸음: 귀환 상태 (요람까지 두 번 써야 해서 비용을 두 배로 봅니다)"] or ""))
         end
         if TV.SpellKnown(ASTRAL_SPELL) then
             local remain = TV.SpellCD(ASTRAL_SPELL)
@@ -6693,7 +6707,9 @@ QTR.SetupRoute = function()
         tb:SetAttribute("type", attrs.type)
         tb.icon:SetTexture(icon or "Interface\\Icons\\INV_Misc_Rune_01")
         -- 구렁로봇은 쓴 뒤 로봇에게 말을 걸어야 한다 (말을 걸면 미궁을 자동으로 고른다)
-        local hint = (r.travel == "delvebot") and L["\n|cffffffff클릭한 뒤 로봇에게 말을 걸면 미궁으로 갑니다"] or L["\n|cffffffff클릭해서 사용"]
+        local hint = (r.travel == "delvebot") and L["\n|cffffffff클릭한 뒤 로봇에게 말을 걸면 미궁으로 갑니다"]
+            or (r.travel == "root" and r.twice and L["\n|cffffffff지금은 뿌리걸음: 귀환 상태라 먼저 직전 위치로 돌아갑니다.\n돌아간 뒤 한 번 더 누르면 요람으로 갑니다"])
+            or L["\n|cffffffff클릭해서 사용"]
         local shown = tostring(r.label) .. hint .. (r == TV.finish and L[" (내비게이션 완료)"] or "") .. "|r"
         tb.text:SetText(shown)
         -- 글이 길면 창을 넓힌다 (2026-11-08: 구렁로봇 안내가 창 밖으로 넘쳤다). 아이콘 왼쪽 10 + 36 + 간격 10 + 오른쪽 여백 14
@@ -7135,6 +7151,7 @@ QTR.SetupRoute = function()
                     CountTravel("root")
                     local label, text, zone, chat = TV.TravelLabel("root")
                     AddEntry({ travel = "root", spell = QTR.rootTele and QTR.rootTele.spell, arrival = QTR.rootTele and QTR.rootTele.pos,
+                        twice = QTR.rootTele and QTR.rootTele.twice or nil,
                         label = label, travelText = text, innZone = zone, chatLabel = chat })
                 else
                     portalCount = portalCount + 1

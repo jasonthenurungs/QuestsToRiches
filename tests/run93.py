@@ -164,5 +164,23 @@ lua.eval(r'''function(QTR, out)
   PMAP, PX, PY = 2413, 0.5, 0.5
   RunLater(); Tick(); Tick(); RunLater()
   print("  지금 단계: " .. tostring(QTR.route and QTR.route[1] and QTR.route[1].label))
+  -- 2026-11-08 사용자 게임 확인: 한 번 쓰면 "뿌리걸음: 귀환"(1238695)으로 바뀌어 직전 위치로 돌아간다
+  OVR = {}
+  C_Spell.GetOverrideSpell = function(id) return OVR[id] or id end
+  OVR[ROOT] = 1238695
+  -- 요람에서 먼 하란다르 퀘스트: 포탈로 가도 멀어서 두 배(40초)여도 뿌리걸음이 낫다
+  for k in pairs(Q) do Q[k] = nil end
+  Q[92] = { map = 2413, title = "H2 요람 서쪽", money = 10000000, t = 86400, x = 0.40, y = 0.55 }
+  route("10) 귀환 상태 -> 두 번 값으로 따져 넣고, 사용 창에 두 번 누르라고 알림", SM[1], SM[2], SM[3])
+  button()
+  print("==T 10b) /qtr hearth")
+  SlashCmdList["QUESTSTORICHES"]("hearth")
+  print("==T 11) 눌러서 귀환 (직전 위치 줄아만으로) -> 다시 짜고, 이제 뿌리걸음 상태라 다시 뿌리걸음 단계")
+  QTR.OnPlayerSpellcast(1238695)
+  OVR[ROOT] = nil
+  PMAP, PX, PY = 2437, 0.40, 0.47
+  RunLater(); Tick(); RunLater()
+  print("  지금 단계: " .. tostring(QTR.route and QTR.route[1] and QTR.route[1].label))
+  button()
   print("==T end")
 end''')(addon, out)
