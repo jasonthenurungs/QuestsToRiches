@@ -8156,6 +8156,13 @@ QTR.SetupRoute = function()
         popFoot:ClearAllPoints()
         popFoot:SetPoint("TOPLEFT", pop, "TOPLEFT", 12, y - 6)
         popFoot:SetText(foot)
+        -- 다음 추천 캐릭터 이름에 마우스를 올리면 추천 이유 (마지막 줄)
+        if places == 0 and QTR.recLast then
+            local hgt = popFoot.GetStringHeight and popFoot:GetStringHeight() or 0
+            QTR.PlaceRecHover(pop, popFoot, hgt * (footLines - 1) / footLines)
+        elseif QTR.recHovers[popFoot] then
+            QTR.recHovers[popFoot]:Hide()
+        end
         -- 안내 중이면 오른쪽 아래 "경로안내 중지", 다 마쳤으면 "대시보드로 돌아가기"
         popActBtn.backOnly = false
         popActBtn:SetText(#route > 0 and L["경로안내 중지"] or L["대시보드로 돌아가기"])
@@ -8170,6 +8177,9 @@ QTR.SetupRoute = function()
     --   회색 "현재 내비게이션 대기중", 지금 넣을 수 있는 곳(골드퀘 수와 골드 합계, 특별 과제 수),
     --   그 밑 가운데에 "내비게이션 시작!" 버튼 (넣을 곳이 없으면 "대시보드로 돌아가기")
     function QTR.RoutePopupIdle()
+        if QTR.recHovers[popFoot] then
+            QTR.recHovers[popFoot]:Hide()
+        end
         popSub:SetText(L["|cff808080현재 내비게이션 대기중|r"])
         popBand:Hide()
         for k = 1, #popRows do
@@ -8745,7 +8755,18 @@ function QTR.RecommendNextChar()
             break
         end
     end
+    -- 직업 선호 (2026-11-08 사용자 요청): 1번 다음, 골드보다 먼저. 선호 1, 보통 2(기본), 비선호 3 (설정 classPref)
+    local richest
+    for _, r in ipairs(list) do
+        r.tier = QTR.ClassTier(r.key)
+        if not richest or r.money > richest.money then
+            richest = r
+        end
+    end
     table.sort(list, function(a, b)
+        if a.tier ~= b.tier then
+            return a.tier < b.tier
+        end
         if a.money ~= b.money then
             return a.money > b.money
         end
@@ -8755,21 +8776,129 @@ function QTR.RecommendNextChar()
         return a.key < b.key
     end)
     local best = list[1]
+    -- 툴팁에 쓸 추천 이유: 1번으로 좁혔는가, 직업 선호 때문에 골드가 더 많은 캐릭터를 건너뛰었는가, 같은 서버로 바꿨는가
+    local function done(r, realmOver)
+        r.sameRealm, r.urgent = (r.realm == myRealm), urgent
+        r.narrowed = (#list < #all)
+        r.richer = (richest ~= r and richest.money > r.money and richest.tier > r.tier) and richest or nil
+        r.realmOver = realmOver
+        r.tiersUsed = QTR.ClassPrefUsed()
+        r.hasPref = false
+        for _, c in ipairs(list) do
+            if c.tier == 1 then
+                r.hasPref = true
+            end
+        end
+        return r
+    end
     if myRealm and best.realm ~= myRealm then
         for _, r in ipairs(list) do
-            if r.realm == myRealm and best.money - r.money <= REC_NEAR then
-                r.sameRealm, r.urgent = true, urgent
-                return r
+            if r.realm == myRealm and r.tier == best.tier and best.money - r.money <= REC_NEAR then
+                return done(r, best)
             end
         end
     end
-    best.sameRealm, best.urgent = (best.realm == myRealm), urgent
-    return best
+    return done(best)
+end
+
+-- 직업 선호 단계: 1 선호, 2 보통, 3 비선호 (DB.settings.classPref[직업 토큰])
+QTR.recHovers = {} -- 추천 줄 글자 칸별 이름 위 마우스 영역 (QTR.PlaceRecHover, 글자 칸에 직접 두지 않는다)
+QTR.CLASS_TOKENS = { "WARRIOR", "PALADIN", "HUNTER", "ROGUE", "PRIEST", "DEATHKNIGHT", "SHAMAN", "MAGE", "WARLOCK", "MONK",
+    "DRUID", "DEMONHUNTER", "EVOKER" }
+function QTR.ClassTier(key)
+    local c = DB.chars[key]
+    local p = DB.settings.classPref
+    return (c and c.class and p and p[c.class]) or 2
+end
+function QTR.ClassPrefUsed()
+    for _, v in pairs(DB.settings.classPref or {}) do
+        if v ~= 2 then
+            return true
+        end
+    end
+    return false
+end
+
+-- 추천 이유 툴팁 (2026-11-08 사용자 요청: 추천 줄에 글을 붙이지 말고 캐릭터 이름에 마우스를 올리면 보이게)
+function QTR.ShowRecTip(owner)
+    local r = QTR.recLast
+    if not r then
+        return
+    end
+    GameTooltip:SetOwner(owner, "ANCHOR_BOTTOMRIGHT")
+    GameTooltip:AddLine(ColorName(r.key))
+    GameTooltip:AddLine(L["추천 이유"], 1, 0.82, 0)
+    local function add(text)
+        GameTooltip:AddLine("- " .. text, 1, 1, 1, true)
+    end
+    if r.narrowed and r.urgent then
+        local e = r.urgent.e
+        local left = e.expire and (e.expire - time()) or nil
+        add(L["가장 빨리 끝나는 골드퀘 %s을(를) 아직 하지 않은 캐릭터 중에서 골랐습니다%s."]:format(tostring(e.name or r.urgent.id),
+            (left and left > 0) and L[" (%s 남음)"]:format(FormatDuration(left)) or ""))
+    end
+    if r.tiersUsed then
+        local _, className = GetCharSortInfo(r.key)
+        if r.tier == 1 then
+            add(L["선호 직업(%s)입니다."]:format(className))
+        elseif r.tier == 3 then
+            add(L["비선호 직업(%s)이지만 다른 후보가 없습니다."]:format(className))
+        else
+            add(L["보통 직업(%s)입니다. 후보 중에 선호 직업 캐릭터가 없습니다."]:format(className))
+        end
+        if r.richer then
+            add(L["%s보다 남은 골드는 %s 적지만 직업 선호가 더 높습니다."]:format(ColorName(r.richer.key), FormatGold(r.richer.money - r.money)))
+        end
+    end
+    if r.realmOver and r.realmOver.money == r.money then
+        add(L["지금 캐릭터와 같은 서버라서, 남은 골드가 같은 %s 대신 골랐습니다."]:format(ColorName(r.realmOver.key)))
+    elseif r.realmOver then
+        add(L["지금 캐릭터와 같은 서버라서, 남은 골드가 %s 더 많은 %s 대신 골랐습니다 (1천 골드 안 차이)."]:format(
+            FormatGold(r.realmOver.money - r.money), ColorName(r.realmOver.key)))
+    elseif r.tiersUsed then
+        add(L["같은 직업 선호 중에서 남은 골드가 가장 많습니다: 골드퀘 %d개, %s."]:format(r.count, FormatGold(r.money)))
+    else
+        add(L["후보 중에서 남은 골드가 가장 많습니다: 골드퀘 %d개, %s."]:format(r.count, FormatGold(r.money)))
+    end
+    GameTooltip:Show()
+end
+
+-- 추천 줄의 캐릭터 이름 위에 마우스 영역을 둔다. lineTop: 글자 위쪽에서 추천 줄까지 내려간 거리 (여러 줄 글자의 마지막 줄일 때)
+function QTR.PlaceRecHover(parent, fs, lineTop)
+    local h = QTR.recHovers[fs]
+    if not h then
+        h = CreateFrame("Frame", nil, parent)
+        h:EnableMouse(true)
+        h:SetScript("OnEnter", function(self) QTR.ShowRecTip(self) end)
+        h:SetScript("OnLeave", function() GameTooltip:Hide() end)
+        h.measure = parent:CreateFontString(nil, "OVERLAY")
+        h.measure:Hide()
+        QTR.recHovers[fs] = h
+    end
+    local r = QTR.recLast
+    if not r then
+        h:Hide()
+        return
+    end
+    local font = fs.GetFontObject and fs:GetFontObject()
+    if font then
+        h.measure:SetFontObject(font)
+    end
+    h.measure:SetText(L["다음 추천: %s |cffaaaaaa(남은 골드퀘 %d개, %s)|r"]:match("^(.-)%%s") or "")
+    local x = h.measure:GetStringWidth() or 0
+    h.measure:SetText(r.key)
+    local w = h.measure:GetStringWidth() or 0
+    h.measure:SetText("")
+    h:ClearAllPoints()
+    h:SetPoint("TOPLEFT", fs, "TOPLEFT", x, -(lineTop or 0))
+    h:SetSize(math.max(w, 20), 14)
+    h:Show()
 end
 
 -- 추천 한 줄: "다음 추천: 겨울이간다-데스윙 (남은 골드퀘 8개, 8,400골드)"
 function QTR.RecommendText()
     local r = QTR.RecommendNextChar()
+    QTR.recLast = r -- 이름 툴팁 (QTR.ShowRecTip)
     if not r then
         return L["|cffaaaaaa다음 추천: 남은 골드퀘가 있는 다른 캐릭터가 없습니다.|r"]
     end
@@ -9025,6 +9154,7 @@ function QTR:UpdateRich()
         rich.sub:SetText(L["|cffaaaaaa캐릭터 %d개 기준, 줄을 누르면 캐릭터별 현황|r"]:format(#targets))
     end
     rich.rec:SetText(QTR.RecommendText())
+    QTR.PlaceRecHover(dashPanel, rich.rec)
 end
 
 -- 탭이 열려 있는 동안 남은 시간을 주기적으로 갱신
@@ -9486,6 +9616,32 @@ local function BuildOptions()
             image = "Interface\\AddOns\\QuestsToRiches\\Media\\Pin", imageCoords = { 0, 0.03, 0, 0.03 },
             imageWidth = 1, imageHeight = 24 }
     end
+    -- 다음 추천 캐릭터의 직업 선호 (2026-11-08 사용자 요청): 직업마다 선호, 보통(기본), 비선호. 골드보다 먼저 본다
+    local classArgs = {
+        desc = { type = "description", order = 0, width = "full",
+            name = L["다음 추천 캐릭터를 고를 때 골드보다 먼저 봅니다 (가장 빨리 끝나는 골드퀘를 아직 안 한 캐릭터로 후보를 좁힌 다음).\n"]
+                .. L["추천된 캐릭터 이름에 마우스를 올리면 추천 이유가 나옵니다."] },
+        reset = { type = "execute", name = L["모두 보통으로"], order = 100,
+            func = function()
+                DB.settings.classPref = nil
+                QTR:Refresh()
+            end },
+    }
+    for i, token in ipairs(QTR.CLASS_TOKENS) do
+        local color = RAID_CLASS_COLORS and RAID_CLASS_COLORS[token] and RAID_CLASS_COLORS[token].colorStr
+        local cname = (LOCALIZED_CLASS_NAMES_MALE and LOCALIZED_CLASS_NAMES_MALE[token]) or token
+        classArgs["class" .. token] = {
+            type = "select", order = i, width = 0.8,
+            name = color and ("|c" .. color .. cname .. "|r") or cname,
+            values = { [1] = L["선호"], [2] = L["보통"], [3] = L["비선호"] }, sorting = { 1, 2, 3 },
+            get = function() return (DB.settings.classPref and DB.settings.classPref[token]) or 2 end,
+            set = function(_, v)
+                DB.settings.classPref = DB.settings.classPref or {}
+                DB.settings.classPref[token] = (v ~= 2) and v or nil
+                QTR:Refresh()
+            end,
+        }
+    end
     return {
         type = "group",
         name = "QuestsToRiches",
@@ -9860,6 +10016,9 @@ local function BuildOptions()
                         set = function(_, val) DB.settings.finishArcantinaOff = not val end,
                     },
                 },
+            },
+            classGroup = {
+                type = "group", name = L["다음 추천 캐릭터"], order = 4.6, inline = true, args = classArgs,
             },
             cacheGroup = {
                 type = "group", name = L["정점 보관함"], order = 4.5, inline = true,

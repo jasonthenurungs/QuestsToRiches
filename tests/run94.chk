@@ -1,0 +1,42 @@
+|cffffd100[QTR]|r 로드 완료. /qtr 창 열기, /qtr set 설정창
+|cffffd100[QTR]|r 이번 버전부터 이동 수단 채팅 알림(동선에 넣었습니다, 넣지 않았습니다)은 기본으로 나오지 않습니다. 보고 싶으면 설정창 '동선에 넣는 이동 수단' 묶음에서 '이동 수단을 넣었는지와 그 이유를 채팅창에 알리기'를 켜 주세요.
+== 1) 선호 설정 없음 -> 골드 순 (사냥-아즈샤라 3,800과 주술 3,800 같음) -> 같은 서버 주술
+  text: 다음 추천: 주술-데스윙 (남은 골드퀘 4개, 3,800|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t)
+  tip: 주술-데스윙
+  tip: 추천 이유
+  tip: - 지금 캐릭터와 같은 서버라서, 남은 골드가 같은 사냥-아즈샤라 대신 골랐습니다.
+== 2) 드루이드 선호, 주술사 비선호 -> 골드가 적어도(2,100) 드루
+  text: 다음 추천: 드루-데스윙 (남은 골드퀘 2개, 2,100|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t)
+  tip: 드루-데스윙
+  tip: 추천 이유
+  tip: - 선호 직업(DRUID)입니다.
+  tip: - 사냥-아즈샤라보다 남은 골드는 1,700|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t 적지만 직업 선호가 더 높습니다.
+  tip: - 같은 직업 선호 중에서 남은 골드가 가장 많습니다: 골드퀘 2개, 2,100|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t.
+== 3) 가장 빨리 끝나는 퀘 1을 주술만 안 함 -> 비선호여도 주술 (1번 기준이 먼저)
+  text: 다음 추천: 주술-데스윙 (남은 골드퀘 4개, 3,800|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t)
+  tip: 주술-데스윙
+  tip: 추천 이유
+  tip: - 가장 빨리 끝나는 골드퀘 퀘 1을(를) 아직 하지 않은 캐릭터 중에서 골랐습니다 (3시간 남음).
+  tip: - 비선호 직업(SHAMAN)이지만 다른 후보가 없습니다.
+  tip: - 같은 직업 선호 중에서 남은 골드가 가장 많습니다: 골드퀘 4개, 3,800|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t.
+== 4) 사냥꾼 선호 둘: 사냥-아즈샤라 3,800, 사냥2(같은 서버) 3,000 -> 800 차이라 같은 서버 사냥2
+  text: 다음 추천: 사냥2-데스윙 (남은 골드퀘 3개, 3,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t)
+  tip: 사냥2-데스윙
+  tip: 추천 이유
+  tip: - 선호 직업(HUNTER)입니다.
+  tip: - 드루-데스윙보다 남은 골드는 800|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t 적지만 직업 선호가 더 높습니다.
+  tip: - 지금 캐릭터와 같은 서버라서, 남은 골드가 800|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t 더 많은 사냥-아즈샤라 대신 골랐습니다 (1천 골드 안 차이).
+== 5) 부자되기 탭: 추천 줄은 글 그대로, 이름 위 마우스 영역에 툴팁
+  line: 다음 추천: 사냥2-데스윙 (남은 골드퀘 3개, 3,000|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t)
+  hover: true
+  tip: 사냥2-데스윙
+  tip: 추천 이유
+  tip: - 선호 직업(HUNTER)입니다.
+  tip: - 드루-데스윙보다 남은 골드는 800|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t 적지만 직업 선호가 더 높습니다.
+  tip: - 지금 캐릭터와 같은 서버라서, 남은 골드가 800|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t 더 많은 사냥-아즈샤라 대신 골랐습니다 (1천 골드 안 차이).
+== 6) 모두 보통으로 -> 설정 지움
+== 6) 선호 없음
+  text: 다음 추천: 드루-데스윙 (남은 골드퀘 4개, 3,800|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t)
+  tip: 드루-데스윙
+  tip: 추천 이유
+  tip: - 후보 중에서 남은 골드가 가장 많습니다: 골드퀘 4개, 3,800|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t.
