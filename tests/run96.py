@@ -1,5 +1,6 @@
-# 직업 선호 세 칸 화면 (2026-11-11 사용자 요청): 선호, 보통, 비선호 칸에 직업 단추. 끌어서 다른 칸에 놓거나
-#   왼쪽 클릭은 선호 쪽으로, 오른쪽 클릭은 비선호 쪽으로 한 칸. AceGUI 칸 QTR_ClassTiers (흉내 AceGUI로 만든다)
+# 직업 선호 세 칸 화면 (2026-11-11 사용자 요청): 선호, 보통, 비선호 칸에 직업 단추. 끌어서 다른 칸에 놓기만 (클릭으로 옮기기는 뺌)
+#   끄는 동안 커서 아래 칸 테두리 노랑, "모두 보통으로" 단추는 보통 칸 아래 가운데, 처음 차례는 판금-사슬-가죽-천 안에서 이름순,
+#   옮긴 직업은 옮긴 차례대로 칸 맨 끝. AceGUI 칸 QTR_ClassTiers (흉내 AceGUI로 만든다)
 import os as _os
 TD = _os.path.dirname(_os.path.abspath(__file__)) + '/'
 from lupa import LuaRuntime
@@ -46,6 +47,9 @@ lua.eval('''function(QTR, out)
     },
     days = {}, turnIns = {}, settings = { tab = "dash" },
   }
+  LOCALIZED_CLASS_NAMES_MALE = { WARRIOR = "전사", PALADIN = "성기사", HUNTER = "사냥꾼", ROGUE = "도적", PRIEST = "사제",
+    DEATHKNIGHT = "죽음의 기사", SHAMAN = "주술사", MAGE = "마법사", WARLOCK = "흑마법사", MONK = "수도사", DRUID = "드루이드",
+    DEMONHUNTER = "악마사냥꾼", EVOKER = "기원사" }
   -- 흉내 AceGUI: 칸 종류를 등록하면 만드는 함수를 기억한다
   local WIDGETS = {}
   local FAKEGUI = {
@@ -59,51 +63,55 @@ lua.eval('''function(QTR, out)
   local oldLib = LibStub
   LibStub = function(name, ...) if name == "AceGUI-3.0" then return FAKEGUI end return oldLib(name, ...) end
   GameTooltip = { SetOwner = function() end, Show = function() end, Hide = function() end, AddLine = function() end }
+  function GetCursorPosition() return 100, 100 end
+  UIParent.GetEffectiveScale = function() return 1 end
   QTR:OnInitialize(); QTR:OnEnable(); QTR:PLAYER_ENTERING_WORLD(); RunLater()
   local DB = QuestsToRichesDB
   local grp = OPTIONS.args.classGroup.args
-  print("== 1) 설정창: 드롭다운 대신 세 칸 칸 하나 (" .. tostring(grp.tiers and grp.tiers.dialogControl) .. "), 직업별 드롭다운 " .. tostring(grp.classDRUID ~= nil))
+  print("== 1) 설정창: 세 칸 칸 하나 (" .. tostring(grp.tiers and grp.tiers.dialogControl) .. "), 설정창의 따로 된 '모두 보통으로' " .. tostring(grp.reset ~= nil))
   local w = WIDGETS["QTR_ClassTiers"]()
   w:OnAcquire()
   w:SetWidth(600)
+  print("  높이 " .. tostring(w.h) .. ", '모두 보통으로' 단추: " .. tostring(w.reset._text) .. " 보통 칸 아래 " .. tostring(rawget(w.reset, "_x")) .. "," .. tostring(rawget(w.reset, "_y")))
+  print("  직업 단추 클릭으로 옮기기: " .. tostring(rawget(w.chips.DRUID, "_scr_OnClick") ~= nil))
   local function show(title)
     print("== " .. title)
     for t = 1, 3 do
       local names = {}
-      for _, token in ipairs(QTR.CLASS_TOKENS) do
-        if QTR.ClassTierOf(token) == t then
-          local b = w.chips[token]
-          table.insert(names, token .. "@" .. tostring(rawget(b, "_x")) .. "," .. tostring(rawget(b, "_y")))
-        end
+      for _, token in ipairs(QTR.ClassTierList(t)) do
+        local b = w.chips[token]
+        table.insert(names, LOCALIZED_CLASS_NAMES_MALE[token] .. "@" .. tostring(rawget(b, "_x")) .. "," .. tostring(rawget(b, "_y")))
       end
       print("  " .. tostring(w.boxes[t].title._text) .. ": " .. table.concat(names, " "))
     end
-    print("  저장: " .. (DB.settings.classPref and (function() local t = {} for k, v in pairs(DB.settings.classPref) do table.insert(t, k .. "=" .. v) end table.sort(t) return table.concat(t, ",") end)() or "없음"))
   end
-  show("2) 처음: 13직업 모두 보통 (두 줄, 7행)")
-  local function click(token, button) rawget(w.chips[token], "_scr_OnClick")(w.chips[token], button) end
-  click("DRUID", "LeftButton")
-  click("HUNTER", "LeftButton")
-  click("SHAMAN", "RightButton")
-  click("ROGUE", "RightButton")
-  show("3) 드루이드, 사냥꾼 왼쪽 클릭 -> 선호, 주술사, 도적 오른쪽 클릭 -> 비선호")
-  click("DRUID", "LeftButton")
-  click("SHAMAN", "RightButton")
-  click("ROGUE", "LeftButton")
-  show("4) 끝 칸에서 더 밀어도 그대로, 도적 왼쪽 클릭 -> 보통")
-  -- 끌어서 놓기: 비선호 칸 위에서 놓음
-  for t = 1, 3 do w.boxes[t].IsMouseOver = function() return t == 3 end end
-  rawget(w.chips["MAGE"], "_scr_OnDragStart")(w.chips["MAGE"])
-  print("== 5) 마법사를 끄는 중: 따라오는 이름 " .. tostring(w.ghost._shown) .. " " .. tostring(w.ghost.text._text))
-  rawget(w.chips["MAGE"], "_scr_OnDragStop")(w.chips["MAGE"])
-  click("MAGE", "LeftButton") -- 끌어 놓은 직후의 클릭은 무시
-  show("5b) 마법사를 비선호 칸에 놓음 (놓은 직후 클릭은 무시), 따라오는 이름 숨김 " .. tostring(not w.ghost._shown))
-  for t = 1, 3 do w.boxes[t].IsMouseOver = function() return false end end
-  NOWT = NOWT + 1
-  rawget(w.chips["PRIEST"], "_scr_OnDragStop")(w.chips["PRIEST"])
-  show("6) 칸 밖에 놓으면 그대로")
+  local function drag(token, t)
+    for k = 1, 3 do w.boxes[k].IsMouseOver = function() return k == t end end
+    rawget(w.chips[token], "_scr_OnDragStart")(w.chips[token])
+    rawget(w.ghost, "_scr_OnUpdate")(w.ghost)
+    local lit = {}
+    for k = 1, 3 do table.insert(lit, tostring(rawget(w.boxes[k], "lit") or false)) end
+    rawget(w.chips[token], "_scr_OnDragStop")(w.chips[token])
+    local after = {}
+    for k = 1, 3 do table.insert(after, tostring(rawget(w.boxes[k], "lit") or false)) end
+    return "끄는 중 노랑 테두리 " .. table.concat(lit, "/") .. ", 놓은 뒤 " .. table.concat(after, "/")
+  end
+  show("2) 처음: 모두 보통, 판금(성기사 전사 죽음의 기사) 사슬(기원사 사냥꾼 주술사) 가죽(도적 드루이드 수도사 악마사냥꾼) 천(마법사 사제 흑마법사)")
+  print("  " .. drag("DRUID", 1))
+  drag("HUNTER", 1)
+  show("3) 드루이드, 사냥꾼 차례로 선호에 놓음 -> 선호: 드루이드, 사냥꾼")
+  print("  " .. drag("MONK", 3))
+  drag("ROGUE", 3)
+  show("4) 수도사, 도적 차례로 비선호 (끄는 동안 비선호만 노랑)")
+  drag("DRUID", 2)
+  show("5) 드루이드를 다시 보통으로 -> 보통 맨 끝")
+  drag("MONK", 3)
+  show("6) 수도사를 같은 비선호 칸에 다시 놓음 -> 차례 그대로")
+  print("  " .. drag("MAGE", nil))
+  show("7) 칸 밖에 놓으면 그대로, 테두리 모두 원래대로")
   DB.activeGQ = { [1] = { name = "퀘 1", zone = "공허폭풍", money = 10000000, expire = time() + 3600 * 5 } }
-  print("== 7) 다음 추천은 선호 드루이드: " .. (QTR.RecommendText():gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("|T[^|]*|t", "")))
-  grp.reset.func()
-  show("8) 모두 보통으로")
+  print("== 8) 다음 추천 (드루이드 보통, 주술사 보통 -> 이름순 드루): " .. (QTR.RecommendText():gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("|T[^|]*|t", "")))
+  rawget(w.reset, "_scr_OnClick")(w.reset)
+  show("9) 모두 보통으로 -> 처음 차례")
+  print("  저장: " .. tostring(DB.settings.classPref) .. " " .. tostring(DB.settings.classOrder))
 end''')(addon, out)

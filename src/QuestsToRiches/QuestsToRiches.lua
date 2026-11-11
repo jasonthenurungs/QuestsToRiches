@@ -9640,15 +9640,55 @@ end
 -- 직업 선호 바꾸기 (세 칸 화면에서): 단계 1 선호, 2 보통, 3 비선호. 보통은 저장하지 않는다
 function QTR.SetClassTier(token, tier)
     tier = math.max(1, math.min(3, tier))
-    DB.settings.classPref = DB.settings.classPref or {}
-    DB.settings.classPref[token] = (tier ~= 2) and tier or nil
-    if not next(DB.settings.classPref) then
-        DB.settings.classPref = nil
+    if tier == QTR.ClassTierOf(token) then
+        return -- 같은 칸에 놓으면 그대로 (차례도 바꾸지 않는다)
     end
+    local s = DB.settings
+    s.classPref = s.classPref or {}
+    s.classPref[token] = (tier ~= 2) and tier or nil
+    if not next(s.classPref) then
+        s.classPref = nil
+    end
+    -- 옮긴 차례: 마지막에 옮긴 직업이 그 칸의 맨 끝 (2026-11-11 사용자 요청)
+    s.classSeq = (s.classSeq or 0) + 1
+    s.classOrder = s.classOrder or {}
+    s.classOrder[token] = s.classSeq
+    QTR.ClassTiersChanged()
+end
+function QTR.ResetClassTiers()
+    DB.settings.classPref, DB.settings.classOrder, DB.settings.classSeq = nil, nil, nil
     QTR.ClassTiersChanged()
 end
 function QTR.ClassTierOf(token)
     return (DB.settings.classPref and DB.settings.classPref[token]) or 2
+end
+-- 칸 안의 차례 (2026-11-11 사용자 요청): 옮긴 적 없는 직업이 먼저 (판금, 사슬, 가죽, 천 순, 같은 방어구 안에서는 이름순),
+-- 옮긴 직업은 그 뒤에 옮긴 차례대로
+QTR.CLASS_ARMOR = { WARRIOR = 1, PALADIN = 1, DEATHKNIGHT = 1, HUNTER = 2, SHAMAN = 2, EVOKER = 2,
+    ROGUE = 3, DRUID = 3, MONK = 3, DEMONHUNTER = 3, PRIEST = 4, MAGE = 4, WARLOCK = 4 }
+function QTR.ClassName(token)
+    return (LOCALIZED_CLASS_NAMES_MALE and LOCALIZED_CLASS_NAMES_MALE[token]) or token
+end
+function QTR.ClassTierList(tier)
+    local list = {}
+    for _, token in ipairs(QTR.CLASS_TOKENS) do
+        if QTR.ClassTierOf(token) == tier then
+            table.insert(list, token)
+        end
+    end
+    local order = DB.settings.classOrder or {}
+    table.sort(list, function(a, b)
+        local oa, ob = order[a] or 0, order[b] or 0
+        if oa ~= ob then
+            return oa < ob
+        end
+        local ra, rb = QTR.CLASS_ARMOR[a] or 9, QTR.CLASS_ARMOR[b] or 9
+        if ra ~= rb then
+            return ra < rb
+        end
+        return QTR.ClassName(a) < QTR.ClassName(b)
+    end)
+    return list
 end
 -- 바뀐 뒤: 열려 있는 세 칸을 다시 그리고 추천 줄을 새로 계산
 function QTR.ClassTiersChanged()
@@ -9660,7 +9700,8 @@ end
 
 -- 세 칸 화면 (AceGUI 칸 "QTR_ClassTiers", 설정창의 description 자리에 dialogControl로 넣는다)
 --   칸마다 제목과 직업 단추(직업 색 이름)를 두 줄로 늘어놓는다. 13개가 한 칸에 다 들어가도 7줄
---   단추를 끌면 이름이 커서를 따라오고, 놓은 자리의 칸으로 옮긴다. 왼쪽 클릭은 한 칸 왼쪽(선호 쪽), 오른쪽 클릭은 한 칸 오른쪽
+--   단추를 끌면 이름이 커서를 따라오고, 커서 아래 칸의 테두리가 노랗게 바뀌며, 놓은 자리의 칸으로 옮긴다
+--   (2026-11-11 사용자 요청: 클릭으로 옮기기는 빼고 끌기만). "모두 보통으로" 단추는 보통 칸 아래 가운데
 function QTR.RegisterClassTierWidget()
     local AceGUI = LibStub("AceGUI-3.0", true)
     if QTR.classTierRegistered or not (AceGUI and AceGUI.RegisterWidgetType and AceGUI.RegisterAsWidget) then
@@ -9670,12 +9711,25 @@ function QTR.RegisterClassTierWidget()
     local Type, ROW, HEAD = "QTR_ClassTiers", 18, 22
     local TIER_NAME = { L["선호"], L["보통"], L["비선호"] }
     local TIER_COLOR = { { 0.2, 0.6, 0.2 }, { 0.5, 0.5, 0.5 }, { 0.7, 0.2, 0.2 } }
-    local HEIGHT = HEAD + 7 * ROW + 10
+    local BOX_H = HEAD + 7 * ROW + 10
+    local HEIGHT = BOX_H + 6 + 22 + 4 -- 칸 + 간격 + "모두 보통으로" 단추
 
     local function ClassLabel(token)
         local color = RAID_CLASS_COLORS and RAID_CLASS_COLORS[token] and RAID_CLASS_COLORS[token].colorStr
-        local name = (LOCALIZED_CLASS_NAMES_MALE and LOCALIZED_CLASS_NAMES_MALE[token]) or token
+        local name = QTR.ClassName(token)
         return color and ("|c" .. color .. name .. "|r") or name
+    end
+    -- 칸 테두리: 끄는 동안 커서 아래 칸은 노랑, 아니면 칸 색
+    local function SetBorder(box, t, lit)
+        if box.SetBackdropBorderColor then
+            local c = TIER_COLOR[t]
+            if lit then
+                box:SetBackdropBorderColor(1, 0.82, 0, 1)
+            else
+                box:SetBackdropBorderColor(c[1], c[2], c[3], 1)
+            end
+        end
+        box.lit = lit or nil
     end
 
     local methods = {}
@@ -9706,27 +9760,26 @@ function QTR.RegisterClassTierWidget()
             w = 540
         end
         local boxW = math.floor((w - 16) / 3)
-        local slot = { 0, 0, 0 }
+        local half = math.floor((boxW - 12) / 2)
         for t = 1, 3 do
             local box = self.boxes[t]
             box:ClearAllPoints()
             box:SetPoint("TOPLEFT", self.frame, "TOPLEFT", (t - 1) * (boxW + 8), 0)
-            box:SetSize(boxW, HEIGHT)
+            box:SetSize(boxW, BOX_H)
+            SetBorder(box, t, false)
+            local list = QTR.ClassTierList(t)
+            for n, token in ipairs(list) do
+                local b = self.chips[token]
+                local col, row = (n - 1) % 2, math.floor((n - 1) / 2)
+                b:ClearAllPoints()
+                b:SetPoint("TOPLEFT", box, "TOPLEFT", 6 + col * half, -(HEAD + row * ROW))
+                b:SetSize(half, ROW)
+                b.text:SetText(ClassLabel(token))
+            end
+            box.title:SetText(TIER_NAME[t] .. " (" .. #list .. ")")
         end
-        for _, token in ipairs(QTR.CLASS_TOKENS) do
-            local b = self.chips[token]
-            local t = QTR.ClassTierOf(token)
-            local n = slot[t]
-            slot[t] = n + 1
-            local col, row = n % 2, math.floor(n / 2)
-            b:ClearAllPoints()
-            b:SetPoint("TOPLEFT", self.boxes[t], "TOPLEFT", 6 + col * math.floor((boxW - 12) / 2), -(HEAD + row * ROW))
-            b:SetSize(math.floor((boxW - 12) / 2), ROW)
-            b.text:SetText(ClassLabel(token))
-        end
-        for t = 1, 3 do
-            self.boxes[t].title:SetText(TIER_NAME[t] .. " (" .. slot[t] .. ")")
-        end
+        self.reset:ClearAllPoints()
+        self.reset:SetPoint("TOP", self.boxes[2], "BOTTOM", 0, -6)
     end
 
     local function Constructor()
@@ -9744,13 +9797,18 @@ function QTR.RegisterClassTierWidget()
                     insets = { left = 3, right = 3, top = 3, bottom = 3 } })
                 local c = TIER_COLOR[t]
                 box:SetBackdropColor(c[1] * 0.4, c[2] * 0.4, c[3] * 0.4, 0.6)
-                box:SetBackdropBorderColor(c[1], c[2], c[3], 1)
             end
+            SetBorder(box, t, false)
             box.title = box:CreateFontString(nil, "OVERLAY", "GameFontNormal")
             box.title:SetPoint("TOP", box, "TOP", 0, -5)
             self.boxes[t] = box
         end
-        -- 끄는 동안 커서를 따라오는 이름
+        local reset = CreateFrame("Button", nil, frame, "UIPanelButtonTemplate")
+        reset:SetSize(140, 22)
+        reset:SetText(L["모두 보통으로"])
+        reset:SetScript("OnClick", function() QTR.ResetClassTiers() end)
+        self.reset = reset
+        -- 끄는 동안 커서를 따라오는 이름. 커서 아래 칸의 테두리를 노랗게
         local ghost = CreateFrame("Frame", nil, UIParent)
         ghost:SetFrameStrata("TOOLTIP")
         ghost:SetSize(120, ROW)
@@ -9762,6 +9820,12 @@ function QTR.RegisterClassTierWidget()
             local s = UIParent:GetEffectiveScale()
             g:ClearAllPoints()
             g:SetPoint("CENTER", UIParent, "BOTTOMLEFT", x / s, y / s)
+            for t = 1, 3 do
+                local over = self.boxes[t]:IsMouseOver() and true or false
+                if over ~= (self.boxes[t].lit or false) then
+                    SetBorder(self.boxes[t], t, over)
+                end
+            end
         end)
         self.ghost = ghost
         for _, token in ipairs(QTR.CLASS_TOKENS) do
@@ -9769,14 +9833,7 @@ function QTR.RegisterClassTierWidget()
             b.text = b:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
             b.text:SetPoint("LEFT", b, "LEFT", 4, 0)
             b:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-            b:RegisterForClicks("LeftButtonUp", "RightButtonUp")
             b:RegisterForDrag("LeftButton")
-            b:SetScript("OnClick", function(_, button)
-                if self.dragged and GetTime() - self.dragged < 0.3 then
-                    return -- 끌어 놓은 직후의 클릭은 무시
-                end
-                QTR.SetClassTier(token, QTR.ClassTierOf(token) + ((button == "RightButton") and 1 or -1))
-            end)
             b:SetScript("OnDragStart", function()
                 GameTooltip:Hide()
                 ghost.text:SetText(ClassLabel(token))
@@ -9784,19 +9841,21 @@ function QTR.RegisterClassTierWidget()
             end)
             b:SetScript("OnDragStop", function()
                 ghost:Hide()
-                self.dragged = GetTime()
+                local target
                 for t = 1, 3 do
                     if self.boxes[t]:IsMouseOver() then
-                        QTR.SetClassTier(token, t)
-                        return
+                        target = t
                     end
+                    SetBorder(self.boxes[t], t, false)
+                end
+                if target then
+                    QTR.SetClassTier(token, target)
                 end
             end)
             b:SetScript("OnEnter", function(btn)
                 GameTooltip:SetOwner(btn, "ANCHOR_RIGHT")
                 GameTooltip:AddLine(ClassLabel(token))
                 GameTooltip:AddLine(L["끌어서 다른 칸에 놓으면 옮깁니다."], 1, 1, 1, true)
-                GameTooltip:AddLine(L["왼쪽 클릭: 선호 쪽으로 한 칸, 오른쪽 클릭: 비선호 쪽으로 한 칸"], 1, 1, 1, true)
                 GameTooltip:Show()
             end)
             b:SetScript("OnLeave", function()
@@ -9823,19 +9882,14 @@ local function BuildOptions()
             imageWidth = 1, imageHeight = 24 }
     end
     -- 다음 추천 캐릭터의 직업 선호 (2026-11-08 사용자 요청): 직업마다 선호, 보통(기본), 비선호. 골드보다 먼저 본다
-    --   2026-11-11 사용자 요청: 드롭다운 13개 대신 선호, 보통, 비선호 세 칸 (끌어서 옮기기, 클릭으로도 옮기기, QTR_ClassTiers 칸)
+    --   2026-11-11 사용자 요청: 드롭다운 13개 대신 선호, 보통, 비선호 세 칸 (끌어서 옮기기, QTR_ClassTiers 칸. "모두 보통으로" 단추도 그 안에)
     QTR.RegisterClassTierWidget()
     local classArgs = {
         desc = { type = "description", order = 0, width = "full",
             name = L["다음 추천 캐릭터를 고를 때 골드보다 먼저 봅니다 (가장 빨리 끝나는 골드퀘를 아직 안 한 캐릭터로 후보를 좁힌 다음).\n"]
                 .. L["추천된 캐릭터 이름에 마우스를 올리면 추천 이유가 나옵니다.\n"]
-                .. L["직업을 끌어서 다른 칸에 놓거나, 왼쪽 클릭은 선호 쪽으로, 오른쪽 클릭은 비선호 쪽으로 한 칸 옮깁니다."] },
+                .. L["직업을 끌어서 다른 칸에 놓으면 옮깁니다. 칸 안에서는 마지막에 옮긴 직업이 맨 끝에 놓입니다."] },
         tiers = { type = "description", order = 1, width = "full", name = "", dialogControl = "QTR_ClassTiers" },
-        reset = { type = "execute", name = L["모두 보통으로"], order = 100,
-            func = function()
-                DB.settings.classPref = nil
-                QTR.ClassTiersChanged()
-            end },
     }
     return {
         type = "group",
