@@ -8385,6 +8385,80 @@ local function IsSourceDoneBy(key, src, weekStart)
     return GetSourceDoneTime(key, src, weekStart) ~= nil
 end
 
+-- 받은 보관함을 연 골드 (2026-11-11 사용자 요청: 부자되기 탭 보관함 줄에 대박 표시, 동기부여)
+--   연 기록(days의 caches)에는 출처가 없어, 같은 캐릭터의 같은 보관함을 받은 차례와 연 차례로 짝짓는다 (먼저 받은 것을 먼저 열었다고 본다).
+--   받은 시각보다 앞선 연 기록은 그 받은 기록의 짝으로 쓰지 않는다. 결과: { [받은 기록] = 연 골드 중 가장 큰 것(코퍼) }
+function QTR.CacheOpenMatch(key)
+    local byTime = function(a, b) return (a.t or 0) < (b.t or 0) end
+    local opens, gets = {}, {}
+    for _, day in pairs(DB.days) do
+        local rec = day[key]
+        for _, c in ipairs(rec and rec.caches or {}) do
+            opens[c.id] = opens[c.id] or {}
+            table.insert(opens[c.id], c)
+        end
+    end
+    for _, g in ipairs(DB.cacheGets[key] or {}) do
+        gets[g.id] = gets[g.id] or {}
+        for _ = 1, math.max(1, g.n or 1) do
+            table.insert(gets[g.id], g)
+        end
+    end
+    local match = {}
+    for id, list in pairs(gets) do
+        table.sort(list, byTime)
+        local ol = opens[id] or {}
+        table.sort(ol, byTime)
+        local j = 1
+        for _, g in ipairs(list) do
+            while ol[j] and (ol[j].t or 0) < (g.t or 0) do
+                j = j + 1
+            end
+            if ol[j] then
+                match[g] = math.max(match[g] or 0, ol[j].money or 0)
+                j = j + 1
+            end
+        end
+    end
+    return match
+end
+
+-- since 뒤에 받은 보관함 중 match에 맞는 것을 열어 나온 골드의 가장 큰 값 (연 기록이 없으면 nil)
+function QTR.OpenGoldSince(key, since, match)
+    local opened, best = nil, nil
+    for _, g in ipairs(DB.cacheGets[key] or {}) do
+        if (g.t or 0) >= since and match(g) then
+            opened = opened or QTR.CacheOpenMatch(key)
+            local m = opened[g]
+            if m and (not best or m > best) then
+                best = m
+            end
+        end
+    end
+    return best
+end
+-- 이 출처(src)로 이번 주(특별 과제는 이번 회차)에 받은 보관함
+function QTR.SourceOpenGold(key, src, weekStart)
+    return QTR.OpenGoldSince(key, GetSourceSince(src, weekStart), function(g)
+        if src.kind == "item" then
+            return g.id == src.itemID
+        end
+        return g.q == src.questID
+    end)
+end
+-- 부자되기 탭 펼친 캐릭터 줄의 오른쪽 칸: 미개봉 개수, 없으면 열어서 대박이었을 때 별과 골드 (대박이 아니면 비움)
+function QTR.CacheCellText(key, itemID, gold)
+    local c = DB.chars[key]
+    local n = c and c.cacheBag and c.cacheBag[itemID] or 0 -- GetUnopenedCount와 같다 (그 함수가 아래에 있어 직접 읽는다)
+    if n > 0 then
+        return L["|cffffd100미개봉 %d|r"]:format(n)
+    end
+    local _, star = QTR.JackpotTier(gold)
+    if star then
+        return star .. " " .. FormatGold(gold)
+    end
+end
+
 -- 특별 과제 줄에서 아직 안 한 캐릭터의 상태 (2026-11-01 사용자 요청: 잠김과 해금했는데 미완료를 나눠서)
 --   그 캐릭터로 이번 회차에 지도를 읽었을 때(DB.saLock) 잠겨 있었으면 회색 "잠김(n/3)", 해금했으면 nil (빨간 "미완료" 그대로)
 --   이번 회차에 그 캐릭터로 읽은 적이 없으면 회색 "미확인"
@@ -9098,10 +9172,8 @@ function QTR:UpdateRich()
         if rich.expanded[key] then
             local since = GetSourceSince(src, weekStart)
             AddCharRows(entries, targets, doneTime, function(k)
-                local n = GetUnopenedCount(k, src.itemID)
-                if n > 0 then
-                    return L["|cffffd100미개봉 %d|r"]:format(n)
-                end
+                -- 미개봉 개수, 없으면 열어서 대박이었을 때 별과 골드 (2026-11-11 사용자 요청: 동기부여)
+                return QTR.CacheCellText(k, src.itemID, doneTime(k) and QTR.SourceOpenGold(k, src, weekStart))
             end, nil, nil, QTR.IsMapSource(src) and function(k)
                 return QTR.SpecialState(k, src, since)
             end or nil)
@@ -9130,10 +9202,19 @@ function QTR:UpdateRich()
         })
         if rich.expanded[key] then
             AddCharRows(entries, targets, doneTime, function(k)
-                local n = GetUnopenedCount(k, QTR.SILVERMOON_CACHE)
-                if n > 0 then
-                    return L["|cffffd100미개봉 %d|r"]:format(n)
-                end
+                -- 대박 표시: 이번 주에 이 주간 퀘스트(w.ids)로 받은 최정상 보관함을 연 골드
+                local gold = doneTime(k) and QTR.OpenGoldSince(k, weekStart, function(g)
+                    if g.id ~= QTR.SILVERMOON_CACHE then
+                        return false
+                    end
+                    for _, id in ipairs(w.ids) do
+                        if g.q == id then
+                            return true
+                        end
+                    end
+                    return false
+                end)
+                return QTR.CacheCellText(k, QTR.SILVERMOON_CACHE, gold)
             end, nil, nil, function(k)
                 return QTR.WeeklyState(k, w, weekStart)
             end)
@@ -9165,10 +9246,9 @@ function QTR:UpdateRich()
         })
         if rich.expanded[key] then
             AddCharRows(entries, targets, doneTime, function(k)
-                local n = GetUnopenedCount(k, o.id)
-                if n > 0 then
-                    return L["|cffffd100미개봉 %d|r"]:format(n)
-                end
+                -- 대박 표시: 이번 주에 받은 이 보관함을 연 골드
+                local gold = doneTime(k) and QTR.OpenGoldSince(k, weekStart, function(g) return g.id == o.id end)
+                return QTR.CacheCellText(k, o.id, gold)
             end)
         end
     end
