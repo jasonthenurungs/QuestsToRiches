@@ -1,0 +1,35 @@
+|cffffd100[QTR]|r 로드 완료. /qtr 창 열기, /qtr set 설정창
+|cffffd100[QTR]|r 이번 버전부터 이동 수단 채팅 알림(동선에 넣었습니다, 넣지 않았습니다)은 기본으로 나오지 않습니다. 보고 싶으면 설정창 '동선에 넣는 이동 수단' 묶음에서 '이동 수단을 넣었는지와 그 이유를 채팅창에 알리기'를 켜 주세요.
+== 1) 설정창: 드롭다운 대신 세 칸 칸 하나 (QTR_ClassTiers), 직업별 드롭다운 false
+== 2) 처음: 13직업 모두 보통 (두 줄, 7행)
+  선호 (0): 
+  보통 (13): WARRIOR@6,-22 PALADIN@97,-22 HUNTER@6,-40 ROGUE@97,-40 PRIEST@6,-58 DEATHKNIGHT@97,-58 SHAMAN@6,-76 MAGE@97,-76 WARLOCK@6,-94 MONK@97,-94 DRUID@6,-112 DEMONHUNTER@97,-112 EVOKER@6,-130
+  비선호 (0): 
+  저장: 없음
+== 3) 드루이드, 사냥꾼 왼쪽 클릭 -> 선호, 주술사, 도적 오른쪽 클릭 -> 비선호
+  선호 (2): HUNTER@6,-22 DRUID@97,-22
+  보통 (9): WARRIOR@6,-22 PALADIN@97,-22 PRIEST@6,-40 DEATHKNIGHT@97,-40 MAGE@6,-58 WARLOCK@97,-58 MONK@6,-76 DEMONHUNTER@97,-76 EVOKER@6,-94
+  비선호 (2): ROGUE@6,-22 SHAMAN@97,-22
+  저장: DRUID=1,HUNTER=1,ROGUE=3,SHAMAN=3
+== 4) 끝 칸에서 더 밀어도 그대로, 도적 왼쪽 클릭 -> 보통
+  선호 (2): HUNTER@6,-22 DRUID@97,-22
+  보통 (10): WARRIOR@6,-22 PALADIN@97,-22 ROGUE@6,-40 PRIEST@97,-40 DEATHKNIGHT@6,-58 MAGE@97,-58 WARLOCK@6,-76 MONK@97,-76 DEMONHUNTER@6,-94 EVOKER@97,-94
+  비선호 (1): SHAMAN@6,-22
+  저장: DRUID=1,HUNTER=1,SHAMAN=3
+== 5) 마법사를 끄는 중: 따라오는 이름 true MAGE
+== 5b) 마법사를 비선호 칸에 놓음 (놓은 직후 클릭은 무시), 따라오는 이름 숨김 true
+  선호 (2): HUNTER@6,-22 DRUID@97,-22
+  보통 (9): WARRIOR@6,-22 PALADIN@97,-22 ROGUE@6,-40 PRIEST@97,-40 DEATHKNIGHT@6,-58 WARLOCK@97,-58 MONK@6,-76 DEMONHUNTER@97,-76 EVOKER@6,-94
+  비선호 (2): SHAMAN@6,-22 MAGE@97,-22
+  저장: DRUID=1,HUNTER=1,MAGE=3,SHAMAN=3
+== 6) 칸 밖에 놓으면 그대로
+  선호 (2): HUNTER@6,-22 DRUID@97,-22
+  보통 (9): WARRIOR@6,-22 PALADIN@97,-22 ROGUE@6,-40 PRIEST@97,-40 DEATHKNIGHT@6,-58 WARLOCK@97,-58 MONK@6,-76 DEMONHUNTER@97,-76 EVOKER@6,-94
+  비선호 (2): SHAMAN@6,-22 MAGE@97,-22
+  저장: DRUID=1,HUNTER=1,MAGE=3,SHAMAN=3
+== 7) 다음 추천은 선호 드루이드: 다음 추천: 드루-데스윙 (남은 골드퀘 1개, 1,000)
+== 8) 모두 보통으로
+  선호 (0): 
+  보통 (13): WARRIOR@6,-22 PALADIN@97,-22 HUNTER@6,-40 ROGUE@97,-40 PRIEST@6,-58 DEATHKNIGHT@97,-58 SHAMAN@6,-76 MAGE@97,-76 WARLOCK@6,-94 MONK@97,-94 DRUID@6,-112 DEMONHUNTER@97,-112 EVOKER@6,-130
+  비선호 (0): 
+  저장: 없음
