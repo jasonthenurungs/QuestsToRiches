@@ -9,6 +9,10 @@
   The class preference is checked before the amount of gold left (after narrowing to characters who have not done the gold quest that ends soonest).
   Hover over the recommended character's name to see why it was picked.
 
+### Fixes
+- Riches tab and next character recommendation: gold quests seen only by characters below max level are no longer listed.
+  A leveling version of a gold quest (quest ID 92566) seen by a level 84 character showed up as 0/7 and turned hidden on every max-level character.
+
 ---
 
 ## (다음 버전, 번호는 정해지면) (한국어)
@@ -21,3 +25,7 @@
 - 다음 추천 캐릭터: 설정창 "다음 추천 캐릭터"에서 직업마다 선호, 보통, 비선호를 고를 수 있습니다.
   직업 선호는 남은 골드보다 먼저 봅니다 (가장 빨리 끝나는 골드퀘를 아직 안 한 캐릭터로 후보를 좁힌 다음).
   추천된 캐릭터 이름에 마우스를 올리면 추천 이유가 나옵니다.
+
+### 수정
+- 부자되기 탭과 다음 추천: 만렙이 아닌 캐릭터만 본 골드퀘는 더 이상 나오지 않습니다.
+  84레벨 캐릭터가 본 레벨업용 "어둠의 군대"가 0/7로 나오고, 만렙 캐릭터로 접속할 때마다 "안 보임"으로 바뀌었습니다.

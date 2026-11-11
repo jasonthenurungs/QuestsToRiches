@@ -8549,6 +8549,21 @@ local function GetTargetChars()
     return list, maxLevel
 end
 
+-- 대상 캐릭터(만렙) 중 누군가 지도에서 본 골드퀘인가 (2026-11-11 사용자 결정 "부자되기 탭에 뜨는 퀘스트는 만렙 캐릭이 본 것만"):
+--   84레벨 마래푸누렁스만 볼 수 있던 레벨업용 "어둠의 군대"(92566, 만렙용은 92571)가 만렙 기준 부자되기 탭에 0/7로 나왔고,
+--   만렙 캐릭터는 접속할 때마다 "안 보임"이 되었다. 본 캐릭터 기록(seenBy)이 없는 예전 항목은 그대로 둔다
+function QTR.SeenByTarget(e, targets)
+    if not (e.seenBy and next(e.seenBy)) then
+        return true
+    end
+    for _, key in ipairs(targets) do
+        if e.seenBy[key] then
+            return true
+        end
+    end
+    return false
+end
+
 local function FormatProgress(done, total)
     local color = "|cffffffff"
     if total > 0 and done >= total then
@@ -8708,7 +8723,8 @@ function QTR.RecommendNextChar()
     local targets = GetTargetChars()
     local quests = {}
     for questID, e in pairs(DB.activeGQ) do
-        if (not e.expire or e.expire - now > REC_SOON) and not e.cacheItem and not QTR.IsHiddenQuest(questID) then
+        if (not e.expire or e.expire - now > REC_SOON) and not e.cacheItem and not QTR.IsHiddenQuest(questID)
+            and QTR.SeenByTarget(e, targets) then
             table.insert(quests, { id = questID, e = e, since = GetGQInstanceStart(questID, e) })
         end
     end
@@ -8917,7 +8933,7 @@ function QTR:UpdateRich()
     local zones, zoneByName = {}, {}
     local gqCount = 0
     for questID, e in pairs(DB.activeGQ) do
-        if (not e.expire or e.expire > now) and not QTR.IsHiddenQuest(questID) then
+        if (not e.expire or e.expire > now) and not QTR.IsHiddenQuest(questID) and QTR.SeenByTarget(e, targets) then
             local zname = e.zone or "?"
             -- 다른 언어로 저장된 지역 이름은 그 지역 지도 이름을 게임에서 읽는다 (2026-10-31 영어 클라이언트 지원)
             if QTR.WrongLang(zname) and e.mapID then
