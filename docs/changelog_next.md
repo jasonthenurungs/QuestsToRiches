@@ -10,7 +10,7 @@
   The class preference is checked before the amount of gold left (after narrowing to characters who have not done the gold quest that ends soonest).
   Hover over the recommended character's name to see why it was picked.
 - Riches tab: when you expand a Pinnacle Cache line, characters who opened a jackpot cache show a star with "Jackpot"
-  (silver star, 3,000 gold or more) or "Super jackpot" (gold star, 10,000 gold or more). Unopened caches still show "Unopened n" first.
+  (silver star, 3,000 gold or more) or "Mega jackpot" (gold star, 10,000 gold or more). Unopened caches still show "Unopened n" first.
 
 ### Fixes
 - Riches tab and next character recommendation: gold quests seen only by characters below max level are no longer listed.
