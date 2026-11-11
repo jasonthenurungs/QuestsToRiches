@@ -68,11 +68,12 @@ lua.eval('''function(QTR, out)
   for _, fs in ipairs(out) do
     if type(fs._text) == "string" and (fs._text:find("퀘") or fs._text:find("골드퀘")) then print("  " .. clean(fs._text)) end
   end
-  print("== 3) 마래푸가 90이 되면 (만렙이 본 것이 되어) 다시 나옴")
+  print("== 3) 마래푸가 90이 되어도 레벨업용으로 본 것이라 나오지 않음 (볼 때 레벨로 판단, 2026-11-11 사용자 지적)")
   DB.chars["마래푸누렁스-아즈샤라"].level = 90
   for _, fs in ipairs(out) do fs._text = "" end
   QTR:Refresh()
   for _, fs in ipairs(out) do
     if type(fs._text) == "string" and fs._text:find("어둠의 군대") then print("  " .. clean(fs._text)) end
   end
+  print("  seenMax: 92566=" .. tostring(DB.activeGQ[92566].seenMax) .. ", 예전 항목=" .. tostring(DB.activeGQ[3].seenMax) .. ", 둘 다 본 퀘=" .. tostring(DB.activeGQ[4].seenMax))
 end''')(addon, out)

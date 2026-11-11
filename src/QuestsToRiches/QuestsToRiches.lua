@@ -4068,6 +4068,13 @@ local function RememberGoldQuest(questID, title, zoneName, mapID, money, timeLef
     e.seen = time()
     -- 이 퀘스트를 지도에서 본 캐릭터 (캐릭터마다 보이는 퀘스트가 다를 수 있다)
     if charKey then
+        -- 만렙이 본 골드퀘인가 (부자되기 탭과 다음 추천은 이것만, QTR.SeenByTarget). 만렙이 한 번 보면 true로 남는다.
+        --   만렙 아닌 캐릭터가 처음 본 것만 false. 다른 캐릭터가 본 기록이 있는 예전 항목(seenMax 없음)은 SeenByTarget이 정하게 둔다
+        if QTR.IsMaxChar() then
+            e.seenMax = true
+        elseif e.seenMax == nil and not (e.seenBy and next(e.seenBy)) then
+            e.seenMax = false
+        end
         e.seenBy = e.seenBy or {}
         e.seenBy[charKey] = time()
         if e.hiddenFor then
@@ -8551,17 +8558,28 @@ end
 
 -- 대상 캐릭터(만렙) 중 누군가 지도에서 본 골드퀘인가 (2026-11-11 사용자 결정 "부자되기 탭에 뜨는 퀘스트는 만렙 캐릭이 본 것만"):
 --   84레벨 마래푸누렁스만 볼 수 있던 레벨업용 "어둠의 군대"(92566, 만렙용은 92571)가 만렙 기준 부자되기 탭에 0/7로 나왔고,
---   만렙 캐릭터는 접속할 때마다 "안 보임"이 되었다. 본 캐릭터 기록(seenBy)이 없는 예전 항목은 그대로 둔다
+--   만렙 캐릭터는 접속할 때마다 "안 보임"이 되었다.
+--   "볼 때 만렙이었는가"로 판단한다 (e.seenMax, 기록할 때 정한다). 사용자 지적: 마래푸가 나중에 90이 되어도 92566은 레벨업용이라 나오면 안 된다.
+--   seenMax가 없는 예전 항목은 처음 볼 때 그때의 레벨로 한 번 정해 둔다 (본 캐릭터 기록 seenBy도 없으면 만렙이 본 것으로)
 function QTR.SeenByTarget(e, targets)
-    if not (e.seenBy and next(e.seenBy)) then
+    if e.seenMax == nil then
+        local seen = not (e.seenBy and next(e.seenBy))
+        for _, key in ipairs(targets) do
+            if e.seenBy and e.seenBy[key] then
+                seen = true
+            end
+        end
+        e.seenMax = seen
+    end
+    return e.seenMax
+end
+-- 지금 캐릭터가 만렙인가 (최고 레벨을 못 읽으면 만렙으로 본다)
+function QTR.IsMaxChar()
+    local m = GetMaxLevelForPlayerExpansion and GetMaxLevelForPlayerExpansion()
+    if not m or m <= 0 then
         return true
     end
-    for _, key in ipairs(targets) do
-        if e.seenBy[key] then
-            return true
-        end
-    end
-    return false
+    return (UnitLevel("player") or 0) >= m
 end
 
 local function FormatProgress(done, total)
