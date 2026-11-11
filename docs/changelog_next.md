@@ -9,8 +9,8 @@
   Drag a class to another box to move it; the box under the cursor is outlined in yellow.
   The class preference is checked before the amount of gold left (after narrowing to characters who have not done the gold quest that ends soonest).
   Hover over the recommended character's name to see why it was picked.
-- Riches tab: when you expand a Pinnacle Cache line, characters who opened a jackpot cache show the star and the gold
-  (silver star 3,000 gold or more, gold star 10,000 gold or more). Unopened caches still show "Unopened n" first.
+- Riches tab: when you expand a Pinnacle Cache line, characters who opened a jackpot cache show a star with "Jackpot"
+  (silver star, 3,000 gold or more) or "Super jackpot" (gold star, 10,000 gold or more). Unopened caches still show "Unopened n" first.
 
 ### Fixes
 - Riches tab and next character recommendation: gold quests seen only by characters below max level are no longer listed.
@@ -29,8 +29,8 @@
   직업을 끌어서 다른 칸에 놓으면 옮겨지고, 끄는 동안 놓일 칸의 테두리가 노랗게 바뀝니다.
   직업 선호는 남은 골드보다 먼저 봅니다 (가장 빨리 끝나는 골드퀘를 아직 안 한 캐릭터로 후보를 좁힌 다음).
   추천된 캐릭터 이름에 마우스를 올리면 추천 이유가 나옵니다.
-- 부자되기 탭: 정점 보관함 줄을 펼치면, 보관함을 열어 대박이 나온 캐릭터에 별과 골드가 나옵니다
-  (3,000골드 이상 은별, 10,000골드 이상 금별). 아직 열지 않은 보관함이 있으면 지금처럼 "미개봉 n"이 먼저 나옵니다.
+- 부자되기 탭: 정점 보관함 줄을 펼치면, 보관함을 열어 대박이 나온 캐릭터에 별과 함께 "대박"
+  (은별, 3,000골드 이상) 또는 "초대박"(금별, 10,000골드 이상)이 나옵니다. 아직 열지 않은 보관함이 있으면 지금처럼 "미개봉 n"이 먼저 나옵니다.
 
 ### 수정
 - 부자되기 탭과 다음 추천: 만렙이 아닌 캐릭터만 본 골드퀘는 더 이상 나오지 않습니다.

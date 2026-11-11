@@ -8446,16 +8446,17 @@ function QTR.SourceOpenGold(key, src, weekStart)
         return g.q == src.questID
     end)
 end
--- 부자되기 탭 펼친 캐릭터 줄의 오른쪽 칸: 미개봉 개수, 없으면 열어서 대박이었을 때 별과 골드 (대박이 아니면 비움)
+-- 부자되기 탭 펼친 캐릭터 줄의 오른쪽 칸: 미개봉 개수, 없으면 열어서 대박이었을 때 별과 "대박"/"초대박" (대박이 아니면 비움)
 function QTR.CacheCellText(key, itemID, gold)
     local c = DB.chars[key]
     local n = c and c.cacheBag and c.cacheBag[itemID] or 0 -- GetUnopenedCount와 같다 (그 함수가 아래에 있어 직접 읽는다)
     if n > 0 then
         return L["|cffffd100미개봉 %d|r"]:format(n)
     end
-    local _, star = QTR.JackpotTier(gold)
+    -- 금액 대신 "대박", "초대박" (2026-11-11 사용자 요청: 금액은 비슷비슷하니 말이 더 동기부여가 된다). 글자색은 채팅 대박 알림과 같은 주황
+    local tier, star = QTR.JackpotTier(gold)
     if star then
-        return star .. " " .. FormatGold(gold)
+        return star .. " |cffff8000" .. QTR.JACKPOT_NAMES[tier] .. "|r"
     end
 end
 
