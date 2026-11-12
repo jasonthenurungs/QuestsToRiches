@@ -1,6 +1,6 @@
 # 하라니르 뿌리걸음 (2026-11-08 인벤 김다크님 제안, 사용자 "한번 테스트해보자"): 주문 1238686, 쿨타임 없음, 하란다르 요람으로
 #   요람 위치는 어림값으로 시작해 한 번 써서 내린 곳을 배우면 그것으로, 마법사 순간이동처럼 TravelCost에 넣는다. 세계수 뿌리 가까이(150야드)에서는 넣지 않는다
-#   다른 대륙에 내리면 배우지 않음, 설정 travelRootOff, 사용 버튼 창은 그 주문, /qtr hearth 상태 줄
+#   다른 대륙에 내리면 배우지 않음, 설정 travelRootOn (2026-11-12부터 기본 꺼짐이라 이 시험은 켜고 시작), 사용 버튼 창은 그 주문, /qtr hearth 상태 줄
 import os as _os
 TD = _os.path.dirname(_os.path.abspath(__file__)) + '/'
 from lupa import LuaRuntime
@@ -49,7 +49,7 @@ chunk("QuestsToRiches")
 lua.eval(r'''function(QTR, out)
   QuestsToRichesDB = {
     chars = { ["봄이간다-데스윙"] = { money = 1, class = "WARRIOR", level = 90 } },
-    days = {}, turnIns = {}, settings = { tab = "dash" },
+    days = {}, turnIns = {}, settings = { tab = "dash", travelRootOn = true },
   }
   QTR:OnInitialize(); QTR:OnEnable(); QTR:PLAYER_ENTERING_WORLD(); RunLater()
   -- run65와 같은 지도 좌표 흉내
@@ -156,9 +156,9 @@ lua.eval(r'''function(QTR, out)
   -- 아미드라실 뿌리(0.7645, 0.4740)에서 요람까지 약 1,590야드(28초) > 순간이동 비용 20초
   route("6) 하란다르 아미드라실 뿌리 곁에서 출발 -> 넣지 않음 (다른 대륙으로 가므로)", 2413, 0.7645, 0.4740)
   route("7) 같은 뿌리에서 약 210야드 떨어진 곳 -> 뿌리걸음", 2413, 0.80, 0.4740)
-  DB.settings.travelRootOff = true
-  route("8) 설정 끔 -> 넣지 않음", SM[1], SM[2], SM[3])
-  DB.settings.travelRootOff = nil
+  DB.settings.travelRootOn = nil
+  route("8) 설정 끔 (기본값) -> 넣지 않음", SM[1], SM[2], SM[3])
+  DB.settings.travelRootOn = true
   route("9) 다시 실버문에서 시작하고 뿌리걸음을 써서 요람에 내림 -> 다음 목적지로", SM[1], SM[2], SM[3])
   QTR.OnPlayerSpellcast(ROOT)
   PMAP, PX, PY = 2413, 0.5, 0.5

@@ -16,7 +16,8 @@ Works on Korean and English clients (all windows, settings and messages are tran
   with how many max-level characters have completed each. Click a line for per-character status.
   Special assignments show whether each character has unlocked them ("Locked (n/3)"),
   and Silvermoon weeklies show each character's progress ("35/100").
-  Also recommends the next character to play.
+  Also recommends the next character to play. Sort classes into Preferred, Normal and Avoid by dragging them in Settings,
+  and hover over the recommended name to see why it was picked.
 - 3. Earnings: gold from gold quests and special assignment caches by day, week, month or all time,
   per-character contribution and recent trend.
 - 4. Holdings: account gold history. Summary by day, or detail per character
@@ -37,6 +38,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
   and the Maisara Caverns Mythic+ teleport (to Zul'Aman) are used when they are faster. Each can be turned off
   (the Mythic+ teleport is off by default, turn it on in Settings).
   When two of them save almost the same time, the one with the shorter cooldown is used.
+- Haranir Rootwalking (experimental, off by default): used like a portal to the Cradle in Harandar when it is faster.
 - Delve-O-Bot 7001 to the Labyrinth of Kindo'jan (off by default, needs the Labyrinth update chip):
   the Labyrinth is picked automatically when you talk to the bot on that step.
 - Dundun's Abundant Travel Method (experimental, off by default): goes to the cave where Abundance is currently active.
@@ -59,7 +61,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
 - Alert window for unopened caches in your bags (click to open).
 - Records the gold from each cache you open.
 - Other Pinnacle Caches (such as the Silvermoon weekly cache) are recorded on the Earnings tab, and the Riches tab shows
-  which characters received them this week. Jackpots (3,000 gold or more, silver star) and super jackpots
+  which characters received them this week. Jackpots (3,000 gold or more, silver star) and mega jackpots
   (10,000 gold or more, gold star) are marked.
 
 ## Other
@@ -112,7 +114,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
   퀘스트 줄 클릭: 웨이포인트 (TomTom이 있으면 TomTom), 마우스를 올리면 요구 조건과 보상
 - 2. 부자되기: 계정 전체의 현재 골드퀘와 특별 과제별로 만렙 캐릭터 몇 명이 완료했는지 표시, 줄을 누르면 캐릭터별 현황
   특별 과제는 캐릭터별 해금 여부("잠김(n/3)"), 실버문 주간 퀘스트는 캐릭터별 진행도("35/100")도 표시
-  다음에 접속할 캐릭터도 추천
+  다음에 접속할 캐릭터도 추천. 설정창에서 직업을 끌어서 선호, 보통, 비선호로 나눌 수 있고, 추천된 이름에 마우스를 올리면 추천 이유 표시
 - 3. 획득량: 골드퀘와 특별 과제 보관함으로 번 골드를 일별, 주별, 월별, 전체로 집계하고 캐릭터별 기여도와 최근 추이 표시
 - 4. 보유량: 계정 보유 골드 기록 (날짜별 요약, 캐릭터별 상세와 전일비, 순위 등락, 비중)
 - 창 위에 마우스를 올리면 숫자키 1~4로 탭 전환, 탭마다 버튼 단축키 (R, Q W E R, T, 쉼표 마침표, 마우스 휠)
@@ -126,6 +128,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
   길드 혜택과 인간 종족 특성(2회 충전)을 반영하고, 마칠 때 1회 남기기 가능
 - 이동 기술: 마법사 실버문 순간이동, 주술사 영혼의 귀환, 아르칸티나로 통하는 개인 열쇠, 쐐기돌 던전 마이사라 동굴 순간이동(줄아만)을 더 빠를 때 사용 (각각 끌 수 있음, 쐐기 순간이동은 기본 끔이라 설정에서 켜야 함)
   줄어드는 시간이 거의 같으면 쿨타임이 짧은 쪽을 사용
+- 하라니르 뿌리걸음 (시험 기능, 기본 끔): 더 빠를 때 하란다르의 요람으로 가는 포탈처럼 사용
 - 구렁로봇 7001로 킨도잔의 미궁 가기 (기본 끔, 미궁 업데이트 칩 필요): 그 차례에 로봇에게 말을 걸면 미궁을 자동으로 고름
 - 둔둔의 풍요로운 이동 수단 (시험 기능, 기본 끔): 지금 풍요가 열린 동굴로 이동
 - 내비게이션을 시작할 때 어떤 이동 수단을 넣었는지와 나머지를 넣지 않은 이유를 채팅창에 알리기 (선택)
