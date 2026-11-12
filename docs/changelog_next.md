@@ -15,7 +15,7 @@
 ### Fixes
 - Riches tab and next character recommendation: gold quests seen only by characters below max level are no longer listed.
   A leveling version of a gold quest (quest ID 92566) seen by a level 84 character showed up as 0/7 and turned hidden on every max-level character.
-- Riches tab: "Tracking Xal'atath" no longer shows characters as done just because the game reports it completed
+- Riches tab: the Xal'atath Silvermoon weekly (quest ID 98172) no longer shows characters as done just because the game reports it completed
   (in a week without it, every character that logged in showed "Done"). Only completions seen by the addon count, as with the Liadrin weekly.
 
 ---
