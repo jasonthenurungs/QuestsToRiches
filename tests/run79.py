@@ -1,6 +1,6 @@
 # 리에드린 주간 완료 표시를 믿지 않기 (2026-11-05 사용자 제보: 리에드린 주간이 없는 주인데 '완료'로 나옴)
 #   게임이 10종을 한꺼번에 완료로 답해 접속 시각에 모두 완료로 남았다. 예전 기록은 불러올 때 지우고, 새로 남기지 않는다.
-#   잘아타스 추적은 완료 표시를 그대로 믿는다. 실제 완료(QUEST_TURNED_IN)는 그대로 완료 (run69 준비 부분 사용)
+#   잘아타스 추적도 2026-11-12부터 믿지 않는다 (이번 주에 없는 듯한데 접속한 캐릭터가 "완료"가 됨, 사용자 결정). 실제 완료(QUEST_TURNED_IN)는 그대로 완료 (run69 준비 부분 사용)
 import os as _os
 TD = _os.path.dirname(_os.path.abspath(__file__)) + '/'
 from lupa import LuaRuntime
@@ -99,9 +99,9 @@ lua.eval(r'''function(QTR, out)
   ALLFLAG = true
   QTR.ScanWeeklyFlags()
   local f = DB.flagDone["봄이간다-데스윙"]
-  print("  봄이간다 flagDone 93913: " .. tostring(f and f[93913]) .. " / 98172(잘아타스, 그대로 믿음): " .. tostring(f and f[98172] ~= nil))
+  print("  봄이간다 flagDone 93913: " .. tostring(f and f[93913]) .. " / 98172(잘아타스, 2026-11-12부터 믿지 않음): " .. tostring(f and f[98172] ~= nil))
   SlashCmdList["QUESTSTORICHES"]("rich")
-  rows("리에드린 줄 없음 (이번 주 실제 완료, 수행중 없음), 잘아타스는 여름이간다(표시)와 봄이간다(지금 표시)")
+  rows("리에드린 줄 없음 (이번 주 실제 완료, 수행중 없음), 잘아타스 줄도 없음 (게임 완료 표시만 있어서, 2026-11-12부터)")
   print("== 3) 실제로 완료(QUEST_TURNED_IN)하면 그때부터 완료")
   QTR:QUEST_TURNED_IN("x", 93913, 0, 0)
   rows("리에드린 줄: 봄이간다 완료 1/4")

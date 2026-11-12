@@ -15,6 +15,8 @@
 ### Fixes
 - Riches tab and next character recommendation: gold quests seen only by characters below max level are no longer listed.
   A leveling version of a gold quest (quest ID 92566) seen by a level 84 character showed up as 0/7 and turned hidden on every max-level character.
+- Riches tab: "Tracking Xal'atath" no longer shows characters as done just because the game reports it completed
+  (in a week without it, every character that logged in showed "Done"). Only completions seen by the addon count, as with the Liadrin weekly.
 
 ---
 
@@ -35,3 +37,5 @@
 ### 수정
 - 부자되기 탭과 다음 추천: 만렙이 아닌 캐릭터만 본 골드퀘는 더 이상 나오지 않습니다.
   84레벨 캐릭터가 본 레벨업용 "어둠의 군대"가 0/7로 나오고, 만렙 캐릭터로 접속할 때마다 "안 보임"으로 바뀌었습니다.
+- 부자되기 탭: 잘아타스 추적을 게임이 완료로 알려 준다는 이유만으로 "완료"로 표시하지 않습니다
+  (이 퀘스트가 없는 주에 접속한 캐릭터마다 "완료"가 되었습니다). 리에드린 주간처럼 애드온이 직접 본 완료만 셉니다.

@@ -495,7 +495,7 @@ local function InitDB()
     end
     -- 게임이 완료로 본 퀘스트(QTR 완료 기록 없음): { [캐릭터키] = { [퀘스트ID] = 그렇게 본 시각 } }, 완료 시각처럼 30일 뒤 지운다
     DB.flagDone = DB.flagDone or {}
-    -- 게임의 완료 표시를 믿지 않는 퀘스트(리에드린 주간, QTR.SILVERMOON_NOFLAG_IDS)는 예전에 남긴 것도 지운다
+    -- 게임의 완료 표시를 믿지 않는 퀘스트(리에드린 주간, 잘아타스 추적, QTR.SILVERMOON_NOFLAG_IDS)는 예전에 남긴 것도 지운다
     for _, list in pairs(DB.flagDone) do
         for questID, t in pairs(list) do
             if t < cutoff or QTR.SILVERMOON_NOFLAG_IDS[questID] then
@@ -1586,7 +1586,9 @@ QTR.SPECIAL_ASSIGNMENTS = {
 --   퀘스트 ID 출처: Apex Ledger (Andrew, MIT License) Data.lua. 코드는 가져오지 않고 ID만
 QTR.SILVERMOON_CACHE = 279527
 QTR.SILVERMOON_WEEKLY = {
-    { key = "xalatath", name = L["잘아타스 추적"], ids = { 98172 } },
+    -- 잘아타스 추적도 noFlag (2026-11-12 사용자 결정): 주간 초기화 뒤 이번 주에 없는 듯한데, 접속한 캐릭터(훗추 18:35, 랩값)를 게임이 완료로 알려
+    --   시각 없는 "완료"가 되었다. 저장 기록상 대부분 10-29 주와 11-05 주에 연달아 했으므로 2주 주기는 아니다 (왜 없는지는 확인 불가)
+    { key = "xalatath", name = L["잘아타스 추적"], noFlag = true, ids = { 98172 } },
     -- 93913 야외 우두머리, 93769 주거, 93889 연회, 93890 풍요, 93891 하란다르 전설, 93892 스토마리온 공격,
     -- 93909 구렁, 93910 사냥감, 93911 던전, 93912 공격대
     -- noFlag: 게임의 완료 표시(IsQuestFlaggedCompleted)를 믿지 않는다 (2026-11-05 사용자 제보: 리에드린 주간이 없는 주인데 "완료").
@@ -4167,7 +4169,7 @@ function QTR.ScanWeeklyFlags()
     local now = time()
     for questID in pairs(QTR.SILVERMOON_WEEKLY_IDS) do
         local ok, done = false, false
-        if not QTR.SILVERMOON_NOFLAG_IDS[questID] then -- 리에드린 주간은 완료 표시를 믿지 않는다 (SILVERMOON_WEEKLY noFlag)
+        if not QTR.SILVERMOON_NOFLAG_IDS[questID] then -- 리에드린 주간, 잘아타스 추적은 완료 표시를 믿지 않는다 (SILVERMOON_WEEKLY noFlag)
             ok, done = pcall(C_QuestLog.IsQuestFlaggedCompleted, questID)
         end
         if ok and done then
