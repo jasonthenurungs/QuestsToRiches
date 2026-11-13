@@ -1597,8 +1597,10 @@ QTR.SILVERMOON_WEEKLY = {
     -- skipNext: 한 번 하면 다음 주에는 받을 수 없다 (2026-11-07 사용자 제보: 10-29에 한 13캐릭터는 11-05 주에 퀘스트가 없고,
     --   이번 주 처음 만렙이 된 캐릭터는 받음. 유럽 포럼에도 같은 글). 그 캐릭터는 이번 주 "지난주 완료"로 빼고 개수에서도 뺀다.
     --   2주 주기인지는 11-12 초기화 뒤 13캐릭터가 다시 받는지 봐야 확정 (확인 불가). 위 완료 표시도 "지금 받을 수 없음"이었던 것으로 보인다
+    -- 93766 전역 퀘스트 (2026-11-14 사용자 제보: 인구학이 이번 주 리에드린 퀘스트를 했는데 부자되기 탭에 없었다.
+    --   최정상 보관함을 93766 보상으로 받은 기록만 있었다. wowhead 이름 "Midnight: World Quests", 보상 최정상 보관함과 불꽃)
     { key = "liadrin", name = L["리에드린 주간 퀘스트"], noFlag = true, skipNext = true,
-      ids = { 93913, 93769, 93889, 93890, 93891, 93892, 93909, 93910, 93911, 93912 } },
+      ids = { 93913, 93766, 93769, 93889, 93890, 93891, 93892, 93909, 93910, 93911, 93912 } },
 }
 QTR.SILVERMOON_WEEKLY_IDS = {}
 QTR.SILVERMOON_NOFLAG_IDS = {}
@@ -4139,6 +4141,15 @@ local function GetQuestDoneTime(key, questID, since)
     local t = DB.turnIns[key] and DB.turnIns[key][questID]
     if t and t >= since then
         return t
+    end
+    -- 실버문 주간: 완료 기록이 없어도 최정상 보관함을 그 퀘스트 보상으로 받은 기록(cacheGets의 q)이 있으면 그 시각
+    --   (2026-11-14: 목록에 없던 93766을 한 인구학은 보관함 기록만 남았다. 목록에 넣은 뒤 이 기록으로 이번 주 완료가 된다)
+    if QTR.SILVERMOON_WEEKLY_IDS[questID] then
+        for _, g in ipairs(DB.cacheGets and DB.cacheGets[key] or {}) do
+            if g.q == questID and g.t and g.t >= since then
+                return g.t
+            end
+        end
     end
     -- 리에드린 주간(QTR.SILVERMOON_NOFLAG_IDS)은 게임의 완료 표시를 믿지 않는다 (직접 본 완료 기록만)
     if QTR.SILVERMOON_NOFLAG_IDS[questID] then
