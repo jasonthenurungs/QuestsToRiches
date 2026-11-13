@@ -182,5 +182,22 @@ lua.eval(r'''function(QTR, out)
   RunLater(); Tick(); RunLater()
   print("  지금 단계: " .. tostring(QTR.route and QTR.route[1] and QTR.route[1].label))
   button()
+  print("==T 12) 한 동선에서 뿌리걸음을 두 번 (2026-11-14 사용자 제보: 두 번째 차례에 사용 창이 안 뜸)")
+  print("  두 단계가 이름도 내릴 곳(요람)도 같아, 첫 번째를 쓸 때 남긴 '이미 쓴 단계' 표시에 걸렸다. 순간이동을 하면 그 표시를 지운다")
+  OVR[ROOT] = nil
+  for k in pairs(Q) do Q[k] = nil end
+  Q[95] = { map = 2413, title = "H5 요람 근처", money = 10000000, t = 86400, x = 0.52, y = 0.52 }
+  Q[96] = { map = 2413, title = "H6 요람 서쪽", money = 10000000, t = 86400, x = 0.40, y = 0.55 }
+  route("12a) 실버문에서 시작 -> 뿌리걸음 먼저", SM[1], SM[2], SM[3])
+  button()
+  QTR.OnPlayerSpellcast(ROOT)
+  button()
+  PMAP, PX, PY = 2413, 0.5, 0.5
+  RunLater(); Tick(); Tick(); RunLater()
+  print("  12b) 요람에 내림 -> 지금 단계: " .. tostring(QTR.route and QTR.route[1] and QTR.route[1].label))
+  PMAP, PX, PY = 2437, 0.40, 0.47
+  RunLater(); Tick(); RunLater()
+  print("  12c) 다른 순간이동으로 줄아만에 감 -> 다시 짠 첫 단계: " .. tostring(QTR.route and QTR.route[1] and QTR.route[1].label))
+  button()
   print("==T end")
 end''')(addon, out)

@@ -96,7 +96,18 @@ lua.eval(r'''function(QTR, out)
   local since = now - 3 * 86400
   local t, q = QTR.WeeklyDoneTime("인구학-데스윙", W, since)
   print("== 2) 인구학: 보관함 받은 기록으로 이번 주 완료 " .. tostring(t == now - 600) .. " (퀘스트 " .. tostring(q) .. ")")
-  print("  격냥패딩: 이번 주 완료 " .. tostring(QTR.WeeklyDoneTime("격냥패딩-데스윙", W, since)) .. ", 지난주 완료 " .. tostring(QTR.WeeklyLastWeek("격냥패딩-데스윙", W, now - 86400 * 2) ~= nil))
+  print("  격냥패딩: 이번 주 완료 " .. tostring(QTR.WeeklyDoneTime("격냥패딩-데스윙", W, since)))
+  -- 2026-11-14 사용자 제보: 2주 주기는 모두 같다 (10-29 주 시작, 11-12 주 새 주기). 주기 첫째 주에는 "지난주 완료"로 빼지 않는다
+  local WK = 7 * 86400
+  local ws1 = W.cycleRef - 3600          -- 주기 첫째 주의 시작 (cycleRef가 든 주)
+  print("== 2b) 2주 주기 (cycleRef " .. os.date("%m-%d %H시", W.cycleRef) .. ")")
+  DB.cacheGets["격냥패딩-데스윙"] = { { id = 279527, n = 1, t = ws1 + 1000, q = 93913 } }
+  print("  첫째 주에 한 캐릭터, 둘째 주에 보면 지난주 완료: " .. tostring(QTR.WeeklyLastWeek("격냥패딩-데스윙", W, ws1 + WK) ~= nil))
+  DB.cacheGets["격냥패딩-데스윙"] = { { id = 279527, n = 1, t = ws1 + WK + 1000, q = 93909 } }
+  print("  둘째 주에 한 캐릭터(상암동누렁스 11-11), 새 주기 첫째 주에 보면 지난주 완료: " .. tostring(QTR.WeeklyLastWeek("격냥패딩-데스윙", W, ws1 + 2 * WK) ~= nil))
+  DB.cacheGets["격냥패딩-데스윙"] = { { id = 279527, n = 1, t = ws1 + 2 * WK + 1000, q = 93766 } }
+  print("  다음 주기 첫째 주에 한 캐릭터, 그 둘째 주에 보면 지난주 완료: " .. tostring(QTR.WeeklyLastWeek("격냥패딩-데스윙", W, ws1 + 3 * WK) ~= nil))
+  DB.cacheGets["격냥패딩-데스윙"] = { { id = 279527, n = 1, t = now - 8 * 86400, q = 93766 } }
   SlashCmdList["QUESTSTORICHES"]("rich")
   rows("3) 부자되기 탭: 리에드린 줄 인구학 완료 1/3 (격냥패딩 기록은 8일 전이라 실제 주간 경계로는 지난주 밖)")
   print("== end")

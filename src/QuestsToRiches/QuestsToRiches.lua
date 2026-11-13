@@ -1599,7 +1599,11 @@ QTR.SILVERMOON_WEEKLY = {
     --   2주 주기인지는 11-12 초기화 뒤 13캐릭터가 다시 받는지 봐야 확정 (확인 불가). 위 완료 표시도 "지금 받을 수 없음"이었던 것으로 보인다
     -- 93766 전역 퀘스트 (2026-11-14 사용자 제보: 인구학이 이번 주 리에드린 퀘스트를 했는데 부자되기 탭에 없었다.
     --   최정상 보관함을 93766 보상으로 받은 기록만 있었다. wowhead 이름 "Midnight: World Quests", 보상 최정상 보관함과 불꽃)
+    -- cycleRef (2026-11-14 사용자 제보로 고침): 2주 주기는 캐릭터마다가 아니라 모두 같다. 10-29 주에 시작해 11-12 주에 새 주기.
+    --   상암동누렁스는 11-05 주(주기 둘째 주) 11-11에 처음 했는데 11-12 주에 다시 받았다 (93766). 주기 첫째 주에는 "지난주 완료"로 빼지 않는다.
+    --   cycleRef는 주기 첫째 주 안의 아무 때 (10-30 12시). 한국 말고 다른 지역도 같은 주에 주기가 시작하는지는 확인 불가
     { key = "liadrin", name = L["리에드린 주간 퀘스트"], noFlag = true, skipNext = true,
+      cycleRef = time({ year = 2026, month = 10, day = 30, hour = 12 }),
       ids = { 93913, 93766, 93769, 93889, 93890, 93891, 93892, 93909, 93910, 93911, 93912 } },
 }
 QTR.SILVERMOON_WEEKLY_IDS = {}
@@ -4291,6 +4295,10 @@ end
 --   실버문 주간 ID를 넣기(10-30) 전에 한 것은 이것만 남아 있다)
 function QTR.WeeklyLastWeek(key, w, weekStart)
     if not w.skipNext then
+        return nil
+    end
+    -- 2주 주기의 첫째 주면 지난주에 했어도 이번 주에 다시 받는다 (w.cycleRef가 든 주에서 짝수 주 뒤)
+    if w.cycleRef and math.floor((w.cycleRef - weekStart) / (7 * 86400)) % 2 == 0 then
         return nil
     end
     local from = weekStart - 7 * 86400
@@ -7350,6 +7358,9 @@ QTR.SetupRoute = function()
         if not last or (last.c == pos.c and Dist(last, pos) < JUMP) then
             return
         end
+        -- 순간이동을 했으면 "이미 쓴 단계" 표시를 지운다 (2026-11-14 사용자 제보: 같은 동선에서 뿌리걸음을 두 번째 쓸 차례에 사용 창이 안 떴다.
+        --   두 단계가 이름도 내릴 곳도 같아 첫 번째를 쓸 때 남긴 closedKey와 같았다. 뿌리걸음: 귀환으로 돌아간 뒤 다시 짠 단계도 마찬가지)
+        TV.closedKey = nil
         local r = QTR.route[1]
         if (r.portal or r.travel) and r.arrival and Dist(pos, r.arrival) < JUMP then
             NavLogStop(nil, r.portal or r.travel)

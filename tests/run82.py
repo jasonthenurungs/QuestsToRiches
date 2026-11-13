@@ -55,6 +55,8 @@ lua.eval(r'''function(QTR, out)
   }
   C_QuestLog.IsQuestFlaggedCompleted = function(id) return ALLFLAG end
   QTR:OnInitialize(); QTR:OnEnable(); QTR:PLAYER_ENTERING_WORLD(); RunLater()
+  -- 2주 주기 (2026-11-14): 이 시험은 주기 둘째 주로 본다 (지난주가 주기 첫째 주라 지난주에 했으면 이번 주에 못 받음)
+  for _, w in ipairs(QTR.SILVERMOON_WEEKLY) do if w.key == "liadrin" then w.cycleRef = time() - 7 * 86400 end end
   local DB = QuestsToRichesDB
   local strip = function(s)
     s = tostring(s or "")
