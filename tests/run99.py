@@ -2,6 +2,7 @@
 #   배운 던전 중 가장 빨라지는 곳 하나. 이름은 아는 던전 이름, 모르면 게임의 주문 이름. 입구 어림 좌표는 한 번 쓰면 실제로 내린 곳으로 바꾼다
 #   (run70 준비 부분 사용. 마이사라 1254559, 윈드러너 첨탑 1254400, 공결탑 제나스 1254563(공허폭풍))
 #   시즌 2 (같은 날 추가): 날로라크의 소굴 1286807 (줄아만 실측 입구). 설정창 던전별 켜고 끄기 (DB.settings.mplusOff)
+#   설정창 칸은 아홉 곳 모두, 배우지 않은 던전은 회색에 툴팁 "아직 배우지 않았습니다" (같은 날 사용자 요청)
 import os as _os
 TD = _os.path.dirname(_os.path.abspath(__file__)) + '/'
 from lupa import LuaRuntime
@@ -160,27 +161,42 @@ lua.eval(r'''function(QTR, out)
   cdAll(nil)
   KNOWN[XEN] = nil
   route("8) 조각난 핵을 모름 -> 마이사라나 윈드러너 중 하나만")
-  print("==T 9) 설정창 던전별 켜고 끄기: 배운 던전만 나옴")
+  print("==T 9) 설정창 던전별 칸: 아홉 곳 모두, 배우지 않은 던전은 회색")
   local each = OPTIONS.args.travelGroup.args.travelMaisaraEach
   KNOWN[1286807] = true
-  local vals = each.values()
-  local ks = {}
-  for k in pairs(vals) do table.insert(ks, k) end
-  table.sort(ks)
-  for _, k in ipairs(ks) do print("  " .. k .. " " .. vals[k] .. " = " .. tostring(each.get(nil, k))) end
-  print("  숨김 " .. tostring(each.hidden()) .. ", 큰 설정 켜짐이라 바꿀 수 있음 " .. tostring(not each.disabled()))
+  local keys = {}
+  for k, v in pairs(each.args) do table.insert(keys, k) end
+  table.sort(keys, function(a, b) return each.args[a].order < each.args[b].order end)
+  print("  묶음: " .. tostring(each.type) .. " inline " .. tostring(each.inline) .. " / " .. tostring(each.name) .. " / 칸 " .. #keys)
+  for _, k in ipairs(keys) do
+    local o = each.args[k]
+    print("  " .. k .. " " .. o.name() .. " | 회색 " .. tostring(o.disabled()) .. " | 체크 " .. tostring(o.get()) .. " | 툴팁 " .. tostring(o.desc()) .. " | 칸 " .. tostring(o.dialogControl))
+  end
+  print("  큰 설정 켜짐이라 묶음은 바꿀 수 있음 " .. tostring(not each.disabled()))
+  -- 회색이어도 툴팁이 뜨는 체크 칸: AceGUI 기본 체크 칸이 없는 시험 환경이면 nil (기본 체크 칸)
+  print("  QTR_CheckBox 등록: " .. tostring(QTR.RegisterDisabledTipCheckBox()))
+  local nal = each.args.d1286807
   -- 줄아만 남쪽 날로라크의 소굴 입구 곁 퀘스트
   for k in pairs(Q) do Q[k] = nil end
   Q[74] = { map = 2437, title = "Z3 줄아만 남쪽", money = 10000000, t = 86400, x = 0.32, y = 0.82 }
   route("10) 날로라크의 소굴을 배움 -> 날로라크의 소굴")
-  each.set(nil, 1286807, false)
-  print("  끈 뒤 저장: " .. tostring(DB.settings.mplusOff and DB.settings.mplusOff[1286807]) .. ", 보기 " .. tostring(each.get(nil, 1286807)))
+  nal.set(nil, false)
+  print("  끈 뒤 저장: " .. tostring(DB.settings.mplusOff and DB.settings.mplusOff[1286807]) .. ", 보기 " .. tostring(nal.get()))
   route("11) 날로라크의 소굴을 끔 -> 다른 던전 (마이사라 또는 윈드러너)")
   print("==T 12) /qtr hearth (끈 던전은 끔)")
   SlashCmdList["QUESTSTORICHES"]("hearth")
-  each.set(nil, 1286807, true)
+  nal.set(nil, true)
   print("  다시 켬: " .. tostring(DB.settings.mplusOff[1286807]))
   OPTIONS.args.travelGroup.args.travelMaisara.set(nil, false)
-  print("  큰 설정을 끄면 던전별 칸은 못 바꿈: " .. tostring(each.disabled()))
+  print("  큰 설정을 끄면 던전별 묶음은 못 바꿈: " .. tostring(each.disabled()))
+  print("==T 13) 회색이어도 툴팁이 뜨는 체크 칸 (흉내 AceGUI)")
+  local FREG = { CheckBox = function() return { type = "CheckBox", frame = { SetMotionScriptsWhileDisabled = function(f, v) f.mswd = v end } } end }
+  local FAKE = { WidgetRegistry = FREG, RegisterWidgetType = function(self, n, ctor, v) FREG[n] = ctor end }
+  local oldLS = LibStub
+  LibStub = function(n, ...) if n == "AceGUI-3.0" then return FAKE end return oldLS(n, ...) end
+  local cname = QTR.RegisterDisabledTipCheckBox()
+  local w = FREG[cname]()
+  print("  " .. tostring(cname) .. ": 종류 " .. tostring(w.type) .. ", 회색일 때 마우스 " .. tostring(w.frame.mswd) .. " / 기본 체크 칸은 그대로 " .. tostring(FREG.CheckBox().frame.mswd))
+  LibStub = oldLS
   print("==T end")
 end''')(addon, out)

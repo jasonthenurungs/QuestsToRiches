@@ -38,7 +38,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
   and the Maisara Caverns Mythic+ teleport (to Zul'Aman) are used when they are faster. Each can be turned off
   (the Mythic+ teleport is off by default, turn it on in Settings).
   When two of them save almost the same time, the one with the shorter cooldown is used.
-- Haranir Rootwalking (experimental, off by default): used like a portal to the Cradle in Harandar when it is faster.
+- Haranir Rootwalking (off by default): used like a portal to the Cradle in Harandar when it is faster.
 - Delve-O-Bot 7001 to the Labyrinth of Kindo'jan (off by default, needs the Labyrinth update chip):
   the Labyrinth is picked automatically when you talk to the bot on that step.
 - Dundun's Abundant Travel Method (off by default): goes to the cave where Abundance is currently active.
@@ -128,7 +128,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
   길드 혜택과 인간 종족 특성(2회 충전)을 반영하고, 마칠 때 1회 남기기 가능
 - 이동 기술: 마법사 실버문 순간이동, 주술사 영혼의 귀환, 아르칸티나로 통하는 개인 열쇠, 쐐기돌 던전 마이사라 동굴 순간이동(줄아만)을 더 빠를 때 사용 (각각 끌 수 있음, 쐐기 순간이동은 기본 끔이라 설정에서 켜야 함)
   줄어드는 시간이 거의 같으면 쿨타임이 짧은 쪽을 사용
-- 하라니르 뿌리걸음 (시험 기능, 기본 끔): 더 빠를 때 하란다르의 요람으로 가는 포탈처럼 사용
+- 하라니르 뿌리걸음 (기본 끔): 더 빠를 때 하란다르의 요람으로 가는 포탈처럼 사용
 - 구렁로봇 7001로 킨도잔의 미궁 가기 (기본 끔, 미궁 업데이트 칩 필요): 그 차례에 로봇에게 말을 걸면 미궁을 자동으로 고름
 - 둔둔의 풍요로운 이동 수단 (기본 끔): 지금 풍요가 열린 동굴로 이동
 - 내비게이션을 시작할 때 어떤 이동 수단을 넣었는지와 나머지를 넣지 않은 이유를 채팅창에 알리기 (선택)

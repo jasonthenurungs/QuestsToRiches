@@ -5482,7 +5482,7 @@ QTR.SetupRoute = function()
         { spell = 1254572, name = L["마법학자의 정원"], map = 2424, x = 0.6239, y = 0.1455 },
         { spell = 1254563, name = L["공결탑 제나스"], map = 2405, x = 0.6470, y = 0.6177 },
         { spell = 1286801, name = L["눈부신 골짜기"], map = 2413, x = 0.274101, y = 0.779813, measured = true },
-        { spell = 1286804, name = L["공허흉터 투기장"], map = 2444, x = 0.537344, y = 0.345962, measured = true },
+        { spell = 1286804, name = L["공허흉터 투기장"], map = 2444, x = 0.537344, y = 0.345962, measured = true, zoneMap = 2405 },
         { spell = 1286807, name = L["날로라크의 소굴"], map = 2437, x = 0.313388, y = 0.834081, measured = true },
         { spell = 1286809, name = L["죽음의 골목"], map = 2393, x = 0.566, y = 0.610 },
         { spell = 1286812, name = L["송곳니의 제단"], map = 2509, x = 0.4729, y = 0.6816 },
@@ -5498,6 +5498,11 @@ QTR.SetupRoute = function()
     function TV.MplusName(e)
         return e.name or TV.SpellName(e.spell) or tostring(e.spell)
     end
+    -- 지역 이름 (입구 좌표 지도가 작은 구역이면 zoneMap: 공허흉터 투기장은 학살자의 오름길 지도라서 공허폭풍으로)
+    function TV.MplusZone(e)
+        local info = C_Map.GetMapInfo and C_Map.GetMapInfo(e.zoneMap or e.map)
+        return info and info.name
+    end
     -- 내리는 곳: 한 번 써서 기억한 곳, 없으면 입구 좌표
     function TV.MplusDest(e)
         local d = DB.travelDest and DB.travelDest.mplus and DB.travelDest.mplus[e.spell]
@@ -5506,16 +5511,35 @@ QTR.SetupRoute = function()
         end
         return WorldPos(e.map, e.x, e.y)
     end
-    -- 설정창 던전별 켜고 끄기에 나올 것: 배운 던전만 { [주문] = "이름 (지역)" } (2026-11-14 사용자 요청)
-    function QTR.MplusChoices()
-        local t = {}
-        for _, e in ipairs(TV.MPLUS) do
-            if TV.SpellKnown(e.spell) then
-                local info = C_Map.GetMapInfo and C_Map.GetMapInfo(e.map)
-                t[e.spell] = TV.MplusName(e) .. ((info and info.name) and (" (" .. info.name .. ")") or "")
-            end
+    -- 설정창 던전별 켜고 끄기 칸 (2026-11-14 사용자 요청): 아홉 곳 모두 체크 칸을 두고, 배우지 않은 던전은 회색(끌 수 없음)에
+    --   마우스를 올리면 "아직 배우지 않았습니다". 배우지 않은 칸은 체크 없이 보이고, 배우면 켜진 채로 시작한다 (mplusOff에 없으므로)
+    --   control: 회색이어도 툴팁이 뜨는 체크 칸 (QTR.RegisterDisabledTipCheckBox, 없으면 기본 체크 칸)
+    function QTR.MplusOptionArgs(control)
+        local args = {}
+        for i, e in ipairs(TV.MPLUS) do
+            args["d" .. e.spell] = {
+                type = "toggle", order = i, width = 1.6, dialogControl = control,
+                name = function()
+                    local zone = TV.MplusZone(e)
+                    return TV.MplusName(e) .. (zone and (" (" .. zone .. ")") or "")
+                end,
+                desc = function()
+                    if not TV.SpellKnown(e.spell) then
+                        return L["아직 배우지 않았습니다."]
+                    end
+                    return TV.SpellName(e.spell) or ""
+                end,
+                disabled = function() return not TV.SpellKnown(e.spell) end,
+                get = function()
+                    return TV.SpellKnown(e.spell) and not (DB.settings.mplusOff and DB.settings.mplusOff[e.spell])
+                end,
+                set = function(_, val)
+                    DB.settings.mplusOff = DB.settings.mplusOff or {}
+                    DB.settings.mplusOff[e.spell] = (not val) or nil
+                end,
+            }
         end
-        return t
+        return args
     end
     -- 배운 쐐기 포탈 목록
     function TV.MplusKnown()
@@ -5694,8 +5718,7 @@ QTR.SetupRoute = function()
             -- "쐐기 포탈: 마이사라 동굴 (줄아만)", 채팅 "쐐기 포탈로 마이사라 동굴 (줄아만)" (지역 이름은 게임에서 읽는다)
             --   inn: 그 던전 주문 ID (쐐기 포탈 여러 곳, TV.MPLUS). 없으면 마이사라
             local e = TV.MplusBySpell(inn) or TV.MPLUS[1]
-            local info = C_Map.GetMapInfo and C_Map.GetMapInfo(e.map)
-            local zone = info and info.name
+            local zone = TV.MplusZone(e)
             local z = zone and (" (" .. zone .. ")") or ""
             local name = TV.MplusName(e)
             local text = L["쐐기 포탈: %s"]:format(name)
@@ -9895,6 +9918,30 @@ end
 --   칸마다 제목과 직업 단추(직업 색 이름)를 두 줄로 늘어놓는다. 13개가 한 칸에 다 들어가도 7줄
 --   단추를 끌면 이름이 커서를 따라오고, 커서 아래 칸의 테두리가 노랗게 바뀌며, 놓은 자리의 칸으로 옮긴다
 --   (2026-11-11 사용자 요청: 클릭으로 옮기기는 빼고 끌기만). "모두 보통으로" 단추는 보통 칸 아래 가운데
+-- 회색(끌 수 없음)이어도 마우스를 올리면 툴팁이 뜨는 체크 칸 "QTR_CheckBox" (2026-11-14 사용자 요청: 배우지 않은 쐐기 포탈 칸)
+--   와우 단추는 기본으로 비활성일 때 OnEnter가 오지 않아서 SetMotionScriptsWhileDisabled를 켠다.
+--   AceGUI 기본 체크 칸을 그대로 만들고 종류 이름만 바꿔, 다른 애드온이 쓰는 기본 체크 칸 모음과 섞이지 않게 한다
+--   반환: 등록했으면 그 이름, 못 했으면 nil (그때는 기본 체크 칸)
+function QTR.RegisterDisabledTipCheckBox()
+    local AceGUI = LibStub("AceGUI-3.0", true)
+    local reg = AceGUI and AceGUI.WidgetRegistry
+    if not (reg and reg.CheckBox and AceGUI.RegisterWidgetType) then
+        return nil
+    end
+    if not reg.QTR_CheckBox then
+        local base = reg.CheckBox
+        AceGUI:RegisterWidgetType("QTR_CheckBox", function()
+            local w = base()
+            w.type = "QTR_CheckBox"
+            if w.frame and w.frame.SetMotionScriptsWhileDisabled then
+                w.frame:SetMotionScriptsWhileDisabled(true)
+            end
+            return w
+        end, 1)
+    end
+    return "QTR_CheckBox"
+end
+
 function QTR.RegisterClassTierWidget()
     local AceGUI = LibStub("AceGUI-3.0", true)
     if QTR.classTierRegistered or not (AceGUI and AceGUI.RegisterWidgetType and AceGUI.RegisterAsWidget) then
@@ -10345,6 +10392,7 @@ local function BuildOptions()
                         set = function(_, val) DB.settings.travelMageOff = not val end,
                     },
                     -- 2026-11-08 인벤 김다크님 제안 (하라니르 종족 기술). 기본 꺼짐 (2026-11-12 사용자 결정: 게임에서 아직 동선에 넣어 보지 못해서 1.8.0은 끈 채로 낸다)
+                    --   2026-11-14 볶음밥의로아로 한 동선에서 두 번 써 보고 시험 기능 딱지를 뗐다 (사용자 결정)
                     travelRoot = {
                         type = "toggle", name = L["하라니르 뿌리걸음"], order = 5.5, width = "full",
                         desc = L["하란다르의 요람으로 가는 종족 기술입니다. 쿨타임이 없어 포탈처럼 필요할 때마다 씁니다.\n"]
@@ -10367,18 +10415,12 @@ local function BuildOptions()
                         get = function() return DB.settings.travelMaisaraOn == true end,
                         set = function(_, val) DB.settings.travelMaisaraOn = val or nil end,
                     },
-                    -- 던전별로 켜고 끄기 (2026-11-14 사용자 요청). 배운 던전만 나오고, 위 설정을 켰을 때만 바꿀 수 있다
+                    -- 던전별로 켜고 끄기 (2026-11-14 사용자 요청). 아홉 곳 모두 나오고 배우지 않은 던전은 회색 (QTR.MplusOptionArgs)
+                    --   위 설정을 켰을 때만 바꿀 수 있다 (묶음의 disabled가 안의 칸에도 걸린다)
                     travelMaisaraEach = {
-                        type = "multiselect", name = L["쐐기 포탈을 쓸 던전"], order = 6.55, width = "full",
-                        desc = L["배운 던전만 나옵니다. 끈 던전은 동선에 넣지 않습니다."],
-                        values = function() return QTR.MplusChoices and QTR.MplusChoices() or {} end,
-                        hidden = function() return not QTR.MplusChoices or next(QTR.MplusChoices()) == nil end,
+                        type = "group", inline = true, name = L["쐐기 포탈을 쓸 던전"], order = 6.55,
                         disabled = function() return not DB.settings.travelMaisaraOn end,
-                        get = function(_, k) return not (DB.settings.mplusOff and DB.settings.mplusOff[k]) end,
-                        set = function(_, k, val)
-                            DB.settings.mplusOff = DB.settings.mplusOff or {}
-                            DB.settings.mplusOff[k] = (not val) or nil
-                        end,
+                        args = QTR.MplusOptionArgs(QTR.RegisterDisabledTipCheckBox()),
                     },
                     -- 시험 기능 딱지를 뗐다 (2026-11-14 사용자 결정: 장난감을 얻어 격냥패딩으로 동선에서 써 보니 잘 됨). 기본 끔은 그대로
                     travelDundun = {
