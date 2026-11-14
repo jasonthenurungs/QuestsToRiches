@@ -5472,13 +5472,20 @@ QTR.SetupRoute = function()
     --   (OrderPoints는 키별 횟수, PlanRecalls는 키별 사용 시각으로 쿨타임을 본다). 그중 가장 많이 줄어드는 던전을 고른다
     --   주문 ID는 사용자 게임 확인 (영웅의 길 묶음 246, 같은 날: 시즌 1 네 곳 배움). 입구: 마이사라는 /qtr pos 실측(measured),
     --   나머지는 method.gg 좌표로 시작하고 한 번 쓰면 실제로 내린 곳을 기억한다 (DB.travelDest.mplus[주문])
-    --   이름: 모르는 것은 nil이고 게임의 주문 이름을 쓴다. 시즌 2 다섯 곳(1286801, 1286804, 1286807, 1286809, 1286812)은
-    --   어느 주문이 어느 던전인지 확인한 뒤 넣는다 (입구는 눈부신 골짜기, 공허흉터 투기장, 날로라크의 소굴을 같은 날 실측)
+    --   이름과 주문 대응: 시즌 1은 사용자가 게임 설명으로 확인, 시즌 2(사용자는 아직 안 배움)는 사용자가 wowhead로 확인 (같은 날)
+    --   시즌 2 입구: 눈부신 골짜기, 공허흉터 투기장, 날로라크의 소굴은 /qtr pos 실측 (같은 날), 송곳니의 제단은 method.gg 좌표,
+    --   죽음의 골목은 실버문 동쪽 아스탈로르의 성소 곁 어림 (여러 안내가 56~57, 61로 조금씩 다름)
+    --   던전별 끄기: DB.settings.mplusOff[주문] = true (설정창, 2026-11-14 사용자 요청)
     TV.MPLUS = {
         { spell = 1254559, name = L["마이사라 동굴"], map = 2437, x = 0.445193, y = 0.393821, measured = true },
         { spell = 1254400, name = L["윈드러너 첨탑"], map = 2395, x = 0.3563, y = 0.7887 },
         { spell = 1254572, name = L["마법학자의 정원"], map = 2424, x = 0.6239, y = 0.1455 },
-        { spell = 1254563, map = 2405, x = 0.6470, y = 0.6177 },
+        { spell = 1254563, name = L["공결탑 제나스"], map = 2405, x = 0.6470, y = 0.6177 },
+        { spell = 1286801, name = L["눈부신 골짜기"], map = 2413, x = 0.274101, y = 0.779813, measured = true },
+        { spell = 1286804, name = L["공허흉터 투기장"], map = 2444, x = 0.537344, y = 0.345962, measured = true },
+        { spell = 1286807, name = L["날로라크의 소굴"], map = 2437, x = 0.313388, y = 0.834081, measured = true },
+        { spell = 1286809, name = L["죽음의 골목"], map = 2393, x = 0.566, y = 0.610 },
+        { spell = 1286812, name = L["송곳니의 제단"], map = 2509, x = 0.4729, y = 0.6816 },
     }
     function TV.MplusBySpell(id)
         for _, e in ipairs(TV.MPLUS) do
@@ -5498,6 +5505,17 @@ QTR.SetupRoute = function()
             return { c = d.c, x = d.x, y = d.y }
         end
         return WorldPos(e.map, e.x, e.y)
+    end
+    -- 설정창 던전별 켜고 끄기에 나올 것: 배운 던전만 { [주문] = "이름 (지역)" } (2026-11-14 사용자 요청)
+    function QTR.MplusChoices()
+        local t = {}
+        for _, e in ipairs(TV.MPLUS) do
+            if TV.SpellKnown(e.spell) then
+                local info = C_Map.GetMapInfo and C_Map.GetMapInfo(e.map)
+                t[e.spell] = TV.MplusName(e) .. ((info and info.name) and (" (" .. info.name .. ")") or "")
+            end
+        end
+        return t
     end
     -- 배운 쐐기 포탈 목록
     function TV.MplusKnown()
@@ -6027,8 +6045,9 @@ QTR.SetupRoute = function()
         end
         if want("maisara") and DB.settings.travelMaisaraOn then
             -- 배운 쐐기 포탈마다 하나씩, 키는 모두 "maisara" (쿨타임을 함께 써서 합쳐 한 번만. TV.MPLUS)
+            local off = DB.settings.mplusOff or {}
             for _, e in ipairs(TV.MplusKnown()) do
-                local d = TV.MplusDest(e)
+                local d = not off[e.spell] and TV.MplusDest(e)
                 if d then
                     local remain = TV.SpellCD(e.spell)
                     table.insert(list, { key = "maisara", label = TV.NAMES.maisara, dest = d, destName = e.spell, spell = e.spell,
@@ -6608,7 +6627,8 @@ QTR.SetupRoute = function()
             local names = {}
             for _, e in ipairs(mk) do
                 local learned = e.measured or (DB.travelDest and DB.travelDest.mplus and DB.travelDest.mplus[e.spell])
-                table.insert(names, TV.MplusName(e) .. (learned and "" or L[" (내리는 곳 어림)"]))
+                local off = DB.settings.mplusOff and DB.settings.mplusOff[e.spell]
+                table.insert(names, TV.MplusName(e) .. (off and L[" (끔)"] or learned and "" or L[" (내리는 곳 어림)"]))
             end
             local remain = TV.SpellCD(mk[1].spell)
             local left = math.ceil((remain or 0) / 60) -- 대기시간이 8시간이라 1시간이 넘으면 시간과 분으로
@@ -10346,6 +10366,19 @@ local function BuildOptions()
                             .. L["45초 이상 빨라지는 구간이 있으면 한 번 넣습니다 (다른 수단은 15초. 쿨타임이 길어서 확실히 빨라질 때만). 쿨타임이 8시간이고 다른 던전 순간이동도 함께 쿨타임에 걸리니, 쐐기돌 던전에 갈 때 쓰려면 끄세요."],
                         get = function() return DB.settings.travelMaisaraOn == true end,
                         set = function(_, val) DB.settings.travelMaisaraOn = val or nil end,
+                    },
+                    -- 던전별로 켜고 끄기 (2026-11-14 사용자 요청). 배운 던전만 나오고, 위 설정을 켰을 때만 바꿀 수 있다
+                    travelMaisaraEach = {
+                        type = "multiselect", name = L["쐐기 포탈을 쓸 던전"], order = 6.55, width = "full",
+                        desc = L["배운 던전만 나옵니다. 끈 던전은 동선에 넣지 않습니다."],
+                        values = function() return QTR.MplusChoices and QTR.MplusChoices() or {} end,
+                        hidden = function() return not QTR.MplusChoices or next(QTR.MplusChoices()) == nil end,
+                        disabled = function() return not DB.settings.travelMaisaraOn end,
+                        get = function(_, k) return not (DB.settings.mplusOff and DB.settings.mplusOff[k]) end,
+                        set = function(_, k, val)
+                            DB.settings.mplusOff = DB.settings.mplusOff or {}
+                            DB.settings.mplusOff[k] = (not val) or nil
+                        end,
                     },
                     travelDundun = {
                         type = "toggle", name = L["둔둔의 풍요로운 이동 수단을 동선에 넣기 (시험 기능)"], order = 6.6, width = "full",

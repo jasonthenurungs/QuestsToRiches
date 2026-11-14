@@ -1,9 +1,9 @@
 ## (next version, number to be decided)
 
 ### New
-- Navigation: M+ portals now cover every dungeon teleport you know (Maisara Caverns, Windrunner Spire, Magisters' Terrace
-  and the Voidstorm dungeon so far), not only Maisara Caverns. They share one cooldown, so one is used per route: the one that saves
-  the most time. Landing spots that are estimated are learned the first time you use each teleport. Still off by default
+- Navigation: M+ portals now cover every Midnight dungeon teleport you know (Season 1 and Season 2), not only Maisara Caverns.
+  They share one cooldown, so one is used per route: the one that saves the most time. Each dungeon can be turned off in Settings,
+  and landing spots that are estimated are learned the first time you use each teleport. Still off by default
   ("Use M+ portals (dungeon teleports) in navigation" in Settings).
 
 ### Fixes
@@ -17,8 +17,8 @@
 ## (다음 버전, 번호는 정해지면) (한국어)
 
 ### 새 기능
-- 내비게이션: 쐐기 포탈이 마이사라 동굴만이 아니라 배운 던전 순간이동 모두를 봅니다 (지금은 마이사라 동굴, 윈드러너 첨탑,
-  마법학자의 정원, 공허폭풍 던전). 쿨타임을 함께 쓰므로 한 동선에서 가장 많이 빨라지는 곳 하나만 씁니다.
+- 내비게이션: 쐐기 포탈이 마이사라 동굴만이 아니라 배운 한밤 던전 순간이동 모두를 봅니다 (시즌 1, 시즌 2).
+  쿨타임을 함께 쓰므로 한 동선에서 가장 많이 빨라지는 곳 하나만 씁니다. 설정창에서 던전별로 끌 수 있고,
   내리는 곳을 어림으로 잡은 던전은 처음 쓸 때 실제로 내린 곳을 기억합니다. 지금처럼 기본 끔입니다
   (설정창 "쐐기 포탈(던전 순간이동)을 동선에 넣기").
 

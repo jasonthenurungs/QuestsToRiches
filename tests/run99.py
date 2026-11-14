@@ -1,6 +1,7 @@
 # 쐐기 포탈 여러 곳 (2026-11-14 사용자 요청): 쐐기돌 던전 순간이동은 쿨타임(8시간)을 함께 써서 한 동선에서 합쳐 한 번만.
 #   배운 던전 중 가장 빨라지는 곳 하나. 이름은 아는 던전 이름, 모르면 게임의 주문 이름. 입구 어림 좌표는 한 번 쓰면 실제로 내린 곳으로 바꾼다
-#   (run70 준비 부분 사용. 마이사라 1254559, 윈드러너 첨탑 1254400, 조각난 핵의 길 1254563(공허폭풍))
+#   (run70 준비 부분 사용. 마이사라 1254559, 윈드러너 첨탑 1254400, 공결탑 제나스 1254563(공허폭풍))
+#   시즌 2 (같은 날 추가): 날로라크의 소굴 1286807 (줄아만 실측 입구). 설정창 던전별 켜고 끄기 (DB.settings.mplusOff)
 import os as _os
 TD = _os.path.dirname(_os.path.abspath(__file__)) + '/'
 from lupa import LuaRuntime
@@ -159,5 +160,27 @@ lua.eval(r'''function(QTR, out)
   cdAll(nil)
   KNOWN[XEN] = nil
   route("8) 조각난 핵을 모름 -> 마이사라나 윈드러너 중 하나만")
+  print("==T 9) 설정창 던전별 켜고 끄기: 배운 던전만 나옴")
+  local each = OPTIONS.args.travelGroup.args.travelMaisaraEach
+  KNOWN[1286807] = true
+  local vals = each.values()
+  local ks = {}
+  for k in pairs(vals) do table.insert(ks, k) end
+  table.sort(ks)
+  for _, k in ipairs(ks) do print("  " .. k .. " " .. vals[k] .. " = " .. tostring(each.get(nil, k))) end
+  print("  숨김 " .. tostring(each.hidden()) .. ", 큰 설정 켜짐이라 바꿀 수 있음 " .. tostring(not each.disabled()))
+  -- 줄아만 남쪽 날로라크의 소굴 입구 곁 퀘스트
+  for k in pairs(Q) do Q[k] = nil end
+  Q[74] = { map = 2437, title = "Z3 줄아만 남쪽", money = 10000000, t = 86400, x = 0.32, y = 0.82 }
+  route("10) 날로라크의 소굴을 배움 -> 날로라크의 소굴")
+  each.set(nil, 1286807, false)
+  print("  끈 뒤 저장: " .. tostring(DB.settings.mplusOff and DB.settings.mplusOff[1286807]) .. ", 보기 " .. tostring(each.get(nil, 1286807)))
+  route("11) 날로라크의 소굴을 끔 -> 다른 던전 (마이사라 또는 윈드러너)")
+  print("==T 12) /qtr hearth (끈 던전은 끔)")
+  SlashCmdList["QUESTSTORICHES"]("hearth")
+  each.set(nil, 1286807, true)
+  print("  다시 켬: " .. tostring(DB.settings.mplusOff[1286807]))
+  OPTIONS.args.travelGroup.args.travelMaisara.set(nil, false)
+  print("  큰 설정을 끄면 던전별 칸은 못 바꿈: " .. tostring(each.disabled()))
   print("==T end")
 end''')(addon, out)
