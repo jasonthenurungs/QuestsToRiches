@@ -9,6 +9,7 @@
 ### Changes
 - Settings: travel method options are named shorter ("Hearthstone" instead of "Use the Hearthstone in navigation"),
   since they are already under "Travel methods used in navigation".
+- Dundun's Abundant Travel Method is no longer marked experimental (tested in game). It is still off by default.
 
 ### Fixes
 - Riches tab: the Liadrin weekly now includes the world quest version, so characters who did it show as done.
@@ -28,6 +29,7 @@
 
 ### 바뀐 점
 - 설정창: "동선에 넣는 이동 수단" 묶음 안의 항목 이름에서 반복되던 "~을 동선에 넣기"를 뺐습니다 ("귀환석을 동선에 넣기" -> "귀환석").
+- 둔둔의 풍요로운 이동 수단에서 "시험 기능" 표시를 뗐습니다 (게임에서 확인함). 기본 끔은 그대로입니다.
 
 ### 수정
 - 부자되기 탭: 리에드린 주간 중 전역 퀘스트 종류를 해도 완료로 나오지 않던 문제를 고쳤습니다.

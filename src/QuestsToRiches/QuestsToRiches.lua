@@ -10380,11 +10380,11 @@ local function BuildOptions()
                             DB.settings.mplusOff[k] = (not val) or nil
                         end,
                     },
+                    -- 시험 기능 딱지를 뗐다 (2026-11-14 사용자 결정: 장난감을 얻어 격냥패딩으로 동선에서 써 보니 잘 됨). 기본 끔은 그대로
                     travelDundun = {
-                        type = "toggle", name = L["둔둔의 풍요로운 이동 수단 (시험 기능)"], order = 6.6, width = "full",
+                        type = "toggle", name = L["둔둔의 풍요로운 이동 수단"], order = 6.6, width = "full",
                         desc = L["지금 풍요가 열린 동굴로 가는 장난감입니다. 쿨타임이 30분이라 한 경로에서 두 번까지 넣습니다.\n"]
-                            .. L["풍요 지점이 끝나기 2분 전부터는 넣지 않고, 안내 중에 지점이 바뀌면 남은 경로를 다시 짭니다.\n"]
-                            .. L["제작자가 장난감이 없어 게임에서 확인하지 못한 기능입니다. 써 보시고 이상하면 알려 주세요."],
+                            .. L["풍요 지점이 끝나기 2분 전부터는 넣지 않고, 안내 중에 지점이 바뀌면 남은 경로를 다시 짭니다.\n"],
                         get = function() return DB.settings.travelDundunOn == true end,
                         set = function(_, val) DB.settings.travelDundunOn = val or nil end,
                     },

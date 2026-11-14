@@ -41,7 +41,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
 - Haranir Rootwalking (experimental, off by default): used like a portal to the Cradle in Harandar when it is faster.
 - Delve-O-Bot 7001 to the Labyrinth of Kindo'jan (off by default, needs the Labyrinth update chip):
   the Labyrinth is picked automatically when you talk to the bot on that step.
-- Dundun's Abundant Travel Method (experimental, off by default): goes to the cave where Abundance is currently active.
+- Dundun's Abundant Travel Method (off by default): goes to the cave where Abundance is currently active.
 - Optional chat lines at the start of navigation: which travel methods were added, and why the others were not.
 - Use button: when the next step is a hearthstone or a travel ability, click the small window to use it.
 - Quests about to expire are shown in orange and moved earlier; expired quests are removed.
@@ -130,7 +130,7 @@ Works on Korean and English clients (all windows, settings and messages are tran
   줄어드는 시간이 거의 같으면 쿨타임이 짧은 쪽을 사용
 - 하라니르 뿌리걸음 (시험 기능, 기본 끔): 더 빠를 때 하란다르의 요람으로 가는 포탈처럼 사용
 - 구렁로봇 7001로 킨도잔의 미궁 가기 (기본 끔, 미궁 업데이트 칩 필요): 그 차례에 로봇에게 말을 걸면 미궁을 자동으로 고름
-- 둔둔의 풍요로운 이동 수단 (시험 기능, 기본 끔): 지금 풍요가 열린 동굴로 이동
+- 둔둔의 풍요로운 이동 수단 (기본 끔): 지금 풍요가 열린 동굴로 이동
 - 내비게이션을 시작할 때 어떤 이동 수단을 넣었는지와 나머지를 넣지 않은 이유를 채팅창에 알리기 (선택)
 - 사용 버튼 창: 다음 단계가 귀환석이나 이동 기술이면 작은 창을 눌러 바로 사용
 - 곧 만료되는 퀘스트는 주황색으로 표시하고 앞으로 당기며, 만료되면 경로에서 뺌

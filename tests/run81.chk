@@ -7,7 +7,7 @@
 |cffffd100[QTR]|r 내비게이션: 2곳 (포탈 2번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 실버문행 포탈 (하란다르)
   route: 실버문행 포탈 (하란다르) / 똬리의 섬행 포탈 (아스탈로르의 성소) / 1. Z2 줄아만 (줄아만) / 2. Z1 줄아만 (줄아만)
   default travelDundunOn = nil / toggle get = false
-  option name = 둔둔의 풍요로운 이동 수단 (시험 기능)
+  option name = 둔둔의 풍요로운 이동 수단
   toggle on -> travelDundunOn = true
 ==T 2) 켬, 하란다르에서 출발, 풍요는 줄아만 -> 둔둔 장난감 먼저
 |cffffd100[QTR]|r 내비게이션: 2곳 (둔둔 장난감 1번 이용). TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 둔둔 장난감으로 풍요: 가죽 동굴 (줄아만)
