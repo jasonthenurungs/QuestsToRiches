@@ -10325,7 +10325,7 @@ local function BuildOptions()
                 type = "group", name = L["동선에 넣는 이동 수단"], order = 2.6, inline = true,
                 args = {
                     hearthOn = {
-                        type = "toggle", name = L["귀환석을 동선에 넣기"], order = 2, width = "full",
+                        type = "toggle", name = L["귀환석"], order = 2, width = "full",
                         desc = L["귀환석을 쓰면 15초 이상 빨라지는 구간이 있으면 한 번 넣습니다. 귀환석 모양 장난감도 같은 쿨타임이라 함께 쓸 수 있습니다.\n"]
                             .. L["귀환 지점 위치는 귀환석을 한 번 타면 캐릭터별로 기억합니다. 길드 혜택(빠른 귀환)과 인간 종족 특성도 반영합니다.\n"]
                             .. L["/qtr hearth 로 지금 상태를 볼 수 있습니다."],
@@ -10333,20 +10333,20 @@ local function BuildOptions()
                         set = function(_, val) DB.settings.hearthOff = not val end,
                     },
                     travelAstral = {
-                        type = "toggle", name = L["주술사 영혼의 귀환을 동선에 넣기"], order = 4, width = "full",
+                        type = "toggle", name = L["주술사 영혼의 귀환"], order = 4, width = "full",
                         desc = L["귀환 지점으로 가는 주술사 기술입니다. 쿨타임이 귀환석과 따로라 귀환석과 함께 쓸 수 있습니다."],
                         get = function() return not DB.settings.travelAstralOff end,
                         set = function(_, val) DB.settings.travelAstralOff = not val end,
                     },
                     travelMage = {
-                        type = "toggle", name = L["마법사 실버문 순간이동을 동선에 넣기"], order = 5, width = "full",
+                        type = "toggle", name = L["마법사 실버문 순간이동"], order = 5, width = "full",
                         desc = L["쿨타임이 없어 포탈처럼 필요할 때마다 씁니다."],
                         get = function() return not DB.settings.travelMageOff end,
                         set = function(_, val) DB.settings.travelMageOff = not val end,
                     },
                     -- 2026-11-08 인벤 김다크님 제안 (하라니르 종족 기술). 기본 꺼짐 (2026-11-12 사용자 결정: 게임에서 아직 동선에 넣어 보지 못해서 1.8.0은 끈 채로 낸다)
                     travelRoot = {
-                        type = "toggle", name = L["하라니르 뿌리걸음을 동선에 넣기"], order = 5.5, width = "full",
+                        type = "toggle", name = L["하라니르 뿌리걸음"], order = 5.5, width = "full",
                         desc = L["하란다르의 요람으로 가는 종족 기술입니다. 쿨타임이 없어 포탈처럼 필요할 때마다 씁니다.\n"]
                             .. L["요람에 내리는 곳은 처음에는 어림으로 잡고, 하란다르의 세계수 뿌리에서 떨어진 곳에서 한 번 쓰면 실제로 내린 곳을 기억합니다.\n"]
                             .. L["세계수 뿌리 가까이에서는 다른 대륙의 세계수로 가므로 그 근처에서는 넣지 않습니다."],
@@ -10354,14 +10354,14 @@ local function BuildOptions()
                         set = function(_, val) DB.settings.travelRootOn = val or nil end,
                     },
                     travelArcantina = {
-                        type = "toggle", name = L["아르칸티나로 통하는 개인 열쇠를 동선에 넣기"], order = 6, width = "full",
+                        type = "toggle", name = L["아르칸티나로 통하는 개인 열쇠"], order = 6, width = "full",
                         desc = L["아르칸티나에 들어갔다가 나가는 차원문을 타면 실버문 여관(나그네의 쉼터)으로 나옵니다.\n"]
                             .. L["로딩이 두 번이라 귀환석보다 비용을 조금 크게(약 30초) 잡습니다. 쿨타임은 귀환석과 따로입니다."],
                         get = function() return not DB.settings.travelArcantinaOff end,
                         set = function(_, val) DB.settings.travelArcantinaOff = not val end,
                     },
                     travelMaisara = {
-                        type = "toggle", name = L["쐐기 포탈(던전 순간이동)을 동선에 넣기"], order = 6.5, width = "full",
+                        type = "toggle", name = L["쐐기 포탈 (던전 순간이동)"], order = 6.5, width = "full",
                         desc = L["쐐기돌 던전을 10단계 이상으로 마치면 받는 던전 입구 순간이동입니다. 배운 던전 중 가장 빨라지는 곳 하나를 씁니다.\n"]
                             .. L["45초 이상 빨라지는 구간이 있으면 한 번 넣습니다 (다른 수단은 15초. 쿨타임이 길어서 확실히 빨라질 때만). 쿨타임이 8시간이고 다른 던전 순간이동도 함께 쿨타임에 걸리니, 쐐기돌 던전에 갈 때 쓰려면 끄세요."],
                         get = function() return DB.settings.travelMaisaraOn == true end,
@@ -10381,7 +10381,7 @@ local function BuildOptions()
                         end,
                     },
                     travelDundun = {
-                        type = "toggle", name = L["둔둔의 풍요로운 이동 수단을 동선에 넣기 (시험 기능)"], order = 6.6, width = "full",
+                        type = "toggle", name = L["둔둔의 풍요로운 이동 수단 (시험 기능)"], order = 6.6, width = "full",
                         desc = L["지금 풍요가 열린 동굴로 가는 장난감입니다. 쿨타임이 30분이라 한 경로에서 두 번까지 넣습니다.\n"]
                             .. L["풍요 지점이 끝나기 2분 전부터는 넣지 않고, 안내 중에 지점이 바뀌면 남은 경로를 다시 짭니다.\n"]
                             .. L["제작자가 장난감이 없어 게임에서 확인하지 못한 기능입니다. 써 보시고 이상하면 알려 주세요."],
@@ -10389,7 +10389,7 @@ local function BuildOptions()
                         set = function(_, val) DB.settings.travelDundunOn = val or nil end,
                     },
                     travelDelveBot = {
-                        type = "toggle", name = L["구렁로봇 7001로 킨도잔의 미궁 가기를 동선에 넣기"], order = 6.7, width = "full",
+                        type = "toggle", name = L["구렁로봇 7001로 킨도잔의 미궁 가기"], order = 6.7, width = "full",
                         desc = L["구렁로봇을 불러 \"킨도잔의 미궁으로 데려다주십시오.\"를 고르면 영원노래 숲 남쪽 미궁 입구로 순간이동합니다.\n"]
                             .. L["미궁 업데이트 칩이 있어야 합니다. 로봇에게 한 번 말을 걸면 칩이 있는지 기억합니다.\n"]
                             .. L["15초 이상 빨라지는 구간이 있으면 한 번 넣고, 그 차례에 로봇에게 말을 걸면 미궁을 자동으로 고릅니다 (Shift를 누르고 말을 걸면 고르지 않습니다).\n"]
