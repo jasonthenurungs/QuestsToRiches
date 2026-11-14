@@ -425,6 +425,9 @@ local function InitDB()
     DB.days = DB.days or {}
     DB.snapshots = DB.snapshots or {}
     DB.settings = DB.settings or {}
+    -- 뿌리걸음은 1.8.0에서 기본 끔(travelRootOn을 켜야 씀)이었고 그 뒤 기본 켬(travelRootOff를 켜야 끔)으로 바뀌었다 (2026-11-14 사용자 결정).
+    --   1.8.0에서 켠 사람은 그대로 켬, 켜지 않았던 사람도 켬이 된다 (1.8.0에서 켰다가 끈 것과 처음부터 안 켠 것은 저장 값으로 가릴 수 없다)
+    DB.settings.travelRootOn = nil
     -- 날짜별 보유량 기록: 처음 만들 때는 캐릭터마다 마지막으로 확인한 날에 지금 저장된 값을 넣어 둔다
     if not DB.holdDays then
         DB.holdDays = {}
@@ -5959,7 +5962,7 @@ QTR.SetupRoute = function()
         roots = { { 0.7645, 0.4740 }, { 0.6495, 0.1902 }, { 0.2854, 0.8684 }, { 0.3586, 0.2074 } } }
     function TV.RefreshRoot()
         QTR.rootTele = nil
-        if not DB.settings.travelRootOn or not TV.SpellKnown(TV.ROOT.spell) then
+        if DB.settings.travelRootOff or not TV.SpellKnown(TV.ROOT.spell) then
             return
         end
         local d = DB.travelDest and DB.travelDest.root
@@ -6625,7 +6628,7 @@ QTR.SetupRoute = function()
                 or L["아직 배우지 않음 (한밤 실버문 순간이동을 배우면 동선에 넣습니다)"])))
         end
         if TV.SpellKnown(TV.ROOT.spell) then
-            Print(L["뿌리걸음: "] .. (not DB.settings.travelRootOn and L["설정에서 끔"]
+            Print(L["뿌리걸음: "] .. (DB.settings.travelRootOff and L["설정에서 끔"]
                 or ((DB.travelDest and DB.travelDest.root) and L["켬 (요람 위치 기억함)"]
                 or L["켬, 요람 위치는 어림 (하란다르의 세계수 뿌리에서 떨어진 곳에서 한 번 쓰면 실제로 내린 곳을 기억합니다)"]))
                 .. (TV.RootReturning() and L[" / 지금 뿌리걸음: 귀환 상태 (요람까지 두 번 써야 해서 비용을 두 배로 봅니다)"] or ""))
@@ -7371,7 +7374,7 @@ QTR.SetupRoute = function()
                 end
             end
             -- 뿌리걸음 (2026-11-08 볶음밥의로아 시험에서 알림이 없었다): 포탈처럼 들어가므로 몇 번 넣었는지, 안 넣었으면 그 까닭
-            if TV.SpellKnown(TV.ROOT.spell) and DB.settings.travelRootOn then
+            if TV.SpellKnown(TV.ROOT.spell) and not DB.settings.travelRootOff then
                 if travelCount.root then
                     Print(L["뿌리걸음을 동선에 넣었습니다: %d번 (포탈처럼 더 빠른 구간마다)"]:format(travelCount.root))
                 else
@@ -10393,13 +10396,14 @@ local function BuildOptions()
                     },
                     -- 2026-11-08 인벤 김다크님 제안 (하라니르 종족 기술). 기본 꺼짐 (2026-11-12 사용자 결정: 게임에서 아직 동선에 넣어 보지 못해서 1.8.0은 끈 채로 낸다)
                     --   2026-11-14 볶음밥의로아로 한 동선에서 두 번 써 보고 시험 기능 딱지를 뗐다 (사용자 결정)
+                    --   같은 날 기본 켬으로 바꿈 (사용자 결정). 설정은 travelRootOff (켬이 기본). 1.8.0의 travelRootOn은 불러올 때 지운다
                     travelRoot = {
                         type = "toggle", name = L["하라니르 뿌리걸음"], order = 5.5, width = "full",
                         desc = L["하란다르의 요람으로 가는 종족 기술입니다. 쿨타임이 없어 포탈처럼 필요할 때마다 씁니다.\n"]
                             .. L["요람에 내리는 곳은 처음에는 어림으로 잡고, 하란다르의 세계수 뿌리에서 떨어진 곳에서 한 번 쓰면 실제로 내린 곳을 기억합니다.\n"]
                             .. L["세계수 뿌리 가까이에서는 다른 대륙의 세계수로 가므로 그 근처에서는 넣지 않습니다."],
-                        get = function() return DB.settings.travelRootOn end,
-                        set = function(_, val) DB.settings.travelRootOn = val or nil end,
+                        get = function() return not DB.settings.travelRootOff end,
+                        set = function(_, val) DB.settings.travelRootOff = (not val) or nil end,
                     },
                     travelArcantina = {
                         type = "toggle", name = L["아르칸티나로 통하는 개인 열쇠"], order = 6, width = "full",
