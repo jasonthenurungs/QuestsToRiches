@@ -1,5 +1,11 @@
 ## (next version, number to be decided)
 
+### New
+- Navigation: M+ portals now cover every dungeon teleport you know (Maisara Caverns, Windrunner Spire, Magisters' Terrace
+  and the Voidstorm dungeon so far), not only Maisara Caverns. They share one cooldown, so one is used per route: the one that saves
+  the most time. Landing spots that are estimated are learned the first time you use each teleport. Still off by default
+  ("Use M+ portals (dungeon teleports) in navigation" in Settings).
+
 ### Fixes
 - Riches tab: the Liadrin weekly now includes the world quest version, so characters who did it show as done.
 - Riches tab: the Liadrin weekly runs on a two-week cycle shared by all characters. In the first week of a new cycle,
@@ -9,6 +15,12 @@
 ---
 
 ## (다음 버전, 번호는 정해지면) (한국어)
+
+### 새 기능
+- 내비게이션: 쐐기 포탈이 마이사라 동굴만이 아니라 배운 던전 순간이동 모두를 봅니다 (지금은 마이사라 동굴, 윈드러너 첨탑,
+  마법학자의 정원, 공허폭풍 던전). 쿨타임을 함께 쓰므로 한 동선에서 가장 많이 빨라지는 곳 하나만 씁니다.
+  내리는 곳을 어림으로 잡은 던전은 처음 쓸 때 실제로 내린 곳을 기억합니다. 지금처럼 기본 끔입니다
+  (설정창 "쐐기 포탈(던전 순간이동)을 동선에 넣기").
 
 ### 수정
 - 부자되기 탭: 리에드린 주간 중 전역 퀘스트 종류를 해도 완료로 나오지 않던 문제를 고쳤습니다.

@@ -5070,16 +5070,17 @@ QTR.SetupRoute = function()
             if not rcOn or #rc == 0 then
                 return sum
             end
+            -- 남은 횟수는 키별로 센다 (쐐기 포탈 여러 곳은 키가 같아 합쳐 tokens번. 다른 수단은 키가 하나씩이라 그대로)
             local left, taken = {}, {}
-            for r, m in ipairs(recalls) do
-                left[r] = m.tokens or 1
+            for _, m in ipairs(recalls) do
+                left[m.key] = math.max(left[m.key] or 0, m.tokens or 1)
             end
             while true do
                 local bestSave, bestIdx, bestR = HEARTH_MIN_SAVE, nil, nil
                 for idx, j in ipairs(o) do
                     if not taken[idx] then
                         for r = 1, #rc do
-                            if left[r] > 0 then
+                            if left[recalls[r].key] > 0 then
                                 local save = legs[idx] - rc[r][j]
                                 -- 수단마다 넣는 기준 (minSave, 없으면 15초): 쐐기 포탈은 45초
                                 if save >= (recalls[r].minSave or HEARTH_MIN_SAVE) and (not bestIdx or save >= bestSave) then
@@ -5093,7 +5094,7 @@ QTR.SetupRoute = function()
                     break
                 end
                 taken[bestIdx] = true
-                left[bestR] = left[bestR] - 1
+                left[recalls[bestR].key] = left[recalls[bestR].key] - 1
                 sum = sum - bestSave
                 if used then
                     local key = recalls[bestR].key
@@ -5466,6 +5467,48 @@ QTR.SetupRoute = function()
     --   넣는 기준은 45초 이상 빨라질 때 (2026-11-08 사용자 결정. 다른 수단은 15초: 같은 줄아만 안에서 16초 줄이려고
     --   8시간 쿨타임을 쓰는 것이 부자연스러웠다. 16초는 순간이동 비용 어림의 오차 범위 안이기도 하다)
     TV.MAI = { spell = 1254559, map = 2437, x = 0.445193, y = 0.393821, cd = 8 * 3600, minSave = 45 * NAV_SPEED }
+    -- 쐐기 포탈 여러 곳 (2026-11-14 사용자 요청): 쐐기돌 던전 순간이동은 모두 쿨타임(8시간)을 함께 쓴다.
+    --   배운 주문만 후보로 넣고, 경로 계산에서는 키를 모두 "maisara" 하나로 써서 한 동선에서 합쳐 한 번만 쓴다
+    --   (OrderPoints는 키별 횟수, PlanRecalls는 키별 사용 시각으로 쿨타임을 본다). 그중 가장 많이 줄어드는 던전을 고른다
+    --   주문 ID는 사용자 게임 확인 (영웅의 길 묶음 246, 같은 날: 시즌 1 네 곳 배움). 입구: 마이사라는 /qtr pos 실측(measured),
+    --   나머지는 method.gg 좌표로 시작하고 한 번 쓰면 실제로 내린 곳을 기억한다 (DB.travelDest.mplus[주문])
+    --   이름: 모르는 것은 nil이고 게임의 주문 이름을 쓴다. 시즌 2 다섯 곳(1286801, 1286804, 1286807, 1286809, 1286812)은
+    --   어느 주문이 어느 던전인지 확인한 뒤 넣는다 (입구는 눈부신 골짜기, 공허흉터 투기장, 날로라크의 소굴을 같은 날 실측)
+    TV.MPLUS = {
+        { spell = 1254559, name = L["마이사라 동굴"], map = 2437, x = 0.445193, y = 0.393821, measured = true },
+        { spell = 1254400, name = L["윈드러너 첨탑"], map = 2395, x = 0.3563, y = 0.7887 },
+        { spell = 1254572, name = L["마법학자의 정원"], map = 2424, x = 0.6239, y = 0.1455 },
+        { spell = 1254563, map = 2405, x = 0.6470, y = 0.6177 },
+    }
+    function TV.MplusBySpell(id)
+        for _, e in ipairs(TV.MPLUS) do
+            if e.spell == id then
+                return e
+            end
+        end
+        return nil
+    end
+    function TV.MplusName(e)
+        return e.name or TV.SpellName(e.spell) or tostring(e.spell)
+    end
+    -- 내리는 곳: 한 번 써서 기억한 곳, 없으면 입구 좌표
+    function TV.MplusDest(e)
+        local d = DB.travelDest and DB.travelDest.mplus and DB.travelDest.mplus[e.spell]
+        if d and d.c and d.x and d.y then
+            return { c = d.c, x = d.x, y = d.y }
+        end
+        return WorldPos(e.map, e.x, e.y)
+    end
+    -- 배운 쐐기 포탈 목록
+    function TV.MplusKnown()
+        local list = {}
+        for _, e in ipairs(TV.MPLUS) do
+            if TV.SpellKnown(e.spell) then
+                table.insert(list, e)
+            end
+        end
+        return list
+    end
     TV.NAMES.maisara = L["쐐기 포탈"]
     TV.OBJ.maisara = L["쐐기 포탈을"]
 
@@ -5631,10 +5674,14 @@ QTR.SetupRoute = function()
         end
         if key == "maisara" then
             -- "쐐기 포탈: 마이사라 동굴 (줄아만)", 채팅 "쐐기 포탈로 마이사라 동굴 (줄아만)" (지역 이름은 게임에서 읽는다)
-            local info = C_Map.GetMapInfo and C_Map.GetMapInfo(TV.MAI.map)
-            local zone = (info and info.name) or L["줄아만"]
-            local text = L["쐐기 포탈: 마이사라 동굴"]
-            return text .. " (" .. zone .. ")", text, zone, L["쐐기 포탈로 마이사라 동굴"] .. " (" .. zone .. ")"
+            --   inn: 그 던전 주문 ID (쐐기 포탈 여러 곳, TV.MPLUS). 없으면 마이사라
+            local e = TV.MplusBySpell(inn) or TV.MPLUS[1]
+            local info = C_Map.GetMapInfo and C_Map.GetMapInfo(e.map)
+            local zone = info and info.name
+            local z = zone and (" (" .. zone .. ")") or ""
+            local name = TV.MplusName(e)
+            local text = L["쐐기 포탈: %s"]:format(name)
+            return text .. z, text, zone, L["쐐기 포탈로 %s"]:format(name) .. z
         end
         if key == "delvebot" then
             -- "장난감: 구렁로봇 (킨도잔의 미궁) (영원노래 숲)", 채팅 "구렁로봇으로 킨도잔의 미궁 (영원노래 숲)"
@@ -5978,12 +6025,16 @@ QTR.SetupRoute = function()
                 missing.arcantina = L["나오는 곳(%s) 위치를 몰라서. 한 번 쓰거나 그 여관으로 귀환석을 타면 기억합니다."]:format(ARC_INN)
             end
         end
-        if want("maisara") and DB.settings.travelMaisaraOn and TV.SpellKnown(TV.MAI.spell) then
-            local d = WorldPos(TV.MAI.map, TV.MAI.x, TV.MAI.y)
-            if d then
-                local remain = TV.SpellCD(TV.MAI.spell)
-                table.insert(list, { key = "maisara", label = TV.NAMES.maisara, dest = d, cost = TELE_COST, tokens = 1,
-                    remain = remain, cdLen = TV.MAI.cd, minSave = TV.MAI.minSave, usable = TV.CDUsable(now + (remain or 0), TV.MAI.cd) })
+        if want("maisara") and DB.settings.travelMaisaraOn then
+            -- 배운 쐐기 포탈마다 하나씩, 키는 모두 "maisara" (쿨타임을 함께 써서 합쳐 한 번만. TV.MPLUS)
+            for _, e in ipairs(TV.MplusKnown()) do
+                local d = TV.MplusDest(e)
+                if d then
+                    local remain = TV.SpellCD(e.spell)
+                    table.insert(list, { key = "maisara", label = TV.NAMES.maisara, dest = d, destName = e.spell, spell = e.spell,
+                        cost = TELE_COST, tokens = 1, remain = remain, cdLen = TV.MAI.cd, minSave = TV.MAI.minSave,
+                        usable = TV.CDUsable(now + (remain or 0), TV.MAI.cd) })
+                end
             end
         end
         if want("dundun") and DB.settings.travelDundunOn and TV.HasToy(TV.DUN.item) then
@@ -6392,8 +6443,17 @@ QTR.SetupRoute = function()
             end)
             return true
         end
-        if spellID == TV.MAI.spell then
-            return true -- 마이사라 동굴 순간이동: 내리는 곳은 실측 위치로 정해 두어 기억할 것이 없다
+        local mp = TV.MplusBySpell(spellID)
+        if mp then
+            -- 쐐기 포탈: 입구 좌표와 같은 대륙, 1,000야드 안에 내렸으면 그 던전으로 기억한다 (좌표가 어림인 던전용. 마이사라도 같이)
+            local est = WorldPos(mp.map, mp.x, mp.y)
+            TV.LearnLanding(from, 1, 60, function(p)
+                if est and p.c == est.c and Dist(p, est) < 1000 then
+                    DB.travelDest.mplus = DB.travelDest.mplus or {}
+                    DB.travelDest.mplus[spellID] = { c = p.c, x = p.x, y = p.y, t = time() }
+                end
+            end)
+            return true
         end
         if spellID == TV.DBOT.spell then
             -- 구렁로봇 소환: 대화창에서 미궁을 자동으로 고를지 판단할 때 쓴다 (TV.OnGossip). 말을 걸고 고르는 동안까지 1분 기다리며
@@ -6542,10 +6602,17 @@ QTR.SetupRoute = function()
                 .. (known and "" or L[", 나오는 곳(%s) 위치 모름: 한 번 쓰거나 그 여관으로 귀환석을 타면 기억합니다"]:format(ARC_INN))
                 .. ((remain and remain > 0) and L[", %d분 뒤 사용 가능"]:format(math.ceil(remain / 60)) or ""))
         end
-        if TV.SpellKnown(TV.MAI.spell) then
-            local remain = TV.SpellCD(TV.MAI.spell)
+        local mk = TV.MplusKnown()
+        if #mk > 0 then
+            -- 쐐기 포탈: 배운 던전 이름 (입구를 아직 어림으로 보는 곳은 "내리는 곳 어림"), 쿨타임은 함께 쓰므로 하나만
+            local names = {}
+            for _, e in ipairs(mk) do
+                local learned = e.measured or (DB.travelDest and DB.travelDest.mplus and DB.travelDest.mplus[e.spell])
+                table.insert(names, TV.MplusName(e) .. (learned and "" or L[" (내리는 곳 어림)"]))
+            end
+            local remain = TV.SpellCD(mk[1].spell)
             local left = math.ceil((remain or 0) / 60) -- 대기시간이 8시간이라 1시간이 넘으면 시간과 분으로
-            Print(L["마이사라 동굴 순간이동: "] .. (DB.settings.travelMaisaraOn and L["켬"] or L["설정에서 끔"])
+            Print(L["쐐기 포탈: "] .. (DB.settings.travelMaisaraOn and L["켬"] or L["설정에서 끔"]) .. " [" .. table.concat(names, ", ") .. "]"
                 .. ((left >= 60) and L[", %d시간 %d분 뒤 사용 가능"]:format(math.floor(left / 60), left % 60)
                     or (left > 0) and L[", %d분 뒤 사용 가능"]:format(left) or ""))
         end
@@ -6686,7 +6753,8 @@ QTR.SetupRoute = function()
         elseif key == "arcantina" then
             return { type = "toy", toy = ARC_ITEM }, GetItemIconSafe(ARC_ITEM)
         elseif key == "maisara" then
-            return { type = "spell", spell = TV.MAI.spell }, TV.SpellIcon(TV.MAI.spell)
+            local id = r.spell or TV.MAI.spell -- 쐐기 포탈 여러 곳: 고른 던전의 주문
+            return { type = "spell", spell = id }, TV.SpellIcon(id)
         elseif key == "dundun" then
             return { type = "toy", toy = TV.DUN.item }, GetItemIconSafe(TV.DUN.item)
         elseif key == "delvebot" then
@@ -7165,7 +7233,7 @@ QTR.SetupRoute = function()
                 -- 이름은 "귀환석: 나그네의 쉼터 (실버문)". 채팅에는 쌍점이 겹치지 않게 chatLabel을 쓴다 (TV.TravelLabel)
                 local label, text, zone, chat = TV.TravelLabel(u.m.key, u.m.destName)
                 AddEntry({ travel = u.m.key, hearth = (u.m.key == "hearth") or nil, arrival = u.m.dest, bindName = u.m.destName,
-                    label = label, travelText = text, innZone = zone, chatLabel = chat, poi = u.m.poi })
+                    label = label, travelText = text, innZone = zone, chatLabel = chat, poi = u.m.poi, spell = u.m.spell })
                 portals = u.path
             end
             -- 이 퀘스트로 가는 길에 탈 포탈들(마법사 순간이동 포함)을 먼저 넣는다
@@ -10273,8 +10341,8 @@ local function BuildOptions()
                         set = function(_, val) DB.settings.travelArcantinaOff = not val end,
                     },
                     travelMaisara = {
-                        type = "toggle", name = L["마이사라 동굴 순간이동을 동선에 넣기"], order = 6.5, width = "full",
-                        desc = L["쐐기돌 던전 마이사라 동굴을 10단계 이상으로 마치면 받는 순간이동(심연의 동굴의 길)으로 줄아만 마이사라 동굴 입구에 내립니다.\n"]
+                        type = "toggle", name = L["쐐기 포탈(던전 순간이동)을 동선에 넣기"], order = 6.5, width = "full",
+                        desc = L["쐐기돌 던전을 10단계 이상으로 마치면 받는 던전 입구 순간이동입니다. 배운 던전 중 가장 빨라지는 곳 하나를 씁니다.\n"]
                             .. L["45초 이상 빨라지는 구간이 있으면 한 번 넣습니다 (다른 수단은 15초. 쿨타임이 길어서 확실히 빨라질 때만). 쿨타임이 8시간이고 다른 던전 순간이동도 함께 쿨타임에 걸리니, 쐐기돌 던전에 갈 때 쓰려면 끄세요."],
                         get = function() return DB.settings.travelMaisaraOn == true end,
                         set = function(_, val) DB.settings.travelMaisaraOn = val or nil end,
