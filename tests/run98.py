@@ -107,6 +107,19 @@ lua.eval(r'''function(QTR, out)
   print("  둘째 주에 한 캐릭터(상암동누렁스 11-11), 새 주기 첫째 주에 보면 지난주 완료: " .. tostring(QTR.WeeklyLastWeek("격냥패딩-데스윙", W, ws1 + 2 * WK) ~= nil))
   DB.cacheGets["격냥패딩-데스윙"] = { { id = 279527, n = 1, t = ws1 + 2 * WK + 1000, q = 93766 } }
   print("  다음 주기 첫째 주에 한 캐릭터, 그 둘째 주에 보면 지난주 완료: " .. tostring(QTR.WeeklyLastWeek("격냥패딩-데스윙", W, ws1 + 3 * WK) ~= nil))
+  -- 잘아타스 추적도 2주 주기, 리에드린보다 한 주 늦게 (2026-11-15 사용자 결정, 짐작): 11-05 주 시작, 11-19 주 새 주기
+  local X
+  for _, w in ipairs(QTR.SILVERMOON_WEEKLY) do if w.key == "xalatath" then X = w end end
+  local function ws(m, d) return time({ year = 2026, month = m, day = d, hour = 8 }) end
+  print("== 2c) 잘아타스 2주 주기 (cycleRef " .. os.date("%m-%d %H시", X.cycleRef) .. ")")
+  -- 상암동누렁스, 봄이간다처럼 10-29 주와 11-05 주에 연달아 함 (보관함 기록과 완료 기록)
+  DB.turnIns["격냥패딩-데스윙"] = { [98172] = ws(11, 8) }
+  DB.cacheGets["격냥패딩-데스윙"] = { { id = 279527, n = 1, t = ws(10, 31), q = 98172 } }
+  print("  10-29 주에 한 캐릭터, 11-05 주(새 주기 첫째 주)에 보면 지난주 완료: " .. tostring(QTR.WeeklyLastWeek("격냥패딩-데스윙", X, ws(11, 5)) ~= nil))
+  print("  11-05 주에 한 캐릭터, 11-12 주에 보면 지난주 완료: " .. tostring(QTR.WeeklyLastWeek("격냥패딩-데스윙", X, ws(11, 12)) ~= nil))
+  print("  같은 캐릭터, 11-19 주(새 주기)에 보면 지난주 완료: " .. tostring(QTR.WeeklyLastWeek("격냥패딩-데스윙", X, ws(11, 19)) ~= nil))
+  print("  한 번도 안 한 캐릭터(마래푸누렁스), 11-12 주: " .. tostring(QTR.WeeklyLastWeek("봄이간다-데스윙", X, ws(11, 12)) ~= nil))
+  DB.turnIns["격냥패딩-데스윙"] = nil
   DB.cacheGets["격냥패딩-데스윙"] = { { id = 279527, n = 1, t = now - 8 * 86400, q = 93766 } }
   SlashCmdList["QUESTSTORICHES"]("rich")
   rows("3) 부자되기 탭: 리에드린 줄 인구학 완료 1/3 (격냥패딩 기록은 8일 전이라 실제 주간 경계로는 지난주 밖)")

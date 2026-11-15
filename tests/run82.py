@@ -57,6 +57,8 @@ lua.eval(r'''function(QTR, out)
   QTR:OnInitialize(); QTR:OnEnable(); QTR:PLAYER_ENTERING_WORLD(); RunLater()
   -- 2주 주기 (2026-11-14): 이 시험은 주기 둘째 주로 본다 (지난주가 주기 첫째 주라 지난주에 했으면 이번 주에 못 받음)
   for _, w in ipairs(QTR.SILVERMOON_WEEKLY) do if w.key == "liadrin" then w.cycleRef = time() - 7 * 86400 end end
+  -- 잘아타스 추적도 2주 주기 (2026-11-15): 같은 둘째 주로 맞춘다 (지난주 잘아타스 보관함 기록이 있는 인구학은 지난주에 함)
+  for _, w in ipairs(QTR.SILVERMOON_WEEKLY) do if w.key == "xalatath" then w.cycleRef = time() - 7 * 86400 end end
   local DB = QuestsToRichesDB
   local strip = function(s)
     s = tostring(s or "")
@@ -101,7 +103,7 @@ lua.eval(r'''function(QTR, out)
       local s = QTR.WeeklyDoneTime(k, W, weekStart) and "완료" or strip((QTR.WeeklyState(k, W, weekStart)))
       if s == "" then s = "미완료" end
       print("    " .. k .. ": " .. s .. " / 지난주: " .. tostring(QTR.WeeklyLastWeek(k, W, weekStart) ~= nil)
-        .. " / 잘아타스 지난주(skipNext 없음): " .. tostring(QTR.WeeklyLastWeek(k, X, weekStart) ~= nil))
+        .. " / 잘아타스 지난주(2주 주기, 지난주 함): " .. tostring(QTR.WeeklyLastWeek(k, X, weekStart) ~= nil))
     end
   end
 

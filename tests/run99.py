@@ -198,5 +198,13 @@ lua.eval(r'''function(QTR, out)
   local w = FREG[cname]()
   print("  " .. tostring(cname) .. ": 종류 " .. tostring(w.type) .. ", 회색일 때 마우스 " .. tostring(w.frame.mswd) .. " / 기본 체크 칸은 그대로 " .. tostring(FREG.CheckBox().frame.mswd))
   LibStub = oldLS
+  -- 2026-11-15 사용자 제보: 넣지 않은 이유가 배운 던전 수만큼(네 줄) 나왔다 -> 쐐기 포탈은 한 줄
+  OPTIONS.args.travelGroup.args.travelMaisara.set(nil, true)
+  DB.settings.travelWhyOn = true
+  KNOWN[MAI], KNOWN[WR], KNOWN[XEN], KNOWN[1286807] = true, true, true, true
+  for k in pairs(Q) do Q[k] = nil end
+  Q[75] = { map = 2413, title = "H9 하란다르 구석 곁", money = 10000000, t = 86400, x = 0.94, y = 0.94 }
+  route("14) 네 곳 배움, 넣을 구간 없음 -> 쐐기 포탈 이유는 한 줄")
+  DB.settings.travelWhyOn = nil
   print("==T end")
 end''')(addon, out)

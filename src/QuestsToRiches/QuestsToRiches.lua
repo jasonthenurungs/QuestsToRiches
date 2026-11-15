@@ -1590,8 +1590,13 @@ QTR.SPECIAL_ASSIGNMENTS = {
 QTR.SILVERMOON_CACHE = 279527
 QTR.SILVERMOON_WEEKLY = {
     -- 잘아타스 추적도 noFlag (2026-11-12 사용자 결정): 주간 초기화 뒤 이번 주에 없는 듯한데, 접속한 캐릭터(훗추 18:35, 랩값)를 게임이 완료로 알려
-    --   시각 없는 "완료"가 되었다. 저장 기록상 대부분 10-29 주와 11-05 주에 연달아 했으므로 2주 주기는 아니다 (왜 없는지는 확인 불가)
-    { key = "xalatath", name = L["잘아타스 추적"], noFlag = true, ids = { 98172 } },
+    --   시각 없는 "완료"가 되었다.
+    -- skipNext, cycleRef (2026-11-15 사용자 결정, 짐작으로 넣음): 리에드린과 같은 2주 주기인데 한 주 늦다. 11-05 주에 시작해 11-19 주에 새 주기.
+    --   10-29 주(앞 주기 둘째 주)와 11-05 주(새 주기 첫째 주)에 연달아 할 수 있었고, 11-05 주에 한 캐릭터(상암동누렁스, 봄이간다)는
+    --   11-12 주에 베리사 윈드러너가 주지 않았으며, 한 번도 안 한 마래푸누렁스는 11-12 주에 받았다.
+    --   11-19 주에 모두 다시 받는지는 확인 불가 (그때 확인할 것)
+    { key = "xalatath", name = L["잘아타스 추적"], noFlag = true, skipNext = true,
+      cycleRef = time({ year = 2026, month = 11, day = 6, hour = 12 }), ids = { 98172 } },
     -- 93913 야외 우두머리, 93769 주거, 93889 연회, 93890 풍요, 93891 하란다르 전설, 93892 스토마리온 공격,
     -- 93909 구렁, 93910 사냥감, 93911 던전, 93912 공격대
     -- noFlag: 게임의 완료 표시(IsQuestFlaggedCompleted)를 믿지 않는다 (2026-11-05 사용자 제보: 리에드린 주간이 없는 주인데 "완료").
@@ -4292,7 +4297,7 @@ function QTR.WeeklyDoneTime(key, w, weekStart)
     return best, bestID
 end
 
--- 한 번 하면 다음 주에는 받을 수 없는 칸(w.skipNext, 리에드린 주간)을 그 캐릭터가 지난주에 했나: 했으면 그 시각, 아니면 nil
+-- 한 번 하면 다음 주에는 받을 수 없는 칸(w.skipNext, 리에드린 주간과 잘아타스 추적)을 그 캐릭터가 지난주에 했나: 했으면 그 시각, 아니면 nil
 --   이번 주에 했거나 받아 둔 캐릭터는 부르는 쪽이 먼저 거른다 (받아 두었으면 받을 수 있는 것이므로 그쪽이 우선)
 --   기록: QTR 완료 기록(turnIns), 또는 최정상 보관함을 그 퀘스트 보상으로 받은 기록(cacheGets의 q.
 --   실버문 주간 ID를 넣기(10-30) 전에 한 것은 이것만 남아 있다)
@@ -6303,9 +6308,11 @@ QTR.SetupRoute = function()
         for _, c in ipairs(chosen) do
             used[c.m.key] = true
         end
-        local reasons, hearthWhy = {}, nil
+        -- 같은 key는 한 번만 (2026-11-15 사용자 제보: 쐐기 포탈은 배운 던전마다 따로 목록에 들어가 같은 이유가 던전 수만큼 나왔다)
+        local reasons, hearthWhy, told = {}, nil, {}
         for _, m in ipairs(methods) do
-            if not used[m.key] then
+            if not used[m.key] and not told[m.key] then
+                told[m.key] = true
                 local s = seen[m.key] or {}
                 local text
                 if not s.worth then
