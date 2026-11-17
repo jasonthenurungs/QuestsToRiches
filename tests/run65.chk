@@ -1,4 +1,5 @@
 |cffffd100[QTR]|r 로드 완료. /qtr 창 열기, /qtr set 설정창
+|cffffd100[QTR]|r 이번 버전부터 이동 수단 채팅 알림(동선에 넣었습니다, 넣지 않았습니다)은 기본으로 나오지 않습니다. 보고 싶으면 설정창 '동선에 넣는 이동 수단' 묶음에서 '이동 수단을 넣었는지와 그 이유를 채팅창에 알리기'를 켜 주세요.
 |cffffd100[QTR]|r 보관함 출처 학습: 수요와 공급 (공허폭풍) -> 전설적인 역전용사의 보관함
 hidden for me: true
 activeGQ: 4
@@ -9,8 +10,8 @@ source: q5 특별 과제: 수요와 공급 공허폭풍 279520 map
 |cffffd100[QTR]|r 정점 보관함 획득: 실버문 정점 보관함 (실버문 주간: 수호)
 == stormarion cache with no quest
 get: 282183 1 900
-source: q900 quest 실버문 주간: 수호 282183 npc
 source: q5 quest 특별 과제: 수요와 공급 279520 map
+source: q900 quest 실버문 주간: 수호 282183 npc
 == bank withdraw should not count
 gets now: 1
 ==== rich collapsed
@@ -453,5 +454,31 @@ tip: 77
   route: 1. V9 공허폭풍 (실버문)
 |cffffd100[QTR]|r 내비게이션을 마쳤습니다.
   button: shown=false type=toy spell=nil item=nil toy=253629 text=장난감: 아르칸티나 열쇠 | 클릭해서 사용 (내비게이션 완료)
+==T T9n hearth and key on cooldown, Dalaran and Garrison owned -> Dalaran Hearthstone
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=true type=toy spell=nil item=nil toy=140192 text=장난감: 달라란 귀환석 | 클릭해서 사용 (내비게이션 완료)
+==T T9n2 cast Dalaran Hearthstone -> button goes away
+  button: shown=false type=toy spell=nil item=nil toy=140192 text=장난감: 달라란 귀환석 | 클릭해서 사용 (내비게이션 완료)
+==T T9o Dalaran on cooldown -> Garrison Hearthstone
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=true type=toy spell=nil item=nil toy=110560 text=장난감: 주둔지 귀환석 | 클릭해서 사용 (내비게이션 완료)
+==T T9p Dalaran unchecked -> Garrison Hearthstone
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=true type=toy spell=nil item=nil toy=110560 text=장난감: 주둔지 귀환석 | 클릭해서 사용 (내비게이션 완료)
+==T T9q both unchecked -> nothing
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=false type=toy spell=nil item=nil toy=110560 text=장난감: 주둔지 귀환석 | 클릭해서 사용 (내비게이션 완료)
+==T T9r hearth ready again -> hearthstone first
+|cffffd100[QTR]|r 내비게이션: 1곳. TomTom이 없어서 게임 웨이포인트로 한 곳씩 안내합니다. 첫 목적지: 1. V9 공허폭풍 (실버문)
+  route: 1. V9 공허폭풍 (실버문)
+|cffffd100[QTR]|r 내비게이션을 마쳤습니다.
+  button: shown=true type=item spell=nil item=item:6948 toy=nil text=귀환석: 실버문 | 클릭해서 사용 (내비게이션 완료)
 ==T end
-|cffffd100[QTR]|r 이번 버전부터 이동 수단 채팅 알림(동선에 넣었습니다, 넣지 않았습니다)은 기본으로 나오지 않습니다. 보고 싶으면 설정창 '동선에 넣는 이동 수단' 묶음에서 '이동 수단을 넣었는지와 그 이유를 채팅창에 알리기'를 켜 주세요.

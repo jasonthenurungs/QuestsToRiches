@@ -5722,6 +5722,12 @@ QTR.SetupRoute = function()
         if key == "arcantina" then
             return L["장난감: 아르칸티나 열쇠"], L["장난감: 아르칸티나 열쇠"], nil, L["아르칸티나 열쇠 (장난감)"]
         end
+        if key == "dalaran" then
+            return L["장난감: 달라란 귀환석"], L["장난감: 달라란 귀환석"]
+        end
+        if key == "garrison" then
+            return L["장난감: 주둔지 귀환석"], L["장난감: 주둔지 귀환석"]
+        end
         if key == "maisara" then
             -- "쐐기 포탈: 마이사라 동굴 (줄아만)", 채팅 "쐐기 포탈로 마이사라 동굴 (줄아만)" (지역 이름은 게임에서 읽는다)
             --   inn: 그 던전 주문 ID (쐐기 포탈 여러 곳, TV.MPLUS). 없으면 마이사라
@@ -5865,6 +5871,36 @@ QTR.SetupRoute = function()
         end
         local ok, has = pcall(fn, itemID)
         return ok and has and true or false
+    end
+
+    -- 마친 뒤 귀환 버튼의 맨 끝 순서 장난감 (2026-11-17 인벤 쪽지 제안, 타락한영혼님): 달라란 귀환석, 주둔지 귀환석.
+    --   목적지가 한밤 지역과 대륙이 달라 동선에는 넣지 않는다. 귀환석과 대기시간이 따로 (HEARTH_TOYS에 없음).
+    --   주문 ID는 게임에 묻고(C_Item.GetItemSpell), 못 읽으면 알려진 값. 설정 finishDalaranOff, finishGarrisonOff
+    TV.HOMES = {
+        { key = "dalaran", item = 140192, spell = 222695, off = "finishDalaranOff" },
+        { key = "garrison", item = 110560, spell = 171253, off = "finishGarrisonOff" },
+    }
+    function TV.HomeByKey(key)
+        for _, e in ipairs(TV.HOMES) do
+            if e.key == key then
+                return e
+            end
+        end
+        return nil
+    end
+    function TV.IsHomeSpell(spellID)
+        for _, e in ipairs(TV.HOMES) do
+            if spellID == e.spell then
+                return true
+            end
+            if C_Item and C_Item.GetItemSpell then
+                local ok, _, id = pcall(C_Item.GetItemSpell, e.item)
+                if ok and id == spellID then
+                    return true
+                end
+            end
+        end
+        return false
     end
 
     -- 아르칸티나 열쇠의 주문 ID (게임에 물어 본다. 못 읽으면 알려진 값)
@@ -6549,6 +6585,14 @@ QTR.SetupRoute = function()
             TV.OnUsed()
             return
         end
+        -- 달라란, 주둔지 귀환석 (마친 뒤 귀환 버튼에만 나온다)
+        if not QTR.route and TV.finish then
+            local okHome, isHome = pcall(TV.IsHomeSpell, spellID)
+            if okHome and isHome then
+                TV.OnUsed()
+                return
+            end
+        end
         C_Timer.After(0.5, function()
             if HearthJustStarted() then
                 OnHearthUsed(from)
@@ -6805,6 +6849,9 @@ QTR.SetupRoute = function()
             return { type = "spell", spell = ASTRAL_SPELL }, TV.SpellIcon(ASTRAL_SPELL)
         elseif key == "arcantina" then
             return { type = "toy", toy = ARC_ITEM }, GetItemIconSafe(ARC_ITEM)
+        elseif TV.HomeByKey(key) then
+            local e = TV.HomeByKey(key)
+            return { type = "toy", toy = e.item }, GetItemIconSafe(e.item)
         elseif key == "maisara" then
             local id = r.spell or TV.MAI.spell -- 쐐기 포탈 여러 곳: 고른 던전의 주문
             return { type = "spell", spell = id }, TV.SpellIcon(id)
@@ -6890,9 +6937,10 @@ QTR.SetupRoute = function()
     end
 
     -- 내비게이션을 모두 마쳤을 때 귀환 버튼 (2026-10-27 사용자 아이디어, 설정 finishPopupOff로 끈다)
-    -- 지금 쓸 수 있는 것 하나: 실버문 순간이동(대기시간 없음), 영혼의 귀환, 귀환석, 아르칸티나 열쇠 순
+    -- 지금 쓸 수 있는 것 하나: 실버문 순간이동(대기시간 없음), 영혼의 귀환, 귀환석, 아르칸티나 열쇠, 달라란 귀환석, 주둔지 귀환석 순
+    --   (달라란, 주둔지는 2026-11-17 추가. 귀환석과 아르칸티나 열쇠가 둘 다 쿨타임일 때 쓰려는 것이라 맨 끝. 도착지 좌표를 몰라 가까이 있는지는 보지 않는다)
     -- (귀환석은 "1회 남기기"로 아껴 둔 충전, 아르칸티나 열쇠는 로딩이 두 번이라 뒤에 둔다)
-    -- 수단마다 설정에서 뺄 수 있다: finishMageOff, finishAstralOff, finishHearthOff, finishArcantinaOff
+    -- 수단마다 설정에서 뺄 수 있다: finishMageOff, finishAstralOff, finishHearthOff, finishArcantinaOff, finishDalaranOff, finishGarrisonOff
     -- 동선용 켜고 끄기 설정과는 따로 본다. 이미 그 도착지 가까이(JUMP 안)에 있으면 그 수단은 띄우지 않는다
     -- 쓸 수 있는 것이 없으면 아무것도 띄우지 않는다 (채팅 안내도 없음)
     function TV.FinishAction()
@@ -6934,6 +6982,14 @@ QTR.SetupRoute = function()
             local remain = TV.ItemCD(ARC_ITEM)
             if (not remain or remain == 0) and not (d and near(d)) then
                 return { travel = "arcantina", label = (TV.TravelLabel("arcantina", ARC_INN)) }
+            end
+        end
+        for _, e in ipairs(TV.HOMES) do
+            if not s[e.off] and TV.HasToy(e.item) then
+                local remain = TV.ItemCD(e.item)
+                if not remain or remain == 0 then
+                    return { travel = e.key, label = (TV.TravelLabel(e.key)) }
+                end
             end
         end
         return nil
@@ -10489,7 +10545,7 @@ local function BuildOptions()
                     finishPopup = {
                         type = "toggle", name = L["내비게이션을 마치면 귀환 버튼 창 띄우기"], order = 7.5, width = "full",
                         desc = L["모든 목적지를 마치면 아래에서 고른 것 중 지금 쓸 수 있는 것 하나를 사용 버튼 창에 띄웁니다.\n"]
-                            .. L["순서: 실버문 순간이동, 영혼의 귀환, 귀환석, 아르칸티나 열쇠. 쓸 수 있는 것이 없거나 이미 그 도착지 가까이 있으면 띄우지 않습니다.\n"]
+                            .. L["순서: 실버문 순간이동, 영혼의 귀환, 귀환석, 아르칸티나 열쇠, 달라란 귀환석, 주둔지 귀환석. 쓸 수 있는 것이 없거나 이미 그 도착지 가까이 있으면 띄우지 않습니다.\n"]
                             .. L["동선에 넣는 설정과는 따로입니다."],
                         get = function() return not DB.settings.finishPopupOff end,
                         set = function(_, val)
@@ -10522,6 +10578,19 @@ local function BuildOptions()
                         disabled = function() return DB.settings.finishPopupOff end,
                         get = function() return not DB.settings.finishArcantinaOff end,
                         set = function(_, val) DB.settings.finishArcantinaOff = not val end,
+                    },
+                    -- 2026-11-17 인벤 쪽지 제안. 장난감이 있을 때만 쓰므로 기본 켬
+                    finishDalaran = {
+                        type = "toggle", name = L["달라란 귀환석"], order = 7.55, width = 0.8,
+                        disabled = function() return DB.settings.finishPopupOff end,
+                        get = function() return not DB.settings.finishDalaranOff end,
+                        set = function(_, val) DB.settings.finishDalaranOff = (not val) or nil end,
+                    },
+                    finishGarrison = {
+                        type = "toggle", name = L["주둔지 귀환석"], order = 7.56, width = 0.8,
+                        disabled = function() return DB.settings.finishPopupOff end,
+                        get = function() return not DB.settings.finishGarrisonOff end,
+                        set = function(_, val) DB.settings.finishGarrisonOff = (not val) or nil end,
                     },
                 },
             },

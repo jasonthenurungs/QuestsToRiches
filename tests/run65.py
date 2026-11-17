@@ -601,7 +601,26 @@ lua.eval("""function(out, QTR)
   ICD[253629] = { 0, 0 }
   DB.settings.finishArcantinaOff = true
   finish("T9m hearth and key unchecked -> nothing")
+  -- 달라란, 주둔지 귀환석 (2026-11-17 인벤 쪽지 제안): 귀환석과 아르칸티나 열쇠가 모두 쿨타임일 때 맨 끝 순서
+  TOYS[140192], TOYS[110560] = true, true
+  ICD[6948] = { NOWT - 60, 900 }; ICD[253629] = { NOWT - 60, 900 }
   DB.settings.finishHearthOff, DB.settings.finishArcantinaOff = nil, nil
-  TOYS[253629] = nil
+  finish("T9n hearth and key on cooldown, Dalaran and Garrison owned -> Dalaran Hearthstone")
+  print("==T T9n2 cast Dalaran Hearthstone -> button goes away")
+  LATER = {}
+  QTR.OnPlayerSpellcast(222695)
+  button()
+  ICD[140192] = { NOWT - 60, 1200 }
+  finish("T9o Dalaran on cooldown -> Garrison Hearthstone")
+  ICD[140192] = { 0, 0 }
+  DB.settings.finishDalaranOff = true
+  finish("T9p Dalaran unchecked -> Garrison Hearthstone")
+  DB.settings.finishGarrisonOff = true
+  finish("T9q both unchecked -> nothing")
+  DB.settings.finishDalaranOff, DB.settings.finishGarrisonOff = nil, nil
+  ICD[6948] = { 0, 0 }
+  finish("T9r hearth ready again -> hearthstone first")
+  ICD[253629] = { 0, 0 }
+  TOYS[253629], TOYS[140192], TOYS[110560] = nil, nil, nil
   print("==T end")
 end""")(out, addon)
