@@ -9821,6 +9821,22 @@ QTR.SetupMinimap = function()
         GameTooltip:Hide()
     end)
 
+    -- 다른 애드온(SexyMap, Leatrix Plus 등)이 QTR보다 늦게 미니맵 크기나 모양을 바꾸면 다시 놓는다
+    --   (2026-11-18 인벤 제보: 옮겨 두어도 /reload 하면 엉뚱한 곳. 처음 한 번만 그때 크기로 놓아서, 뒤에 미니맵이 바뀌면 그대로 남았다)
+    if Minimap.HookScript then
+        Minimap:HookScript("OnSizeChanged", function()
+            if btn:IsShown() then
+                UpdatePosition()
+            end
+        end)
+    end
+    btn:RegisterEvent("PLAYER_ENTERING_WORLD")
+    btn:SetScript("OnEvent", function()
+        -- 접속 직후와 조금 뒤 (모양만 바꾸는 애드온은 크기 변경 알림이 없다)
+        UpdatePosition()
+        C_Timer.After(1, UpdatePosition)
+    end)
+
     UpdatePosition()
     QTR.UpdateMinimapButton()
 end

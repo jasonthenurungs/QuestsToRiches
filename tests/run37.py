@@ -66,6 +66,7 @@ lua.execute("""
 Minimap = CreateFrame("Frame", "Minimap")
 Minimap.GetWidth = function() return 198 end
 Minimap.GetHeight = function() return 198 end
+Minimap.HookScript = function(self, n, fn) MMHOOK = MMHOOK or {}; MMHOOK[n] = fn end
 """)
 src = open(TD + '../src/QuestsToRiches/QuestsToRiches.lua', encoding='utf-8').read()
 chunk = lua.eval('function(s) local f, e = load(s, "QTR"); if not f then error(e) end; return f end')(src)
@@ -294,6 +295,16 @@ lua.eval("""function(out, QTR)
   GetMinimapShape = function() return "SQUARE" end
   QTR.UpdateMinimapPosition()
   print("square pos:", rawget(mb, "_x"), rawget(mb, "_y"))
+  -- 2026-11-18 인벤 제보: 다른 애드온이 나중에 미니맵 크기를 바꾸면 다시 놓는다
+  Minimap.GetWidth = function() return 140 end
+  Minimap.GetHeight = function() return 140 end
+  MMHOOK.OnSizeChanged()
+  print("after minimap resized to 140:", rawget(mb, "_x"), rawget(mb, "_y"))
+  GetMinimapShape = nil
+  rawget(mb, "_scr_OnEvent")(mb, "PLAYER_ENTERING_WORLD")
+  print("entering world, round again:", rawget(mb, "_x"), rawget(mb, "_y"))
+  Minimap.GetWidth = function() return 198 end
+  Minimap.GetHeight = function() return 198 end
   -- 클릭
   local ACD = LibStub("AceConfigDialog-3.0")
   print("dash shown before:", tostring(QuestsToRichesFrame._shown))
