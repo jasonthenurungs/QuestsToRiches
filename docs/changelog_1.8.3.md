@@ -1,4 +1,4 @@
-## Next
+## 1.8.3
 
 ### New
 - Navigation: the return button shown when you finish can now use the Dalaran Hearthstone and Garrison Hearthstone toys.
@@ -12,7 +12,7 @@
 
 ---
 
-## Next (한국어)
+## 1.8.3 (한국어)
 
 ### 새 기능
 - 내비게이션: 다 마친 뒤 뜨는 귀환 버튼이 달라란 귀환석과 주둔지 귀환석 장난감도 씁니다.
