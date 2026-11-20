@@ -15,7 +15,8 @@ source: q900 quest 실버문 주간: 수호 282183 npc
 == bank withdraw should not count
 gets now: 1
 ==== rich collapsed
-골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+ / 보유량 순증 |cff808080기록 2일 이상 필요|r
 |cff808080-|r
 |cff808080-|r
 골드퀘 4개 / 특별 과제 2개
@@ -56,7 +57,8 @@ gets now: 1
 |cffffffff1/7|r
 clickable rows: 8
 ==== rich expanded first gq and first source
-골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+ / 보유량 순증 |cff808080기록 2일 이상 필요|r
 |cff808080-|r
 |cff808080-|r
 골드퀘 4개 / 특별 과제 2개
@@ -113,7 +115,8 @@ clickable rows: 8
 |cffffd100[QTR]|r 추적에서 제외했습니다: 퀘 A (공허폭풍)
 |cffffd100[QTR]|r 제외 퀘스트: 퀘 A (공허폭풍)
 ==== rich after ban
-골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+ / 보유량 순증 |cff808080기록 2일 이상 필요|r
 |cff808080-|r
 |cff808080-|r
 골드퀘 3개 / 특별 과제 2개
@@ -178,7 +181,8 @@ clickable rows: 8
 + | 수요와 공급 (공허폭풍) | 6d 9h 0m | |T5555:0|t | 0/7
 + | 실버문 주간: 수호 (실버문) | 6d 9h 0m | |T5555:0|t | 1/7
 ==== rich ban off
-골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+ / 보유량 순증 |cff808080기록 2일 이상 필요|r
 |cff808080-|r
 |cff808080-|r
 골드퀘 4개 / 특별 과제 2개
@@ -257,7 +261,8 @@ clickable rows: 8
 + | 실버문 주간: 수호 (실버문) | 6d 9h 0m | |T5555:0|t | 1/7
 |cffffd100[QTR]|r 제외를 해제했습니다: 퀘 A (공허폭풍)
 ==== gq tab
-골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t / 보유량 순증 |cff808080기록 2일 이상 필요|r
+골드퀘 획득 0|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t
+ / 보유량 순증 |cff808080기록 2일 이상 필요|r
 |cff808080-|r
 |cff808080-|r
 수행 가능한 골드퀘 3개 / 3,030|TInterface\MoneyFrame\UI-GoldIcon:0:0:2:0|t

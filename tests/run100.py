@@ -1,5 +1,6 @@
 # 보유량 순증: 큰 변화 날은 빼고 계산 (2026-11-20 사용자 결정, 인벤 김다크님 글: 500만 골드 탈것을 산 뒤 일주일 내내 "보유량 감소 중")
-#   이웃한 기록 사이 변화가 앞 기록의 20% 이상이면서 하루에 30만 골드 이상이면 늘었든 줄었든 뺀다 (run98 준비 부분 사용)
+#   이웃한 기록 사이 변화가 앞 기록의 20% 이상이면서 하루에 50만 골드 이상이면 늘었든 줄었든 뺀다 (run98 준비 부분 사용)
+#   같은 날 고침: 기준 30만 -> 50만 (토큰 판 골드는 순증에 넣기), 뺀 날 수는 글자 대신 순증에 마우스를 올리면 툴팁
 import os as _os
 TD = _os.path.dirname(_os.path.abspath(__file__)) + '/'
 from lupa import LuaRuntime
@@ -64,6 +65,19 @@ lua.eval(r'''function(QTR, out)
   local G = 10000
   local function day(n) return date("%Y-%m-%d", now - n * 86400) end
   local function setSnaps(t) DB.snapshots = {}; for n, v in pairs(t) do DB.snapshots[day(n)] = v * G end end
+  -- 툴팁 흉내: 순증 글자칸 위 마우스 (OnEnter가 있는 이름 없는 Frame 중 툴팁 제목이 "보유량 순증"인 것)
+  local TIP = {}
+  GameTooltip = { SetOwner = function() TIP = {} end, SetText = function(_, t) table.insert(TIP, t) end,
+                  AddLine = function(_, t) table.insert(TIP, t) end, Show = function() end, Hide = function() end }
+  local hover
+  for _, fr in ipairs(ALLFRAMES) do
+    local fn = rawget(fr, "_scr_OnEnter")
+    if fn and not hover then
+      TIP = {}; pcall(fn, fr)
+      if TIP[1] == "보유량 순증" then hover = fr end
+    end
+  end
+  print("순증 툴팁 칸 찾음: " .. tostring(hover ~= nil))
   local function show(title)
     local tr, big = QTR.HoldingTrendForTest()
     print("== " .. title)
@@ -73,6 +87,8 @@ lua.eval(r'''function(QTR, out)
       local t = fs._text
       if type(t) == "string" and t:find("보유량 순증") then print("  머리: " .. strip(t)) end
     end
+    rawget(hover, "_scr_OnEnter")(hover)
+    print("  툴팁: " .. table.concat(TIP, " / "))
   end
   -- 1) 김다크님 같은 경우: 매일 5만씩 벌다가 4일 전 500만 탈것을 삼 (그날도 5만 벎)
   setSnaps({ [7] = 5000000, [6] = 5050000, [5] = 5100000, [4] = 150000, [3] = 200000, [2] = 250000, [1] = 300000, [0] = 350000 })
@@ -85,9 +101,11 @@ lua.eval(r'''function(QTR, out)
   show("3) 우편 100만 보냄(-31%) 받음(+50%) -> 둘 다 빼고 +50,000 (지출만 빼면 부풀려짐)")
   -- 4) 기준 아래: 20% 넘지만 10만 미만, 10만 넘지만 20% 미만
   setSnaps({ [1] = 300000, [0] = 400000 })
-  show("4a) 30만->40만 (+10만, 33%지만 하루 30만 미만) -> 그대로 +100,000")
-  setSnaps({ [1] = 4000000, [0] = 4350000 })
-  show("4b) 400만->435만 (+35만, 하루 30만 넘지만 9%) -> 그대로 +350,000")
+  show("4a) 30만->40만 (+10만, 33%지만 하루 50만 미만) -> 그대로 +100,000")
+  setSnaps({ [1] = 4000000, [0] = 4600000 })
+  show("4b) 400만->460만 (+60만, 하루 50만 넘지만 15%) -> 그대로 +600,000")
+  setSnaps({ [2] = 1000000, [1] = 1050000, [0] = 1450000 })
+  show("4c) 토큰을 팔아 40만 골드 (105만의 38%지만 하루 50만 미만) -> 순증에 넣음 (+225,000)")
   -- 5) 큰 변화만 있음
   setSnaps({ [1] = 5000000, [0] = 100000 })
   show("5) 기록 2일, 그 사이가 큰 변화 -> 순증 없음 (회색 -)")

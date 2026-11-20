@@ -928,9 +928,11 @@ end
 -- 보유 골드 하루 증가량 (최근 TREND_DAYS일 안의 기록, 코퍼). 기록이 2일치 미만이면 nil
 --   반환 둘째: 빼고 계산한 큰 변화 날 수 (접속하지 않아 띄엄띄엄한 기록 사이면 그 사이 날짜 수)
 -- 큰 변화 날은 빼고 계산한다 (2026-11-20 사용자 결정, 인벤 김다크님 글: 500만 골드 탈것을 산 뒤 일주일 내내 "보유량 감소 중").
---   이웃한 두 기록 사이 변화가 앞 기록의 20% 이상이면서 하루에 30만 골드 이상이면, 늘었든 줄었든 그 사이(변화와 날짜 수)를 뺀다.
---   하루치로 보는 까닭: 며칠 접속하지 않으면 평소 벌이도 한 번에 쌓여 보인다. 30만인 까닭: 탈것을 산 뒤처럼 보유량이 적을 때
---   골드퀘 하루 벌이(제작자 계정 2026-10-16~11-20 하루 최대 +24만, 보통 2~11만)가 20%를 넘기 쉬워서
+--   이웃한 두 기록 사이 변화가 앞 기록의 20% 이상이면서 하루에 50만 골드 이상이면, 늘었든 줄었든 그 사이(변화와 날짜 수)를 뺀다.
+--   하루치로 보는 까닭: 며칠 접속하지 않으면 평소 벌이도 한 번에 쌓여 보인다.
+--   50만인 까닭 (2026-11-20 사용자 결정, 처음 30만): 토큰을 팔아 산 골드는 순증에 들어가야 한다 (한국 토큰 시세는 40만 골드를 넘은 적이 없음).
+--   탈것을 산 뒤처럼 보유량이 적을 때 골드퀘 하루 벌이(제작자 계정 2026-10-16~11-20 하루 최대 +24만, 보통 2~11만)가 20%를 넘기 쉬운 것도 막는다
+--   뺀 날 수는 머리 영역 순증에 마우스를 올리면 툴팁으로 알린다 (글자로는 적지 않음, 2026-11-20 사용자 결정)
 --   큰 수입도 빼는 까닭: 우편으로 다른 캐릭터에 큰돈을 보내면 보낸 날은 줄고 받는 캐릭터가 접속한 날 느는데, 한쪽만 빼면 부풀려진다.
 --   따로 저장하는 것은 없고 계산할 때마다 판단한다 (7일 범위를 벗어나면 저절로 빠진다).
 --   남은 날이 없으면 nil. 달성 예상의 남은 골드는 실제 보유량이라 큰 변화도 거기에는 그대로 들어간다
@@ -954,7 +956,7 @@ local function GetHoldingTrend()
     if not firstKey or firstKey == lastKey then
         return nil
     end
-    local BIG_GOLD, BIG_RATIO = 300000 * 10000, 0.2
+    local BIG_GOLD, BIG_RATIO = 500000 * 10000, 0.2
     local sum, days, skipped, prev = 0, 0, 0, nil
     for _, k in ipairs(keys) do
         if k >= firstKey then
@@ -2936,6 +2938,32 @@ hdr.avg = {
     CreateText(f, 150, -62),
 }
 hdr.avg[1]:SetText(L["하루 평균 (최근 %d일)"]:format(AVG_DAYS))
+-- 보유량 순증은 골드퀘 획득 뒤에 붙는 따로 된 글자칸 (마우스를 올리면 툴팁, 2026-11-20 사용자 요청)
+hdr.hold = f:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+hdr.hold:SetPoint("LEFT", hdr.avg[2], "RIGHT", 0, 0)
+hdr.hold:SetJustifyH("LEFT")
+hdr.holdHover = CreateFrame("Frame", nil, f)
+hdr.holdHover:SetAllPoints(hdr.hold)
+if hdr.holdHover.SetMouseClickEnabled then
+    hdr.holdHover:SetMouseMotionEnabled(true)
+    hdr.holdHover:SetMouseClickEnabled(false) -- 창 끌기는 그대로
+else
+    hdr.holdHover:EnableMouse(true)
+end
+hdr.holdHover:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+    GameTooltip:SetText(L["보유량 순증"])
+    GameTooltip:AddLine(L["최근 7일 동안 계정 보유량이 하루에 평균 얼마나 바뀌었는지입니다."], 1, 1, 1, true)
+    if (hdr.bigDays or 0) > 0 then
+        GameTooltip:AddLine(" ")
+        GameTooltip:AddLine(L["큰 변화 %d일은 빼고 계산했습니다."]:format(hdr.bigDays), 1, 0.82, 0, true)
+        GameTooltip:AddLine(L["보유량이 20% 이상, 하루 50만 골드 이상 바뀐 날입니다 (탈것 구매, 캐릭터끼리 보낸 우편 등)."], 0.7, 0.7, 0.7, true)
+    end
+    GameTooltip:Show()
+end)
+hdr.holdHover:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+end)
 
 hdr.etaWQ = {
     CreateText(f, 20, -82, "GameFontNormalSmall"),
@@ -2998,11 +3026,11 @@ function QTR:UpdateHeader()
 
     local avg = GetRecentAverage(AVG_DAYS)
     local trend, bigDays = GetHoldingTrend()
+    hdr.bigDays = bigDays -- 순증 툴팁에서 쓴다
     local avgLabel = L["골드퀘 획득 "] .. FormatGold(avg)
-    -- 큰 변화로 뺀 날이 있으면 회색으로 알린다 (2026-11-20)
-    local bigNote = (bigDays or 0) > 0 and L[" |cff808080(큰 변화 %d일 제외)|r"]:format(bigDays) or ""
+    local holdLabel
     if not trend and (bigDays or 0) > 0 then
-        avgLabel = avgLabel .. L[" / 보유량 순증 "] .. "|cff808080-|r" .. bigNote
+        holdLabel = L[" / 보유량 순증 "] .. "|cff808080-|r" -- 큰 변화만 있어 셀 날이 없다 (툴팁에 알림)
     elseif trend then
         -- 늘면 흰색 "+", 줄면 빨간 "-", 변화가 없으면 회색 "+0" (보유량 탭과 같은 기호)
         local trendText = FormatSignedGold(trend)
@@ -3011,11 +3039,12 @@ function QTR:UpdateHeader()
         elseif trend < 0 then
             trendText = "|cffff4444" .. trendText .. "|r"
         end
-        avgLabel = avgLabel .. L[" / 보유량 순증 "] .. trendText .. bigNote
+        holdLabel = L[" / 보유량 순증 "] .. trendText
     else
-        avgLabel = avgLabel .. L[" / 보유량 순증 |cff808080기록 2일 이상 필요|r"]
+        holdLabel = L[" / 보유량 순증 |cff808080기록 2일 이상 필요|r"]
     end
     hdr.avg[2]:SetText(avgLabel)
+    hdr.hold:SetText(holdLabel)
 
     -- 오늘 번 골드퀘 수익으로 달성 예상이 얼마나 앞당겨졌는지 옆에 붙인다
     local etaText = FormatEta(goalGold, total, avg)

@@ -7,7 +7,8 @@
 ### Fixes
 - Minimap button: it no longer jumps to a wrong spot after /reload when another addon (SexyMap, Leatrix Plus and so on) resizes or reshapes the minimap.
 - Net holdings: one-time big changes (a mount purchase, gold mailed between your characters) no longer drag the trend down or up for a week.
-  Days where holdings changed by 20% or more and by 300,000 gold or more a day are left out, and the header says so.
+  Days where holdings changed by 20% or more and by 500,000 gold or more a day are left out (hover over net holdings to see how many).
+  Gold from selling a WoW Token still counts.
 
 ---
 
@@ -20,4 +21,5 @@
 ### 수정
 - 미니맵 버튼: 다른 애드온(SexyMap, Leatrix Plus 등)이 미니맵 크기나 모양을 바꾸면 /reload 뒤 버튼이 엉뚱한 곳에 가던 문제를 고쳤습니다.
 - 보유량 순증: 탈것 구매나 캐릭터끼리 우편으로 옮긴 골드 같은 한 번뿐인 큰 변화가 일주일 내내 순증 추세를 끌어내리거나 부풀리지 않습니다.
-  보유량이 20% 이상, 하루 30만 골드 이상 바뀐 날은 빼고 계산하고, 머리 영역에 뺀 날 수를 적습니다.
+  보유량이 20% 이상, 하루 50만 골드 이상 바뀐 날은 빼고 계산합니다 (보유량 순증에 마우스를 올리면 뺀 날 수가 나옵니다).
+  토큰을 팔아 얻은 골드는 그대로 순증에 들어갑니다.
