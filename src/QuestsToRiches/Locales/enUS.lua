@@ -101,6 +101,7 @@ ns.Locales.enUS = {
         ["달성 예상 (순증 추세)"] = "ETA (holdings trend)",
         ["골드퀘 획득 "] = "Gold quests ",
         [" / 보유량 순증 "] = " / net holdings ",
+        [" |cff808080(큰 변화 %d일 제외)|r"] = " |cff808080(big changes left out: %dd)|r",
         [" / 보유량 순증 |cff808080기록 2일 이상 필요|r"] = " / net holdings |cff808080needs 2+ days of records|r",
         ["  |cff00ff00오늘 %s 단축|r"] = "  |cff00ff00-%s today|r",
         ["일별"] = "Daily",

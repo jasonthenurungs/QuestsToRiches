@@ -925,8 +925,15 @@ local function GetRecentAverage(numDays)
     return sum / active
 end
 
--- 보유 골드 하루 증가량 (최근 TREND_DAYS일 안의 가장 오래된 기록과 가장 최근 기록 비교, 코퍼)
--- 기록이 2일치 미만이면 nil
+-- 보유 골드 하루 증가량 (최근 TREND_DAYS일 안의 기록, 코퍼). 기록이 2일치 미만이면 nil
+--   반환 둘째: 빼고 계산한 큰 변화 날 수 (접속하지 않아 띄엄띄엄한 기록 사이면 그 사이 날짜 수)
+-- 큰 변화 날은 빼고 계산한다 (2026-11-20 사용자 결정, 인벤 김다크님 글: 500만 골드 탈것을 산 뒤 일주일 내내 "보유량 감소 중").
+--   이웃한 두 기록 사이 변화가 앞 기록의 20% 이상이면서 하루에 30만 골드 이상이면, 늘었든 줄었든 그 사이(변화와 날짜 수)를 뺀다.
+--   하루치로 보는 까닭: 며칠 접속하지 않으면 평소 벌이도 한 번에 쌓여 보인다. 30만인 까닭: 탈것을 산 뒤처럼 보유량이 적을 때
+--   골드퀘 하루 벌이(제작자 계정 2026-10-16~11-20 하루 최대 +24만, 보통 2~11만)가 20%를 넘기 쉬워서
+--   큰 수입도 빼는 까닭: 우편으로 다른 캐릭터에 큰돈을 보내면 보낸 날은 줄고 받는 캐릭터가 접속한 날 느는데, 한쪽만 빼면 부풀려진다.
+--   따로 저장하는 것은 없고 계산할 때마다 판단한다 (7일 범위를 벗어나면 저절로 빠진다).
+--   남은 날이 없으면 nil. 달성 예상의 남은 골드는 실제 보유량이라 큰 변화도 거기에는 그대로 들어간다
 local function GetHoldingTrend()
     local keys = {}
     for k in pairs(DB.snapshots) do
@@ -947,12 +954,29 @@ local function GetHoldingTrend()
     if not firstKey or firstKey == lastKey then
         return nil
     end
-    local days = DaysBetween(firstKey, lastKey)
-    if days < 1 then
-        return nil
+    local BIG_GOLD, BIG_RATIO = 300000 * 10000, 0.2
+    local sum, days, skipped, prev = 0, 0, 0, nil
+    for _, k in ipairs(keys) do
+        if k >= firstKey then
+            if prev then
+                local a, b = QTR.SnapshotAt(prev), QTR.SnapshotAt(k)
+                local delta, d = b - a, DaysBetween(prev, k)
+                if math.abs(delta) >= math.abs(a) * BIG_RATIO and math.abs(delta) / math.max(d, 1) >= BIG_GOLD then
+                    skipped = skipped + d
+                else
+                    sum = sum + delta
+                    days = days + d
+                end
+            end
+            prev = k
+        end
     end
-    return (QTR.SnapshotAt(lastKey) - QTR.SnapshotAt(firstKey)) / days
+    if days < 1 then
+        return nil, skipped
+    end
+    return sum / days, skipped
 end
+QTR.HoldingTrendForTest = GetHoldingTrend
 
 -- 목표까지 예상 달성일 문자열
 -- hold: 순증 추세 줄 (2026-10-29 사용자 요청: 기록 부족과 감소를 구분한다)
@@ -2973,9 +2997,13 @@ function QTR:UpdateHeader()
     SetBar(hdr.goalBar, totalGold, goalGold)
 
     local avg = GetRecentAverage(AVG_DAYS)
-    local trend = GetHoldingTrend()
+    local trend, bigDays = GetHoldingTrend()
     local avgLabel = L["골드퀘 획득 "] .. FormatGold(avg)
-    if trend then
+    -- 큰 변화로 뺀 날이 있으면 회색으로 알린다 (2026-11-20)
+    local bigNote = (bigDays or 0) > 0 and L[" |cff808080(큰 변화 %d일 제외)|r"]:format(bigDays) or ""
+    if not trend and (bigDays or 0) > 0 then
+        avgLabel = avgLabel .. L[" / 보유량 순증 "] .. "|cff808080-|r" .. bigNote
+    elseif trend then
         -- 늘면 흰색 "+", 줄면 빨간 "-", 변화가 없으면 회색 "+0" (보유량 탭과 같은 기호)
         local trendText = FormatSignedGold(trend)
         if CopperToGold(math.abs(trend)) == 0 then
@@ -2983,7 +3011,7 @@ function QTR:UpdateHeader()
         elseif trend < 0 then
             trendText = "|cffff4444" .. trendText .. "|r"
         end
-        avgLabel = avgLabel .. L[" / 보유량 순증 "] .. trendText
+        avgLabel = avgLabel .. L[" / 보유량 순증 "] .. trendText .. bigNote
     else
         avgLabel = avgLabel .. L[" / 보유량 순증 |cff808080기록 2일 이상 필요|r"]
     end
